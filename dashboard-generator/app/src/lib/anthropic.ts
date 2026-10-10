@@ -36,10 +36,10 @@ Retorne SOMENTE um JSON válido com esta estrutura exata (sem markdown, sem expl
     {
       "name": "Nome da Aba",
       "kpis": [
-        { "label": "Nome do KPI", "value": "1.234", "change": "+12,3%", "trend": "up" },
-        { "label": "Nome do KPI", "value": "R$ 45.2K", "change": "-3,1%", "trend": "down" },
-        { "label": "Nome do KPI", "value": "98,5%", "change": "+0,5%", "trend": "up" },
-        { "label": "Nome do KPI", "value": "234", "change": "0,0%", "trend": "neutral" }
+        { "label": "Nome do KPI", "value": "1.234", "change": "+12,3%", "trend": "up", "goodWhen": "up" },
+        { "label": "Nome do KPI", "value": "R$ 45.2K", "change": "-3,1%", "trend": "down", "goodWhen": "down" },
+        { "label": "Nome do KPI", "value": "98,5%", "change": "+0,5%", "trend": "up", "goodWhen": "up" },
+        { "label": "Nome do KPI", "value": "234", "change": "0,0%", "trend": "neutral", "goodWhen": "up" }
       ],
       "charts": [
         {
@@ -81,7 +81,8 @@ Retorne SOMENTE um JSON válido com esta estrutura exata (sem markdown, sem expl
 Crie exatamente 5 abas relevantes para o segmento "${answers.segmento}".
 Use dados brasileiros realistas (moeda em R$, datas em pt-BR, nomes brasileiros nas tabelas).
 Os valores devem ser plausíveis para um negócio real.
-trend deve ser "up", "down" ou "neutral".
+trend deve ser "up", "down" ou "neutral" (direcao da mudanca).
+goodWhen indica o sentido favoravel do KPI: "up" quando maior e melhor (receita, conversao, OTIF), "down" quando menor e melhor (custo, tempo, atraso, churn, inadimplencia).
 type dos charts deve ser "bar", "line", "pie" ou "doughnut".
 Para pie/doughnut, use apenas 1 dataset com 5-7 itens.`
 

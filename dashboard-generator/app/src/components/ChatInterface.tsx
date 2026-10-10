@@ -1,5 +1,7 @@
 import { useState, type Dispatch, type SetStateAction } from 'react'
 import type { UserAnswers } from '../types'
+import type { Brand } from '../lib/brand'
+import BrandStep from './BrandStep'
 
 const EXEMPLOS_OBJETIVO: Record<string, string[]> = {
   'Financeiro':         ['Ter controle do fluxo de caixa', 'Entender por que o EBITDA caiu', 'Ver centros de custo acima do orçado'],
@@ -56,10 +58,12 @@ interface Props {
   onComplete: (answers: UserAnswers) => void
   isGenerating: boolean
   error: string | null
+  brand: Brand
+  setBrand: Dispatch<SetStateAction<Brand>>
 }
 
-export default function ChatInterface({ onComplete, isGenerating, error }: Props) {
-  const [step, setStep] = useState<1 | 2>(1)
+export default function ChatInterface({ onComplete, isGenerating, error, brand, setBrand }: Props) {
+  const [step, setStep] = useState<1 | 2 | 3>(1)
   const [segmento, setSegmento] = useState('')
   const [objetivo, setObjetivo] = useState('')
   const [decisao, setDecisao] = useState('')
@@ -82,9 +86,10 @@ export default function ChatInterface({ onComplete, isGenerating, error }: Props
     const steps = [
       { n: 1, label: 'Segmento' },
       { n: 2, label: 'Contexto' },
-      { n: 3, label: 'Dashboard' },
+      { n: 3, label: 'Marca' },
+      { n: 4, label: 'Dashboard' },
     ]
-    const current = isGenerating ? 3 : step
+    const current = isGenerating ? 4 : step
     return (
       <div className="flex items-center gap-2 mb-10">
         {steps.map((s, i) => (
@@ -150,13 +155,13 @@ export default function ChatInterface({ onComplete, isGenerating, error }: Props
         <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white text-xs font-bold">AI</div>
         <div>
           <h1 className="text-white font-semibold text-sm">Dashboard Generator</h1>
-          <p className="text-slate-500 text-xs">Powered by Claude</p>
+          <p className="text-slate-500 text-xs">Powered by Gemini</p>
         </div>
       </header>
 
       {/* Content */}
       <main className="flex-1 flex justify-center px-4 py-10">
-        <div className="w-full max-w-2xl">
+        <div className={`w-full ${step === 3 ? 'max-w-6xl' : 'max-w-2xl'}`}>
           <StepDots />
 
           {/* ── STEP 1: Segmento ── */}
@@ -272,13 +277,6 @@ export default function ChatInterface({ onComplete, isGenerating, error }: Props
                 </div>
               </div>
 
-              {error && (
-                <div className="mt-4 flex items-start gap-2.5 bg-red-900/30 border border-red-700/50 rounded-xl px-4 py-3">
-                  <span className="text-red-400 mt-0.5 shrink-0">⚠</span>
-                  <p className="text-red-300 text-sm">{error}</p>
-                </div>
-              )}
-
               <div className="flex items-center justify-between mt-8">
                 <button
                   type="button"
@@ -289,10 +287,46 @@ export default function ChatInterface({ onComplete, isGenerating, error }: Props
                 </button>
                 <button
                   type="button"
+                  onClick={() => setStep(3)}
+                  className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-6 py-2.5 rounded-lg transition-colors"
+                >
+                  Próximo →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ── STEP 3: Identidade visual ── */}
+          {step === 3 && (
+            <div>
+              <h2 className="text-white text-2xl font-semibold tracking-tight mb-1">Identidade visual da marca</h2>
+              <p className="text-slate-400 text-sm mb-8">
+                Opcional. Logo, cores, fonte e tema que o dashboard vai usar.
+              </p>
+
+              <BrandStep brand={brand} setBrand={setBrand} segmento={segmento} />
+
+              {error && (
+                <div className="mt-6 flex items-start gap-2.5 bg-red-900/30 border border-red-700/50 rounded-xl px-4 py-3">
+                  <span className="text-red-400 mt-0.5 shrink-0">⚠</span>
+                  <p className="text-red-300 text-sm">{error}</p>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between mt-8">
+                <button
+                  type="button"
+                  onClick={() => setStep(2)}
+                  className="text-slate-400 hover:text-white text-sm transition-colors"
+                >
+                  ← Voltar
+                </button>
+                <button
+                  type="button"
                   onClick={handleSubmit}
                   className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-6 py-2.5 rounded-lg transition-colors"
                 >
-                  Gerar dashboard
+                  {brand.ativo ? 'Gerar dashboard com a marca' : 'Gerar dashboard'}
                 </button>
               </div>
             </div>
