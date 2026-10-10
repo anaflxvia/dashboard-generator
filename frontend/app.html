@@ -79,6 +79,69 @@
   #dashboard-frame { width: 100%; min-height: 85vh; border: 1px solid var(--border); border-radius: 14px; }
   #screen3 { max-width: 100%; }
   .error-msg { font-size: 13px; color: var(--red); margin-top: 8px; display: none; }
+
+  /* ── IDENTIDADE VISUAL ── */
+  .brand-intro { display: flex; align-items: center; gap: 16px; padding: 18px 20px; background: var(--bg2); border: 1px dashed var(--border2); border-radius: 12px; }
+  .brand-intro p { flex: 1; font-size: 14px; color: var(--text2); line-height: 1.6; }
+  .brand-panel { display: none; background: var(--bg2); border: 1px solid var(--border2); border-radius: 14px; padding: 24px; }
+  .brand-panel.open { display: block; }
+  .brand-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 22px; }
+  .brand-field-label { font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 8px; display: block; }
+  .brand-sub { font-size: 11px; color: var(--text3); font-weight: 400; margin-left: 6px; }
+  .logo-drop { display: flex; align-items: center; gap: 12px; padding: 10px 12px; min-height: 52px; background: var(--bg3); border: 1px dashed var(--border2); border-radius: 12px; cursor: pointer; transition: border-color 0.15s; }
+  .logo-drop:hover, .logo-drop.drag { border-color: var(--accent); }
+  .logo-drop img { max-height: 32px; max-width: 120px; object-fit: contain; border-radius: 4px; background: repeating-conic-gradient(#2a2a32 0% 25%, #1e1e24 0% 50%) 50% / 10px 10px; }
+  .logo-drop span { font-size: 13px; color: var(--text3); flex: 1; }
+  .link-btn { background: none; border: none; color: var(--text3); font-size: 12px; cursor: pointer; font-family: inherit; text-decoration: underline; }
+  .link-btn:hover { color: var(--red); }
+  .preset-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+  .preset { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 8px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 999px; font-size: 12px; color: var(--text2); cursor: pointer; font-family: inherit; transition: all 0.15s; }
+  .preset:hover { border-color: var(--accent); color: var(--text); }
+  .preset.active { border-color: var(--accent); background: var(--accent-bg); color: var(--accent2); }
+  .preset i { display: inline-flex; }
+  .preset i b { width: 12px; height: 12px; border-radius: 50%; margin-left: -3px; border: 1px solid rgba(0,0,0,0.25); }
+  .mode-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .mode-tabs { display: inline-flex; padding: 3px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; }
+  .mode-tab { padding: 6px 14px; border: none; border-radius: 7px; background: transparent; color: var(--text2); font-family: inherit; font-size: 13px; cursor: pointer; }
+  .mode-tab.active { background: var(--accent); color: white; }
+  .mode-bar label { margin-left: auto; font-size: 12px; color: var(--text2); display: flex; align-items: center; gap: 8px; }
+  .q-select { padding: 8px 12px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); font-family: inherit; font-size: 13px; outline: none; }
+  .q-select:focus { border-color: var(--accent); }
+  .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 22px; }
+  .color-field { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; }
+  .color-field input[type=color] { width: 40px; height: 40px; border: 1px solid var(--border2); border-radius: 10px; padding: 0; background: none; cursor: pointer; flex-shrink: 0; }
+  .color-field input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
+  .color-field input[type=color]::-webkit-color-swatch { border: none; border-radius: 9px; }
+  .color-meta { flex: 1; min-width: 0; }
+  .color-meta strong { display: block; font-size: 13px; font-weight: 500; color: var(--text); }
+  .color-meta small { display: block; font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .hex-input { width: 86px; padding: 6px 8px; background: var(--bg2); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 12px; outline: none; text-transform: uppercase; }
+  .hex-input:focus { border-color: var(--accent); }
+  .hex-input.invalid { border-color: var(--red); }
+  .checks { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; margin: 4px 0 22px; }
+  .check { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text2); }
+  .check b { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
+  .check.ok b { background: var(--green-bg); color: var(--green); }
+  .check.warn b { background: rgba(251,191,36,0.12); color: var(--amber); }
+  .check em { font-style: normal; font-family: 'DM Mono', monospace; color: var(--text3); margin-left: auto; }
+  .brand-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .brand-actions .btn { padding: 10px 18px; font-size: 13px; }
+  .brand-actions .spacer { flex: 1; }
+  .brand-preview-wrap { display: none; position: relative; left: 50%; transform: translateX(-50%); width: min(1240px, calc(100vw - 48px)); margin-top: 24px; }
+  .brand-preview-wrap.open { display: block; }
+  .brand-preview-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 12px; color: var(--text3); }
+  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px var(--green-bg); }
+  #brand-preview { width: 100%; height: 760px; border: 1px solid var(--border2); border-radius: 14px; background: #fff; }
+  .brand-resumo { display: none; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .brand-resumo img { max-height: 28px; max-width: 110px; object-fit: contain; }
+  .swatches { display: inline-flex; gap: 4px; }
+  .swatches b { width: 18px; height: 18px; border-radius: 5px; border: 1px solid var(--border2); }
+  .brand-resumo span { font-size: 13px; color: var(--text2); }
+  @media (max-width: 640px) {
+    .seg-grid { grid-template-columns: repeat(2, 1fr); }
+    .brand-row, .color-grid, .checks { grid-template-columns: 1fr; }
+    .brand-intro { flex-direction: column; align-items: stretch; }
+  }
 </style>
 </head>
 <body>
@@ -172,6 +235,77 @@
       </div>
     </div>
 
+    <div class="q-group" id="brand-group">
+      <div class="q-label"><span class="q-label-num">6</span> Identidade visual da marca <span class="brand-sub">opcional</span></div>
+
+      <div class="brand-intro" id="brand-intro">
+        <p>Use o logo e as cores da empresa. O protótipo mostra a marca em tempo real e o dashboard gerado pela IA segue os mesmos tokens, nos temas claro e escuro.</p>
+        <button class="btn btn-ghost" type="button" id="brand-open">Personalizar marca</button>
+      </div>
+
+      <div class="brand-panel" id="brand-panel">
+        <div class="brand-row">
+          <div>
+            <label class="brand-field-label" for="brand-nome">Nome da empresa</label>
+            <input class="q-input" type="text" id="brand-nome" placeholder="Ex: Transportadora Rota Norte" maxlength="60" style="padding:12px 14px;">
+          </div>
+          <div>
+            <span class="brand-field-label">Logotipo <span class="brand-sub">PNG, JPG ou SVG até 2 MB</span></span>
+            <div class="logo-drop" id="logo-drop" tabindex="0" role="button" aria-label="Enviar logotipo">
+              <img id="logo-preview" alt="" style="display:none;">
+              <span id="logo-drop-text">Clique ou arraste o arquivo aqui</span>
+              <button class="link-btn" type="button" id="logo-remove" style="display:none;">Remover</button>
+            </div>
+            <input type="file" id="logo-file" accept="image/png,image/jpeg,image/svg+xml,image/webp" hidden>
+            <div class="error-msg" id="logo-err"></div>
+          </div>
+        </div>
+
+        <span class="brand-field-label">Paletas de partida</span>
+        <div class="preset-row" id="preset-row"></div>
+
+        <div class="mode-bar">
+          <div class="mode-tabs" role="tablist">
+            <button class="mode-tab active" type="button" data-mode="light">Tema claro</button>
+            <button class="mode-tab" type="button" data-mode="dark">Tema escuro</button>
+          </div>
+          <label>Tema inicial
+            <select class="q-select" id="brand-tema">
+              <option value="light">Claro</option>
+              <option value="dark">Escuro</option>
+            </select>
+          </label>
+          <label>Fonte
+            <select class="q-select" id="brand-fonte">
+              <option>Inter</option>
+              <option>DM Sans</option>
+              <option>Manrope</option>
+              <option>IBM Plex Sans</option>
+              <option>Poppins</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="color-grid" id="color-grid"></div>
+
+        <span class="brand-field-label">Contraste (WCAG)</span>
+        <div class="checks" id="brand-checks"></div>
+
+        <div class="brand-actions">
+          <button class="link-btn" type="button" id="brand-close">Não usar identidade visual</button>
+          <span class="spacer"></span>
+          <button class="btn btn-ghost" type="button" id="brand-reset">Restaurar paleta</button>
+          <button class="btn btn-ghost" type="button" id="brand-export">Exportar tokens (Figma)</button>
+          <button class="btn btn-primary" type="button" id="brand-gerar">Gerar protótipo</button>
+        </div>
+      </div>
+
+      <div class="brand-preview-wrap" id="brand-preview-wrap">
+        <div class="brand-preview-head"><span class="live-dot"></span> Protótipo ao vivo. Alterações de logo, cores, fonte e tema aparecem na hora. Dados fictícios.</div>
+        <iframe id="brand-preview" title="Protótipo do dashboard com a identidade visual"></iframe>
+      </div>
+    </div>
+
     <div class="btn-row">
       <button class="btn btn-primary" onclick="goToScreen2()">Gerar prompt</button>
     </div>
@@ -192,6 +326,11 @@
     <div class="prompt-box">
       <div class="prompt-box-label">KPIs sugeridos para o segmento</div>
       <div class="kpi-tags" id="kpi-tags"></div>
+    </div>
+
+    <div class="prompt-box" id="brand-resumo-box" style="display:none;">
+      <div class="prompt-box-label">Identidade visual aplicada</div>
+      <div class="brand-resumo" id="brand-resumo"></div>
     </div>
 
     <div class="q-group">
@@ -330,10 +469,9 @@ const EXEMPLOS = {
   "Outro": ["Entender o desempenho geral da operacao","Identificar onde estao os principais problemas"]
 };
 
-const TEMPLATE_FIXO = `
+function montarTemplateFixo(c) { return `
 ESTRUTURA GERAL:
-- Tema: dark mode com palette sofisticada — fundo #0a0a0f, cards #111118, sidebar #0d0d14, bordas rgba(255,255,255,0.07)
-- Toggle light/dark no canto superior direito (light mode: fundo #f4f4f8, cards #ffffff, texto #0a0a0f)
+${c.linhaTema}
 - Layout: sidebar fixa a esquerda (240px) com logo no topo, icone + label em cada item, separadores de secao, avatar/usuario no rodape
 - Topbar: titulo da aba ativa, barra de filtros (periodo com presets: Hoje / 7d / 30d / 90d / Custom), filtro por regiao e departamento, botao exportar PDF (visual apenas)
 - Tipografia: importar Inter via Google Fonts; hierarquia: 28px bold para numeros grandes, 13px medium para labels, 11px para subtextos
@@ -345,7 +483,7 @@ DESIGN DOS KPI CARDS (OBRIGATORIO):
   - Icone SVG inline no canto superior direito (16x16, cor do accent com opacity 0.7)
   - Label em cima (12px, cor texto secundario, uppercase, letter-spacing:0.05em)
   - Valor principal (28px, font-weight:700, cor texto primario)
-  - Linha inferior: variacao percentual com seta ▲ verde (#22d3a5) ou ▼ vermelha (#f87171) + texto "vs mes anterior" em cinza
+  - Linha inferior: variacao percentual com seta ▲ verde (${c.success}) ou ▼ vermelha (${c.danger}) + texto "vs mes anterior" em cinza
   - Micro sparkline SVG (linha de tendencia simples, 60x24px) no rodape do card — apenas a linha, sem eixos
 
 REQUISITOS POR ABA (OBRIGATORIO):
@@ -361,16 +499,16 @@ DESIGN DOS CARDS DE GRAFICO:
 
 REQUISITOS DE GRAFICOS (OBRIGATORIO):
 - Grid 2x2: display:grid; grid-template-columns:1fr 1fr; gap:20px
-- Todos os graficos: options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ color:'#9090a8', font:{ size:11 } } } }, scales:{ x:{ grid:{ color:'rgba(255,255,255,0.05)' }, ticks:{ color:'#9090a8' } }, y:{ grid:{ color:'rgba(255,255,255,0.05)' }, ticks:{ color:'#9090a8' } } } }
-- Paleta de datasets: ['#6366f1','#22d3a5','#f59e0b','#f87171','#818cf8','#34d399']
+- Todos os graficos: options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ color:'${c.muted}', font:{ size:11 } } } }, scales:{ x:{ grid:{ color:'${c.grid}' }, ticks:{ color:'${c.muted}' } }, y:{ grid:{ color:'${c.grid}' }, ticks:{ color:'${c.muted}' } } } }
+- Paleta de datasets: ${c.datasets}
 - Line charts: tension:0.4, borderWidth:2, pointRadius:3, pointHoverRadius:6
 - Bar charts: borderRadius:6, borderSkipped:false
 - Doughnut/pie: cutout:'65%' (rosca), hoverOffset:8
 
 GRAFICO DE FORECAST NA ABA RESUMO (OBRIGATORIO):
 - Line chart com dois datasets no mesmo grafico:
-  Dataset 1 — historico (6 meses): linha solida, borderDash:[], cor #6366f1, fill:true, backgroundColor:'rgba(99,102,241,0.1)'
-  Dataset 2 — forecast (3 meses): linha tracejada, borderDash:[6,4], cor #fbbf24, fill:false
+  Dataset 1 — historico (6 meses): linha solida, borderDash:[], cor ${c.primary}, fill:true, backgroundColor:'rgba(${c.primaryRgb},0.1)'
+  Dataset 2 — forecast (3 meses): linha tracejada, borderDash:[6,4], cor ${c.warning}, fill:false
 - Labels: 9 meses em sequencia; datasets se conectam no ultimo mes historico
 - Titulo do grafico: "Tendencia e Previsao — proximos 3 meses"
 - Adicionar linha vertical pontilhada no ponto de transicao usando plugin de anotacao inline (desenhar via afterDraw no plugin local, sem CDN extra)
@@ -404,15 +542,15 @@ ABA ALOCACAO DE RECURSOS — conteudo obrigatorio e especifico:
 - KPIs especificos: Taxa de Ocupacao, Horas Disponiveis, Horas Alocadas, Colaboradores Sobrecarregados, Projetos Ativos, Indice de Eficiencia
 
 ABA VARIACAO DE KPI — conteudo obrigatorio e especifico:
-- Grafico 1 (chart-variacao-1): line chart com 2 datasets — mes atual (linha solida #6366f1) vs mes anterior (linha tracejada #9090a8) para o KPI principal do segmento; eixo X = semanas do mes
-- Grafico 2 (chart-variacao-2): bar chart de variacao absoluta por KPI (pode ser negativo) — barras verdes para positivo (#22d3a5), vermelhas para negativo (#f87171); use backgroundColor como array de cores condicionais
+- Grafico 1 (chart-variacao-1): line chart com 2 datasets — mes atual (linha solida ${c.primary}) vs mes anterior (linha tracejada ${c.muted}) para o KPI principal do segmento; eixo X = semanas do mes
+- Grafico 2 (chart-variacao-2): bar chart de variacao absoluta por KPI (pode ser negativo) — barras verdes para positivo (${c.success}), vermelhas para negativo (${c.danger}); use backgroundColor como array de cores condicionais
 - Grafico 3 (chart-variacao-3): radar chart comparando performance atual vs meta em 6 dimensoes diferentes e especificas do segmento
 - Grafico 4 (chart-variacao-4): line chart de volatilidade dos KPIs nos ultimos 3 meses (multiplos datasets, um por KPI)
 - Tabela de variacao: colunas KPI | Valor Atual | Valor Anterior | Variacao (%) com seta ▲▼ colorida | Tendencia (icone de linha) | Meta
 - KPIs especificos: Variacao Media, KPIs Acima da Meta, KPIs Abaixo da Meta, Maior Alta, Maior Queda, Estabilidade Geral
 
 ABA PREDICAO DE ENTREGAS — conteudo obrigatorio e especifico:
-- Grafico 1 (chart-predicao-1): line chart com historico (6 meses, linha solida #6366f1, fill com gradiente) + forecast (3 meses, linha tracejada #fbbf24) de entregas no prazo — datasets se conectam no ultimo mes historico
+- Grafico 1 (chart-predicao-1): line chart com historico (6 meses, linha solida ${c.primary}, fill com gradiente) + forecast (3 meses, linha tracejada ${c.warning}) de entregas no prazo — datasets se conectam no ultimo mes historico
 - Grafico 2 (chart-predicao-2): bar chart de entregas por status (No Prazo / Atrasado / Em Risco) agrupado por mes — 6 meses de historico
 - Grafico 3 (chart-predicao-3): scatter chart de prazo previsto vs prazo real por projeto (eixo X = planejado em dias, eixo Y = realizado em dias) — linha diagonal de referencia desenhada via plugin afterDraw
 - Grafico 4 (chart-predicao-4): bar chart horizontal de dias de atraso acumulado por projeto — top 8 projetos com mais atraso
@@ -421,9 +559,9 @@ ABA PREDICAO DE ENTREGAS — conteudo obrigatorio e especifico:
 LOADING STATE OBRIGATORIO (CRITICO):
 - O body inteiro deve comecar invisivel: <body style="visibility:hidden">
 - Criar um overlay de loading ANTES de qualquer conteudo no body:
-  <div id="loading-overlay" style="position:fixed;inset:0;background:#0a0a0f;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;visibility:visible">
-    <div style="width:48px;height:48px;border:3px solid rgba(99,102,241,0.2);border-top-color:#6366f1;border-radius:50%;animation:spin 0.8s linear infinite"></div>
-    <p style="margin-top:16px;color:#9090a8;font-size:13px;font-family:Inter,sans-serif">Carregando dashboard...</p>
+  <div id="loading-overlay" style="position:fixed;inset:0;background:${c.bgInicial};display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;visibility:visible">
+    <div style="width:48px;height:48px;border:3px solid rgba(${c.primaryRgb},0.2);border-top-color:${c.primary};border-radius:50%;animation:spin 0.8s linear infinite"></div>
+    <p style="margin-top:16px;color:${c.muted};font-size:13px;font-family:Inter,sans-serif">Carregando dashboard...</p>
   </div>
   <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 - A funcao inicializarTodos() deve ao final:
@@ -442,10 +580,20 @@ REQUISITOS TECNICOS DE INICIALIZACAO (CRITICO):
 
 REQUISITOS TECNICOS FINAIS:
 - CSS custom properties no :root para todas as cores — facil troca dark/light
-- Scrollbar customizada: width:6px, track transparente, thumb rgba(99,102,241,0.4)
-- Sidebar: item ativo com background accent-bg e borda esquerda 3px solid #6366f1
+- Scrollbar customizada: width:6px, track transparente, thumb rgba(${c.primaryRgb},0.4)
+- Sidebar: item ativo com background accent-bg e borda esquerda 3px solid ${c.primary}
 - Responsivo: funciona em 1440px e 1024px
 - TODOS os dados sao ficticios mas hiper-realistas — valores, nomes, regioes e datas coerentes com o segmento e contexto informado`;
+}
+
+/* paleta original do template; quando a identidade visual nao e usada, o texto gerado e identico ao anterior */
+const PALETA_TEMPLATE_PADRAO = {
+  linhaTema: "- Tema: dark mode com palette sofisticada — fundo #0a0a0f, cards #111118, sidebar #0d0d14, bordas rgba(255,255,255,0.07)\n- Toggle light/dark no canto superior direito (light mode: fundo #f4f4f8, cards #ffffff, texto #0a0a0f)",
+  datasets: "['#6366f1','#22d3a5','#f59e0b','#f87171','#818cf8','#34d399']",
+  primary: '#6366f1', primaryRgb: '99,102,241', grid: 'rgba(255,255,255,0.05)', muted: '#9090a8',
+  success: '#22d3a5', danger: '#f87171', warning: '#fbbf24', bgInicial: '#0a0a0f'
+};
+const TEMPLATE_FIXO = montarTemplateFixo(PALETA_TEMPLATE_PADRAO);
 
 /* ── LOG ── */
 const LOG_KEY = 'dashgen_logs';
@@ -587,6 +735,7 @@ function setupApiKeyInput() {
 window.addEventListener('load', () => {
   iniciarSessao();
   setupApiKeyInput();
+  setupBrand();
 
 
   /* delegacao de eventos nos exemplos — evita onclick com strings interpoladas */
@@ -625,6 +774,7 @@ window.addEventListener('load', () => {
       ).join('');
 
       logAtualizar({ segmento: card.dataset.val });
+      if (prototipoGerado) gerarPrototipo(false);
     });
   });
 });
@@ -666,7 +816,13 @@ function goToScreen2() {
   prompt += `\nABAS: ${base.abas.join(' | ')}\n\n`;
   prompt += `KPIs OBRIGATORIOS (minimo 6 por aba, em grid horizontal sem quebra de linha):\n${todosKpis.join(', ')}\n\n`;
   prompt += `GRAFICOS POR ABA (minimo 4 por aba em grid 2x2, Chart.js com dados ficticios realistas):\n${base.graficos}\n`;
-  prompt += TEMPLATE_FIXO;
+  if (brand.ativo) {
+    prompt += montarTemplateFixo(paletaTemplateDaMarca());
+    prompt += '\n\n' + montarBlocoMarca();
+  } else {
+    prompt += TEMPLATE_FIXO;
+  }
+  renderBrandResumo();
 
   document.getElementById('prompt-edit').value = prompt;
   document.getElementById('screen1').classList.remove('active');
@@ -678,7 +834,8 @@ function goToScreen2() {
     etapa: 2, status: 'prompt_gerado',
     segmento: seg, area: formData.area, objetivo: formData.objetivo,
     decisao: formData.decisao, comparacoes: formData.comparacoes, metricas: formData.metricas,
-    abasPrevistas: base.abas
+    abasPrevistas: base.abas,
+    marca: brand.ativo ? { nome: brand.nome, preset: brand.preset, temaInicial: brand.tema, logo: !!brand.logo } : null
   });
 }
 
@@ -739,7 +896,7 @@ async function goToScreen3(forcarNovo = false) {
     const cached = await cacheBuscar(cacheHash);
     if (cached) {
       const frame = document.getElementById('dashboard-frame');
-      frame.srcdoc = cached.html;
+      frame.srcdoc = injetarLogoMarca(cached.html);
       frame.style.height = '85vh';
       document.getElementById('loading-state').style.display = 'none';
       document.getElementById('dash-container').style.display = 'block';
@@ -785,7 +942,7 @@ async function goToScreen3(forcarNovo = false) {
     await cacheSalvar(cacheHash, prompt, html, formData.segmento);
 
     const frame = document.getElementById('dashboard-frame');
-    frame.srcdoc = html;
+    frame.srcdoc = injetarLogoMarca(html);
     frame.style.height = '85vh';
 
     document.getElementById('loading-state').style.display = 'none';
@@ -813,6 +970,805 @@ async function goToScreen3(forcarNovo = false) {
       </div>`;
     logErro(err.message);
   }
+}
+/* ══════════════════════════════════════════════════════════════
+   IDENTIDADE VISUAL (WHITE-LABEL)
+   Tokens de marca -> prototipo ao vivo + prompt da IA + export Figma Tokens
+   ══════════════════════════════════════════════════════════════ */
+const BRAND_KEY = 'dashgen_brand';
+const BRAND_FONTES = ['Inter', 'DM Sans', 'Manrope', 'IBM Plex Sans', 'Poppins'];
+const BRAND_CORES = [
+  { key: 'primary',    nome: 'Primária',   uso: 'Botões, item ativo, série principal' },
+  { key: 'secondary',  nome: 'Secundária', uso: 'Destaques, segunda série, meta' },
+  { key: 'background', nome: 'Fundo',      uso: 'Fundo da página' },
+  { key: 'surface',    nome: 'Superfície', uso: 'Cartões, tabelas, menus' }
+];
+const BRAND_PRESETS = {
+  indigo:    { nome: 'Indigo',            light: { primary: '#4f46e5', secondary: '#0e7490', background: '#f5f6fa', surface: '#ffffff' }, dark: { primary: '#818cf8', secondary: '#22d3ee', background: '#0b0d12', surface: '#151821' } },
+  logistica: { nome: 'Amarelo e azul',    light: { primary: '#1d4ed8', secondary: '#ffe600', background: '#f5f5f5', surface: '#ffffff' }, dark: { primary: '#93c5fd', secondary: '#ffe600', background: '#111827', surface: '#1f2937' } },
+  verde:     { nome: 'Verde corporativo', light: { primary: '#047857', secondary: '#0369a1', background: '#f4f7f5', surface: '#ffffff' }, dark: { primary: '#34d399', secondary: '#7dd3fc', background: '#0c1210', surface: '#141d1a' } },
+  grafite:   { nome: 'Grafite e laranja', light: { primary: '#c2410c', secondary: '#334155', background: '#f6f5f4', surface: '#ffffff' }, dark: { primary: '#fb923c', secondary: '#cbd5e1', background: '#121212', surface: '#1c1c1e' } },
+  vinho:     { nome: 'Vinho e dourado',   light: { primary: '#9f1239', secondary: '#a16207', background: '#faf7f5', surface: '#ffffff' }, dark: { primary: '#fb7185', secondary: '#facc15', background: '#140d0f', surface: '#1f1518' } }
+};
+/* cores semanticas: reservadas para status, nunca usadas como serie de grafico */
+const BRAND_SEMANTICAS = {
+  light: { success: '#15803d', danger: '#b91c1c', warning: '#b45309', info: '#1d4ed8' },
+  dark:  { success: '#4ade80', danger: '#f87171', warning: '#fbbf24', info: '#60a5fa' }
+};
+/* series extras do grafico, em ordem fixa, depois da primaria e secundaria */
+const BRAND_SERIES_EXTRAS = { light: ['#0f766e', '#7c3aed', '#64748b', '#c2410c'], dark: ['#2dd4bf', '#a78bfa', '#94a3b8', '#fb923c'] };
+const LOGO_VAZIO = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
+let brand = carregarBrand();
+let prototipoGerado = false;
+
+function brandPadrao() {
+  const p = BRAND_PRESETS.indigo;
+  return { ativo: false, nome: '', logo: '', fonte: 'Inter', tema: 'light', editando: 'light', preset: 'indigo',
+           light: { ...p.light }, dark: { ...p.dark } };
+}
+
+function carregarBrand() {
+  const base = brandPadrao();
+  try {
+    const salvo = JSON.parse(localStorage.getItem(BRAND_KEY) || 'null');
+    if (salvo && salvo.light && salvo.dark) return { ...base, ...salvo, light: { ...base.light, ...salvo.light }, dark: { ...base.dark, ...salvo.dark } };
+  } catch (e) {}
+  return base;
+}
+
+function salvarBrand() {
+  try { localStorage.setItem(BRAND_KEY, JSON.stringify(brand)); return true; }
+  catch (e) {
+    /* logo grande demais para o localStorage: salva o resto e mantem o logo so nesta sessao */
+    try { localStorage.setItem(BRAND_KEY, JSON.stringify({ ...brand, logo: '' })); } catch (e2) {}
+    return false;
+  }
+}
+
+/* ── utilitarios de cor ── */
+function hexValido(h) { return /^#[0-9a-f]{6}$/i.test(h); }
+function hexToRgb(h) { const n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+function rgbToHex(r, g, b) { return '#' + [r, g, b].map(v => Math.round(v).toString(16).padStart(2, '0')).join(''); }
+function luminancia(h) {
+  return hexToRgb(h).map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); })
+    .reduce((acc, v, i) => acc + v * [0.2126, 0.7152, 0.0722][i], 0);
+}
+function contraste(a, b) { const la = luminancia(a), lb = luminancia(b); return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05); }
+function misturar(a, b, t) { const x = hexToRgb(a), y = hexToRgb(b); return rgbToHex(...x.map((v, i) => v + (y[i] - v) * t)); }
+function comAlpha(h, a) { const [r, g, b] = hexToRgb(h); return `rgba(${r},${g},${b},${a})`; }
+function melhorTextoSobre(fundo) { return contraste(fundo, '#ffffff') >= contraste(fundo, '#111827') ? '#ffffff' : '#111827'; }
+
+/* tokens completos de um tema, derivados das 4 cores escolhidas */
+function derivarTokens(modo) {
+  const c = brand[modo];
+  const escuro = luminancia(c.background) < 0.2;
+  const text = escuro ? '#f3f4f6' : '#111827';
+  return {
+    'primary': c.primary, 'on-primary': melhorTextoSobre(c.primary),
+    'secondary': c.secondary, 'on-secondary': melhorTextoSobre(c.secondary),
+    'bg': c.background, 'surface': c.surface, 'sidebar': misturar(c.background, c.surface, 0.55),
+    'text': text, 'text-2': escuro ? '#cbd5e1' : '#4b5563', 'muted': escuro ? '#94a3b8' : '#6b7280',
+    'border': comAlpha(text, 0.12), 'border-strong': comAlpha(text, 0.24), 'grid': comAlpha(text, 0.07),
+    ...BRAND_SEMANTICAS[modo],
+    'series': [c.primary, c.secondary, ...BRAND_SERIES_EXTRAS[modo]]
+  };
+}
+
+function checagensContraste() {
+  const out = [];
+  ['light', 'dark'].forEach(m => {
+    const t = derivarTokens(m), tema = m === 'light' ? 'Claro' : 'Escuro';
+    out.push({ tema, nome: 'Texto sobre fundo',          r: contraste(t.text, t.bg),               min: 4.5 });
+    out.push({ tema, nome: 'Texto do botão primário',    r: contraste(t['on-primary'], t.primary), min: 4.5 });
+    out.push({ tema, nome: 'Primária sobre superfície',  r: contraste(t.primary, t.surface),       min: 3 });
+    out.push({ tema, nome: 'Secundária sobre superfície',r: contraste(t.secondary, t.surface),     min: 3 });
+  });
+  return out;
+}
+
+/* ── UI do painel ── */
+function setupBrand() {
+  const $ = id => document.getElementById(id);
+
+  $('preset-row').innerHTML = Object.entries(BRAND_PRESETS).map(([id, p]) =>
+    `<button class="preset" type="button" data-preset="${id}"><i><b style="background:${p.light.primary}"></b><b style="background:${p.light.secondary}"></b><b style="background:${p.dark.background}"></b></i>${p.nome}</button>`
+  ).join('');
+
+  $('color-grid').innerHTML = BRAND_CORES.map(c => `
+    <div class="color-field">
+      <input type="color" id="bc-${c.key}" data-cor="${c.key}" aria-label="${c.nome}">
+      <div class="color-meta"><strong>${c.nome}</strong><small>${c.uso}</small></div>
+      <input class="hex-input" type="text" id="bt-${c.key}" data-cor="${c.key}" maxlength="7" spellcheck="false" aria-label="${c.nome} em hexadecimal">
+    </div>`).join('');
+
+  $('brand-open').addEventListener('click', () => { brand.ativo = true; brandMudou(); $('brand-nome').focus(); });
+  $('brand-close').addEventListener('click', () => {
+    brand.ativo = false; prototipoGerado = false;
+    $('brand-preview-wrap').classList.remove('open');
+    brandMudou();
+  });
+
+  $('brand-nome').addEventListener('input', e => { brand.nome = e.target.value; brandMudou(true); });
+  $('brand-tema').addEventListener('change', e => { brand.tema = e.target.value; brand.editando = e.target.value; brandMudou(); });
+  $('brand-fonte').addEventListener('change', e => { brand.fonte = e.target.value; brandMudou(); });
+
+  document.querySelectorAll('.mode-tab').forEach(b => b.addEventListener('click', () => { brand.editando = b.dataset.mode; brandMudou(); }));
+
+  $('preset-row').addEventListener('click', e => {
+    const b = e.target.closest('.preset'); if (!b) return;
+    const p = BRAND_PRESETS[b.dataset.preset];
+    brand.preset = b.dataset.preset; brand.light = { ...p.light }; brand.dark = { ...p.dark };
+    brandMudou();
+  });
+
+  $('color-grid').addEventListener('input', e => {
+    const key = e.target.dataset.cor; if (!key) return;
+    let v = e.target.value.trim();
+    if (e.target.classList.contains('hex-input')) {
+      if (v && v[0] !== '#') v = '#' + v;
+      const ok = hexValido(v);
+      e.target.classList.toggle('invalid', !ok);
+      if (!ok) return;
+    }
+    brand[brand.editando][key] = v.toLowerCase();
+    brand.preset = '';
+    brandMudou(e.target.classList.contains('hex-input'));
+  });
+
+  /* logo: clique, teclado e arrastar */
+  const drop = $('logo-drop'), file = $('logo-file');
+  drop.addEventListener('click', e => { if (e.target.id !== 'logo-remove') file.click(); });
+  drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); file.click(); } });
+  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('drag'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('drag'));
+  drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('drag'); lerLogo(e.dataTransfer.files[0]); });
+  file.addEventListener('change', () => { lerLogo(file.files[0]); file.value = ''; });
+  $('logo-remove').addEventListener('click', e => { e.stopPropagation(); brand.logo = ''; brandMudou(); });
+
+  $('brand-reset').addEventListener('click', () => {
+    const p = BRAND_PRESETS[brand.preset] || BRAND_PRESETS.indigo;
+    brand.light = { ...p.light }; brand.dark = { ...p.dark }; brand.preset = brand.preset || 'indigo';
+    brandMudou();
+  });
+  $('brand-export').addEventListener('click', exportarTokens);
+  $('brand-gerar').addEventListener('click', () => gerarPrototipo(true));
+  $('brand-preview').addEventListener('load', enviarTokensPreview);
+
+  renderBrandUI();
+}
+
+function lerLogo(f) {
+  const err = document.getElementById('logo-err');
+  err.style.display = 'none';
+  if (!f) return;
+  const tiposOk = ['image/png', 'image/jpeg', 'image/svg+xml', 'image/webp'];
+  if (!tiposOk.includes(f.type)) { err.textContent = 'Formato não suportado. Use PNG, JPG, SVG ou WebP.'; err.style.display = 'block'; return; }
+  if (f.size > 2 * 1024 * 1024) { err.textContent = 'Arquivo maior que 2 MB. Reduza a imagem e tente de novo.'; err.style.display = 'block'; return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    if (f.type === 'image/svg+xml') { brand.logo = reader.result; brandMudou(); return; }
+    /* reduz bitmaps para no maximo 320px no maior lado: logo leve no prompt cache e no localStorage */
+    const img = new Image();
+    img.onload = () => {
+      const s = Math.min(1, 320 / Math.max(img.width, img.height));
+      const cv = document.createElement('canvas');
+      cv.width = Math.max(1, Math.round(img.width * s)); cv.height = Math.max(1, Math.round(img.height * s));
+      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+      brand.logo = cv.toDataURL('image/png');
+      brandMudou();
+    };
+    img.onerror = () => { err.textContent = 'Não foi possível ler a imagem.'; err.style.display = 'block'; };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(f);
+}
+
+/* chamado em toda alteracao: persiste, atualiza o painel e o prototipo ao vivo */
+function brandMudou(digitando) {
+  const salvou = salvarBrand();
+  const err = document.getElementById('logo-err');
+  if (!salvou && brand.logo) { err.textContent = 'Logo muito pesado para salvar no navegador. Ele vale nesta sessão.'; err.style.display = 'block'; }
+  renderBrandUI(digitando);
+  if (prototipoGerado) enviarTokensPreview();
+}
+
+function renderBrandUI(digitando) {
+  const $ = id => document.getElementById(id);
+  $('brand-intro').style.display = brand.ativo ? 'none' : 'flex';
+  $('brand-panel').classList.toggle('open', brand.ativo);
+  if (!brand.ativo) return;
+
+  if (document.activeElement !== $('brand-nome')) $('brand-nome').value = brand.nome;
+  $('brand-tema').value = brand.tema;
+  $('brand-fonte').value = BRAND_FONTES.includes(brand.fonte) ? brand.fonte : 'Inter';
+  document.querySelectorAll('.mode-tab').forEach(b => b.classList.toggle('active', b.dataset.mode === brand.editando));
+  document.querySelectorAll('.preset').forEach(b => b.classList.toggle('active', b.dataset.preset === brand.preset));
+
+  const cores = brand[brand.editando];
+  BRAND_CORES.forEach(c => {
+    $('bc-' + c.key).value = cores[c.key];
+    const hex = $('bt-' + c.key);
+    if (!(digitando && document.activeElement === hex)) { hex.value = cores[c.key].toUpperCase(); hex.classList.remove('invalid'); }
+  });
+
+  $('logo-preview').style.display = brand.logo ? 'block' : 'none';
+  if (brand.logo) $('logo-preview').src = brand.logo;
+  $('logo-remove').style.display = brand.logo ? 'inline' : 'none';
+  $('logo-drop-text').textContent = brand.logo ? 'Trocar logotipo' : 'Clique ou arraste o arquivo aqui';
+
+  $('brand-checks').innerHTML = checagensContraste().map(c => {
+    const ok = c.r >= c.min;
+    return `<div class="check ${ok ? 'ok' : 'warn'}" title="Mínimo ${String(c.min).replace('.', ',')}:1"><b>${ok ? '&#10003;' : '!'}</b>${c.tema}: ${c.nome}<em>${c.r.toFixed(1).replace('.', ',')}:1</em></div>`;
+  }).join('');
+}
+
+function renderBrandResumo() {
+  const box = document.getElementById('brand-resumo-box');
+  const el = document.getElementById('brand-resumo');
+  if (!brand.ativo) { box.style.display = 'none'; return; }
+  const sw = m => `<span class="swatches">${['primary', 'secondary', 'background', 'surface'].map(k => `<b style="background:${brand[m][k]}" title="${k} ${brand[m][k]}"></b>`).join('')}</span>`;
+  el.innerHTML = `${brand.logo ? `<img src="${brand.logo}" alt="">` : ''}<span>${escHtml(brand.nome || 'Sem nome definido')}</span>
+    <span>Claro</span>${sw('light')}<span>Escuro</span>${sw('dark')}<span>Fonte ${escHtml(brand.fonte)}, tema inicial ${brand.tema === 'dark' ? 'escuro' : 'claro'}</span>`;
+  el.style.display = 'flex';
+  box.style.display = 'block';
+}
+
+function escHtml(s) { return String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch])); }
+function siglaMarca() {
+  const p = (brand.nome || '').trim().split(/\s+/).filter(Boolean);
+  return ((p[0] || 'S')[0] + (p[1] ? p[1][0] : (p[0] || 'ua')[1] || '')).toUpperCase();
+}
+
+/* ── integracao com o prompt da IA ── */
+function paletaTemplateDaMarca() {
+  const L = derivarTokens('light'), D = derivarTokens('dark');
+  const ini = brand.tema === 'dark' ? D : L;
+  return {
+    linhaTema:
+      `- Tema inicial: ${brand.tema === 'dark' ? 'escuro' : 'claro'}. Tema claro: fundo ${L.bg}, cards ${L.surface}, sidebar ${L.sidebar}, texto ${L.text}, bordas ${L.border}\n` +
+      `- Tema escuro: fundo ${D.bg}, cards ${D.surface}, sidebar ${D.sidebar}, texto ${D.text}, bordas ${D.border}. Toggle claro/escuro no canto superior direito`,
+    datasets: '[' + ini.series.map(c => `'${c}'`).join(',') + ']',
+    primary: ini.primary, primaryRgb: hexToRgb(ini.primary).join(','), grid: ini.grid, muted: ini.muted,
+    success: ini.success, danger: ini.danger, warning: ini.warning, bgInicial: ini.bg
+  };
+}
+
+function montarBlocoMarca() {
+  const L = derivarTokens('light'), D = derivarTokens('dark');
+  const vars = t => ['primary', 'on-primary', 'secondary', 'on-secondary', 'bg', 'surface', 'sidebar', 'text', 'text-2', 'muted', 'border', 'success', 'danger', 'warning', 'info']
+    .map(k => `--${k}: ${t[k]}`).join('; ');
+  const nome = brand.nome.trim() || 'Empresa Demo';
+  const logo = brand.logo
+    ? `- Logo: no topo da sidebar e no header use exatamente <img class="brand-logo" src="__BRAND_LOGO__" alt="${nome.replace(/"/g, '')}" style="max-height:32px;max-width:140px;object-fit:contain">. NAO altere o valor do src: o sistema substitui pelo arquivo real.`
+    : `- Logo: a empresa nao enviou arquivo. Use um monograma com as iniciais "${siglaMarca()}" em um quadrado 32x32 com cantos de 8px, fundo var(--primary) e texto var(--on-primary).`;
+  return `IDENTIDADE VISUAL DA MARCA (OBRIGATORIO; estas regras substituem qualquer cor, fonte, logo ou tema citados acima):
+- Empresa: ${nome}. Use o nome no topo da sidebar, ao lado do logo, e no <title> da pagina.
+${logo}
+- Fonte: '${brand.fonte}' via Google Fonts, fallback Arial, sans-serif, em todo o dashboard.
+- Tema inicial: ${brand.tema === 'dark' ? 'escuro' : 'claro'}. Defina os tokens abaixo como CSS custom properties: tema claro em :root e tema escuro em [data-theme="dark"] no <html>. O botao de tema alterna o atributo data-theme e preserva aba, filtros e dados.
+- Tokens tema claro: ${vars(L)}
+- Tokens tema escuro: ${vars(D)}
+- Use sempre var(--token) no CSS; nao escreva cores hexadecimais soltas fora dessas declaracoes.
+- Botoes: Primario (fundo var(--primary), texto var(--on-primary)); Secundario (fundo var(--secondary), texto var(--on-secondary)); Ghost (transparente, borda 1px var(--border), texto var(--text)). Raio 8px, altura 36px, foco visivel com outline 2px var(--primary).
+- Filtros e dropdowns: fundo var(--surface), borda var(--border), texto var(--text), rotulo 12px var(--muted).
+- Sidebar: fundo var(--sidebar); item ativo com fundo da primaria a 12% de opacidade e borda esquerda 3px var(--primary).
+- Tipografia: H1 28px peso 700; H2 18px peso 600; rotulos 12px peso 600 em maiusculas com letter-spacing 0.04em; texto 14px; texto de apoio 12px var(--muted). Valores de KPI 28px peso 700 var(--text).
+- Cores semanticas sao reservadas para status e nunca usadas como serie de grafico: sucesso var(--success), erro var(--danger), alerta var(--warning), informacao var(--info). Todo status leva icone e rotulo de texto, nunca so a cor.
+- Variacao dos KPIs: a seta mostra a direcao da mudanca; a cor mostra se ela e favoravel ao indicador. Ex.: custo ou tempo caindo = verde; custo ou atraso subindo = vermelho.
+- Graficos Chart.js: series na ordem fixa ${'[' + L.series.join(', ') + ']'} no tema claro e ${'[' + D.series.join(', ') + ']'} no escuro. Ao trocar o tema, atualize cores das series, eixos, grades, legendas e tooltips de TODOS os graficos (chart.options...; chart.update('none')). Leia as cores com getComputedStyle(document.documentElement).getPropertyValue('--token').
+- Contraste minimo: 4.5:1 para texto e 3:1 para componentes e elementos de grafico. Se uma cor da marca nao atingir, use-a so em areas grandes e mantenha o texto em var(--text).`;
+}
+
+function injetarLogoMarca(html) {
+  if (!html || !html.includes('__BRAND_LOGO__')) return html;
+  return html.split('__BRAND_LOGO__').join(brand.logo || LOGO_VAZIO);
+}
+
+/* ── export no formato Tokens Studio (plugin do Figma) ── */
+function exportarTokens() {
+  const cor = v => ({ value: v, type: 'color' });
+  const setTema = t => ({
+    color: {
+      primary: cor(t.primary), 'on-primary': cor(t['on-primary']), secondary: cor(t.secondary), 'on-secondary': cor(t['on-secondary']),
+      background: cor(t.bg), surface: cor(t.surface), sidebar: cor(t.sidebar),
+      text: { primary: cor(t.text), secondary: cor(t['text-2']), muted: cor(t.muted) },
+      border: { default: cor(t.border), strong: cor(t['border-strong']) },
+      status: { success: cor(t.success), danger: cor(t.danger), warning: cor(t.warning), info: cor(t.info) },
+      chart: Object.fromEntries(t.series.map((c, i) => [`series-${i + 1}`, cor(c)]))
+    }
+  });
+  const tipo = (size, weight, extra = {}) => ({ value: { fontFamily: '{font.family.base}', fontWeight: weight, fontSize: size, lineHeight: '130%', ...extra }, type: 'typography' });
+  const data = {
+    global: {
+      brand: { name: { value: brand.nome || 'Empresa Demo', type: 'text' } },
+      font: { family: { base: { value: brand.fonte, type: 'fontFamilies' } } },
+      typography: {
+        h1: tipo('28', '700'), h2: tipo('18', '600'),
+        label: tipo('12', '600', { letterSpacing: '4%', textCase: 'uppercase' }),
+        body: tipo('14', '400'), support: tipo('12', '400'), kpi: tipo('28', '700', { lineHeight: '110%' })
+      },
+      radius: { sm: { value: '6', type: 'borderRadius' }, md: { value: '8', type: 'borderRadius' }, lg: { value: '14', type: 'borderRadius' } },
+      spacing: { 1: { value: '8', type: 'spacing' }, 2: { value: '16', type: 'spacing' }, 3: { value: '24', type: 'spacing' } }
+    },
+    light: setTema(derivarTokens('light')),
+    dark: setTema(derivarTokens('dark')),
+    $themes: [
+      { id: 'light', name: 'Claro', selectedTokenSets: { global: 'source', light: 'enabled' } },
+      { id: 'dark', name: 'Escuro', selectedTokenSets: { global: 'source', dark: 'enabled' } }
+    ],
+    $metadata: { tokenSetOrder: ['global', 'light', 'dark'] }
+  };
+  const slug = (brand.nome || 'marca').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'marca';
+  const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+  const a = document.createElement('a');
+  a.href = url; a.download = `tokens-${slug}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+/* ── prototipo ao vivo ── */
+function payloadPreview() {
+  return { nome: brand.nome.trim(), sigla: siglaMarca(), logo: brand.logo, fonte: brand.fonte, mode: brand.editando,
+           tokens: { light: derivarTokens('light'), dark: derivarTokens('dark') } };
+}
+
+function enviarTokensPreview() {
+  const fr = document.getElementById('brand-preview');
+  if (!prototipoGerado || !fr.contentWindow) return;
+  fr.contentWindow.postMessage({ _dgBrand: true, payload: payloadPreview() }, '*');
+}
+
+function contextoPrototipo() {
+  const seg = formData.segmento || 'Outro';
+  const base = KPI_BASE[seg] || KPI_BASE['Outro'];
+  return { segmento: seg, area: (document.getElementById('q-area').value || '').trim(), abas: base.abas.slice(0, 5), kpis: base.kpis.slice(0, 4) };
+}
+
+function gerarPrototipo(rolar) {
+  prototipoGerado = true;
+  const wrap = document.getElementById('brand-preview-wrap');
+  wrap.classList.add('open');
+  document.getElementById('brand-preview').srcdoc = montarPrototipoHTML(payloadPreview(), contextoPrototipo());
+  if (rolar) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  logAtualizar({ prototipoMarca: true });
+}
+
+function montarPrototipoHTML(payload, ctx) {
+  const json = o => JSON.stringify(o).replace(/</g, '\\u003c');
+  return `<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Protótipo</title>
+<link id="font-link" rel="stylesheet" href="">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font),Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.app{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+.sb{background:var(--sidebar);border-right:1px solid var(--border);padding:20px 14px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh}
+.sb-brand{display:flex;align-items:center;gap:10px;padding:4px 8px 20px}
+.mono{width:32px;height:32px;border-radius:8px;background:var(--primary);color:var(--on-primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.sb-brand img{max-height:32px;max-width:120px;object-fit:contain}
+.sb-brand strong{font-size:14px;font-weight:600;line-height:1.2;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.sb-sec{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:14px 10px 6px}
+.nav{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--text-2);cursor:pointer;border:none;background:none;text-align:left;width:100%;border-left:3px solid transparent;font-size:13px}
+.nav:hover{background:var(--border)}
+.nav.active{background:color-mix(in srgb,var(--primary) 12%,transparent);color:var(--text);border-left-color:var(--primary);font-weight:600}
+.nav svg{width:16px;height:16px;flex-shrink:0;opacity:.8}
+.sb-foot{margin-top:auto;font-size:11px;color:var(--muted);padding:10px;border-top:1px solid var(--border)}
+main{min-width:0;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:16px;padding:18px 28px;border-bottom:1px solid var(--border);background:var(--surface)}
+.crumb{font-size:12px;color:var(--muted)}
+h1{font-size:24px;font-weight:700;letter-spacing:-.01em;line-height:1.2}
+h2{font-size:16px;font-weight:600;line-height:1.3}
+.top-r{margin-left:auto;display:flex;align-items:center;gap:12px}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--secondary);color:var(--on-secondary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
+.prof{display:flex;flex-direction:column;line-height:1.2}
+.prof b{font-size:13px}.prof span{font-size:11px;color:var(--muted)}
+.content{padding:24px 28px 40px;display:flex;flex-direction:column;gap:20px}
+.filters{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:4px}
+.lbl{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.select{appearance:none;height:36px;padding:0 34px 0 12px;border-radius:8px;border:1px solid var(--border-strong);background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center;min-width:150px;cursor:pointer}
+.spacer{flex:1}
+.btn{height:36px;padding:0 16px;border-radius:8px;border:1px solid transparent;font-weight:600;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:filter .15s,background .15s}
+.btn:hover{filter:brightness(1.07)}
+.btn.pri{background:var(--primary);color:var(--on-primary)}
+.btn.sec{background:var(--secondary);color:var(--on-secondary)}
+.btn.ghost{background:transparent;border-color:var(--border-strong);color:var(--text)}
+.btn.ghost:hover{background:var(--border);filter:none}
+.btn:disabled{opacity:.45;cursor:not-allowed;filter:none}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:12px;padding:3px 10px;border-radius:999px;background:color-mix(in srgb,var(--primary) 12%,transparent);color:var(--text);border:1px solid color-mix(in srgb,var(--primary) 30%,transparent)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px}
+.kpi .lbl{display:block;margin-bottom:6px;min-height:34px}
+.kpi .val{font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .row{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap;font-size:12px}
+.delta{font-weight:600;font-variant-numeric:tabular-nums}
+.delta.good{color:var(--success)}.delta.bad{color:var(--danger)}
+.kpi .meta{font-size:12px;color:var(--muted);margin-top:6px}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:2px 9px 2px 6px;border-radius:999px;white-space:nowrap}
+.badge i{font-style:normal;width:14px;height:14px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:var(--surface)}
+.b-success{background:color-mix(in srgb,var(--success) 14%,transparent);color:var(--success)}.b-success i{background:var(--success)}
+.b-danger{background:color-mix(in srgb,var(--danger) 14%,transparent);color:var(--danger)}.b-danger i{background:var(--danger)}
+.b-warning{background:color-mix(in srgb,var(--warning) 16%,transparent);color:var(--warning)}.b-warning i{background:var(--warning)}
+.b-info{background:color-mix(in srgb,var(--info) 14%,transparent);color:var(--info)}.b-info i{background:var(--info)}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ch-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.ch-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.ch-box{position:relative;height:260px;margin-top:14px}
+.ch-fallback{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;font-size:12px;color:var(--muted)}
+.tbl-wrap{overflow-x:auto;margin-top:12px}
+table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+th{text-align:left;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--border-strong);white-space:nowrap}
+td{padding:11px 12px;border-bottom:1px solid var(--border);white-space:nowrap}
+td.num,th.num{text-align:right}
+tbody tr:hover{background:color-mix(in srgb,var(--primary) 5%,transparent)}
+.demo{font-size:11px;color:var(--muted)}
+/* design system */
+.ds{display:none;flex-direction:column;gap:20px}
+.ds.on{display:flex}.dash.off{display:none}
+.ds-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.sw-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:14px}
+.sw{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface)}
+.sw div{height:44px}
+.sw p{padding:8px 10px;font-size:12px;line-height:1.35}
+.sw p b{display:block;font-weight:600}.sw p span{color:var(--muted);font-family:ui-monospace,Menlo,monospace;font-size:11px}
+.type-row{display:flex;align-items:baseline;gap:16px;padding:10px 0;border-bottom:1px solid var(--border)}
+.type-row:last-child{border-bottom:none}
+.type-row code{width:150px;flex-shrink:0;font-size:11px;color:var(--muted);font-family:ui-monospace,Menlo,monospace}
+.cmp-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.input{height:36px;padding:0 12px;border-radius:8px;border:1px solid var(--border-strong);background:var(--surface);min-width:200px}
+@media (max-width:1100px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .sb{position:static;height:auto;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;align-items:center;padding:10px 14px;border-right:none;border-bottom:1px solid var(--border)}
+  #nav-abas{display:contents}
+  .sb-brand{flex-shrink:0}
+  .sb-brand{padding:4px 8px}.sb-sec,.sb-foot{display:none}
+  .nav{width:auto;flex-shrink:0;white-space:nowrap;border-left:none;border-bottom:2px solid transparent;border-radius:6px}
+  .nav.active{border-bottom-color:var(--primary)}
+  .charts,.ds-grid{grid-template-columns:1fr}
+  .top,.content{padding-left:16px;padding-right:16px}
+  .prof{display:none}
+}
+@media (max-width:520px){.kpis{grid-template-columns:1fr}.top{flex-wrap:wrap}}
+</style></head>
+<body>
+<div class="app">
+  <aside class="sb">
+    <div class="sb-brand"><span id="logo-slot"></span><strong id="brand-name"></strong></div>
+    <div class="sb-sec">Painel</div>
+    <div id="nav-abas"></div>
+    <div class="sb-sec">Marca</div>
+    <button class="nav" data-view="ds"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="13.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="15.5" r="2.5"/><path d="M12 22a10 10 0 1 1 10-10c0 2-1.5 3-3 3h-2a2 2 0 0 0-1.5 3.3A2 2 0 0 1 12 22z"/></svg>Design system</button>
+    <div class="sb-foot">Protótipo demonstrativo<br>Dados fictícios</div>
+  </aside>
+  <main>
+    <header class="top">
+      <div><div class="crumb" id="crumb"></div><h1 id="title"></h1></div>
+      <div class="top-r">
+        <button class="btn ghost" id="theme-btn" type="button"></button>
+        <div class="avatar">GA</div>
+        <div class="prof"><b>Gestora da área</b><span id="prof-org"></span></div>
+      </div>
+    </header>
+
+    <div class="content dash" id="view-dash">
+      <div class="filters">
+        <div class="field"><label class="lbl" for="f-per">Período</label>
+          <select class="select" id="f-per"><option value="3">Últimos 3 meses</option><option value="6" selected>Últimos 6 meses</option><option value="12">Últimos 12 meses</option></select></div>
+        <div class="field"><label class="lbl" for="f-reg">Região</label>
+          <select class="select" id="f-reg"><option value="">Todas as regiões</option></select></div>
+        <span class="spacer"></span>
+        <button class="btn ghost" id="f-clear" type="button">Limpar filtros</button>
+        <button class="btn sec" type="button">Compartilhar</button>
+        <button class="btn pri" type="button">Exportar</button>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div class="kpis" id="kpis"></div>
+      <div class="charts">
+        <div class="card"><div class="ch-head"><div><h2 id="c1-t"></h2><div class="ch-sub" id="c1-s"></div></div></div>
+          <div class="ch-box"><canvas id="c1" role="img"></canvas><div class="ch-fallback">Gráfico indisponível sem internet (Chart.js via CDN).</div></div></div>
+        <div class="card"><div class="ch-head"><div><h2 id="c2-t"></h2><div class="ch-sub" id="c2-s"></div></div></div>
+          <div class="ch-box"><canvas id="c2" role="img"></canvas><div class="ch-fallback">Gráfico indisponível sem internet (Chart.js via CDN).</div></div></div>
+      </div>
+      <div class="card">
+        <div class="ch-head"><div><h2 id="t-t"></h2><div class="ch-sub" id="t-s"></div></div><span class="demo">Ordenado pelo pior resultado</span></div>
+        <div class="tbl-wrap"><table><thead id="t-head"></thead><tbody id="t-body"></tbody></table></div>
+      </div>
+    </div>
+
+    <div class="content ds" id="view-ds">
+      <div class="card"><h2>Cores</h2><div class="ch-sub">Tokens do tema atual. Status são reservados para indicadores e nunca viram série de gráfico.</div><div class="sw-list" id="ds-sw"></div></div>
+      <div class="ds-grid">
+        <div class="card"><h2>Tipografia</h2>
+          <div class="type-row"><code>H1 · 28/700</code><span style="font-size:28px;font-weight:700;line-height:1.2">Visão geral</span></div>
+          <div class="type-row"><code>H2 · 18/600</code><span style="font-size:18px;font-weight:600">Volume por região</span></div>
+          <div class="type-row"><code>Label · 12/600</code><span class="lbl">Entregas no prazo</span></div>
+          <div class="type-row"><code>KPI · 28/700</code><span style="font-size:28px;font-weight:700;font-variant-numeric:tabular-nums">96,4%</span></div>
+          <div class="type-row"><code>Texto · 14/400</code><span>Comparação com o período anterior.</span></div>
+          <div class="type-row"><code>Apoio · 12/400</code><span style="font-size:12px;color:var(--muted)">Atualizado hoje às 07:00</span></div>
+        </div>
+        <div class="card"><h2>Componentes</h2>
+          <div class="ch-sub" style="margin-top:12px">Botões</div>
+          <div class="cmp-row"><button class="btn pri" type="button">Primário</button><button class="btn sec" type="button">Secundário</button><button class="btn ghost" type="button">Ghost</button><button class="btn pri" type="button" disabled>Desativado</button></div>
+          <div class="ch-sub" style="margin-top:18px">Status</div>
+          <div class="cmp-row"><span class="badge b-success"><i>&#10003;</i>Sucesso</span><span class="badge b-danger"><i>&#10005;</i>Erro</span><span class="badge b-warning"><i>!</i>Alerta</span><span class="badge b-info"><i>i</i>Informação</span></div>
+          <div class="ch-sub" style="margin-top:18px">Filtros e dropdowns</div>
+          <div class="cmp-row"><input class="input" placeholder="Buscar unidade"><select class="select"><option>Últimos 6 meses</option></select></div>
+          <div class="cmp-row"><span class="chip">Região: Sudeste</span><span class="chip">Período: 6 meses</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+var P = ${json(payload)};
+var CTX = ${json(ctx)};
+var mode = P.mode || 'light';
+var state = { aba: 0, view: 'dash', per: 6, reg: '' };
+var charts = {};
+var M = null;
+var REG = ['Sudeste', 'Sul', 'Nordeste', 'Centro-Oeste', 'Norte'];
+var SIG = ['SE', 'S', 'NE', 'CO', 'N'];
+var PESO = [0.4, 0.2, 0.19, 0.12, 0.09];
+var MES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+var ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>';
+
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function rng(seed) {
+  var s = 2166136261;
+  for (var i = 0; i < seed.length; i++) { s ^= seed.charCodeAt(i); s = Math.imul(s, 16777619) >>> 0; }
+  return function () { s = (s + 0x6D2B79F5) >>> 0; var t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+function norm(s) { return String(s).toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, ''); }
+
+/* tipo e sentido favoravel de cada KPI a partir do nome */
+function perfilKpi(nome) {
+  var n = norm(nome), p = { tipo: 'count', menor: false, un: '' };
+  if (/custo|tempo|lead|mttr|latencia|erro|incidente|turnover|churn|evasao|inadimpl|absente|atraso|backlog|multa|penalidade|despesa|dso|aging|anomalia|risco|critico|pendente|vencendo|ciclo|resposta|resolucao|cac\\b/.test(n)) p.menor = true;
+  if (/%/.test(n)) p.tipo = 'pct';
+  else if (/mtbf/.test(n)) { p.tipo = 'time'; p.un = 'h'; p.base = [300, 700]; }
+  else if (/latencia/.test(n)) { p.tipo = 'time'; p.un = 'ms'; p.base = [120, 420]; }
+  else if (/dso|ciclo|preenchimento|dias|prazo medio/.test(n)) { p.tipo = 'time'; p.un = 'dias'; p.base = [8, 45]; }
+  else if (/tempo|lead time|mttr|resposta|resolucao/.test(n)) { p.tipo = 'time'; p.un = 'h'; p.base = [6, 60]; }
+  else if (/custo por|ticket|cac|ltv/.test(n)) { p.tipo = 'money'; p.base = [12, 480]; }
+  else if (/custo|receita|valor|ebitda|despesa|honorario|spend|budget|orcamento|savings|caixa|multa|forecast/.test(n)) { p.tipo = 'money'; p.base = [80000, 2400000]; }
+  else if (/taxa|indice|otif|acuracia|uptime|margem|conclus|compliance|cumprid|no prazo|sla|eficiencia|frequencia|aprovacao|ocupacao|resolution|csat|sucesso|reservas|evasao|turnover|churn|inadimpl|absente|cobertura|conversao/.test(n)) p.tipo = 'pct';
+  else if (/giro|velocity|nota|per capita|nps/.test(n)) { p.tipo = 'num'; p.base = [4, 60]; }
+  if (p.tipo === 'pct') p.base = p.menor ? [2, 14] : [82, 97];
+  return p;
+}
+
+function construirModelo() {
+  var r = rng(CTX.segmento + '|' + CTX.abas[state.aba]);
+  var units = [];
+  REG.forEach(function (reg, ri) {
+    for (var j = 0; j < 3; j++) {
+      var vol = [], base = 900 + 9000 * PESO[ri] * (0.6 + r());
+      for (var m = 0; m < 24; m++) vol.push(Math.round(base * (0.88 + 0.02 * (m / 2)) * (0.9 + 0.2 * r()) * (1 + 0.08 * Math.sin((m + ri) / 1.9))));
+      units.push({ nome: 'Unidade ' + SIG[ri] + '-0' + (j + 1), reg: ri, q: r(), vol: vol });
+    }
+  });
+  var kpis = CTX.kpis.map(function (nome, k) {
+    var p = perfilKpi(nome), b = p.base || [400, 4000];
+    var centro = b[0] + (b[1] - b[0]) * (0.35 + 0.4 * r());
+    var tend = (r() - 0.45) * 0.04;
+    var serie = units.map(function (u) {
+      var arr = [];
+      for (var m = 0; m < 24; m++) {
+        var qual = (u.q - 0.5) * 0.25 * (p.menor ? -1 : 1);
+        var v = centro * (1 + qual + tend * (m - 12) + (r() - 0.5) * 0.06);
+        if (p.tipo === 'pct' && !p.menor) v = Math.min(99.6, v);
+        arr.push(v);
+      }
+      return arr;
+    });
+    var meta = p.tipo === 'pct' ? (p.menor ? centro * 0.92 : Math.min(99, centro * 1.02)) : (p.tipo === 'count' ? null : centro * (p.menor ? 0.95 : 1.05));
+    return { nome: nome, p: p, serie: serie, meta: meta };
+  });
+  M = { units: units, kpis: kpis };
+}
+
+function unidadesSel() { return M.units.map(function (u, i) { return i; }).filter(function (i) { return state.reg === '' || M.units[i].reg === +state.reg; }); }
+function janela(offset) { var fim = 24 - offset * state.per, ini = fim - state.per, a = []; for (var m = ini; m < fim; m++) a.push(m); return a; }
+function agregar(k, meses, sel) {
+  var K = M.kpis[k], soma = 0, peso = 0;
+  sel.forEach(function (ui) { meses.forEach(function (m) { var w = M.units[ui].vol[m]; soma += K.serie[ui][m] * w; peso += w; }); });
+  if (K.p.tipo === 'count') { var tot = 0; sel.forEach(function (ui) { meses.forEach(function (m) { tot += M.units[ui].vol[m]; }); }); return tot * (0.4 + k * 0.15); }
+  return peso ? soma / peso : null;
+}
+function fmt(v, p) {
+  if (v == null || !isFinite(v)) return 'Sem base';
+  if (p.tipo === 'pct') return v.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%';
+  if (p.tipo === 'money') return v >= 10000 ? 'R$ ' + (v / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' mil' : v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  if (p.tipo === 'time') return v.toLocaleString('pt-BR', { maximumFractionDigits: p.un === 'h' ? 1 : 0 }) + ' ' + p.un;
+  if (p.tipo === 'num') return v.toLocaleString('pt-BR', { maximumFractionDigits: 1 });
+  return Math.round(v).toLocaleString('pt-BR');
+}
+function statusVsMeta(v, K) {
+  if (K.meta == null || v == null) return { cls: 'info', ic: 'i', txt: 'Sem meta' };
+  var diff = (K.p.menor ? K.meta - v : v - K.meta) / Math.abs(K.meta);
+  if (diff >= 0) return { cls: 'success', ic: '&#10003;', txt: 'Na meta' };
+  if (diff > -0.03) return { cls: 'warning', ic: '!', txt: 'Atenção' };
+  return { cls: 'danger', ic: '&#10005;', txt: 'Fora da meta' };
+}
+function rotuloMes(m) { var d = new Date(2024, 9 + m, 1); return MES[d.getMonth()] + '/' + String(d.getFullYear()).slice(2); }
+function perTxt() { return 'Últimos ' + state.per + ' meses'; }
+
+function renderKpis() {
+  var sel = unidadesSel(), at = janela(0), ant = janela(1);
+  document.getElementById('kpis').innerHTML = M.kpis.map(function (K, k) {
+    var v = agregar(k, at, sel), pv = agregar(k, ant, sel), d = '', dcls = '';
+    if (v != null && pv) {
+      var dif = K.p.tipo === 'pct' ? v - pv : (v - pv) / pv * 100;
+      var bom = K.p.menor ? dif < 0 : dif > 0;
+      dcls = Math.abs(dif) < 0.05 ? '' : (bom ? 'good' : 'bad');
+      d = (dif >= 0 ? '&#9650; ' : '&#9660; ') + Math.abs(dif).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + (K.p.tipo === 'pct' ? ' p.p.' : '%');
+    }
+    var st = statusVsMeta(v, K);
+    return '<div class="card kpi"><span class="lbl">' + esc(K.nome) + '</span><div class="val">' + fmt(v, K.p) + '</div>' +
+      '<div class="row"><span class="delta ' + dcls + '">' + d + '</span><span style="color:var(--muted)">vs período anterior</span></div>' +
+      '<div class="row"><span class="badge b-' + st.cls + '"><i>' + st.ic + '</i>' + st.txt + '</span><span class="meta">' + (K.meta != null ? 'Meta ' + fmt(K.meta, K.p) : perTxt()) + '</span></div></div>';
+  }).join('');
+}
+
+function renderTabela() {
+  var sel = unidadesSel(), at = janela(0), K = M.kpis[0];
+  document.getElementById('t-t').textContent = 'Desempenho por unidade';
+  document.getElementById('t-s').textContent = perTxt() + (state.reg !== '' ? ' · ' + REG[+state.reg] : ' · todas as regiões');
+  document.getElementById('t-head').innerHTML = '<tr><th>Unidade</th><th>Região</th><th class="num">Volume</th><th class="num">' + esc(K.nome) + '</th><th class="num">Meta</th><th>Status</th></tr>';
+  var rows = sel.map(function (ui) {
+    var vol = at.reduce(function (s, m) { return s + M.units[ui].vol[m]; }, 0);
+    var v = agregar(0, at, [ui]);
+    var st = vol < 1500 * state.per ? { cls: 'info', ic: 'i', txt: 'Base pequena', ord: 1 } : statusVsMeta(v, K);
+    st.ord = st.cls === 'danger' ? 0 : st.cls === 'warning' ? 1 : st.cls === 'info' ? 2 : 3;
+    return { u: M.units[ui], vol: vol, v: v, st: st };
+  }).sort(function (a, b) { return a.st.ord - b.st.ord || (K.p.menor ? b.v - a.v : a.v - b.v); });
+  document.getElementById('t-body').innerHTML = rows.map(function (r) {
+    return '<tr><td>' + esc(r.u.nome) + '</td><td>' + REG[r.u.reg] + '</td><td class="num">' + r.vol.toLocaleString('pt-BR') + '</td><td class="num">' + fmt(r.v, K.p) + '</td><td class="num">' + (K.meta != null ? fmt(K.meta, K.p) : 'Sem meta') + '</td><td><span class="badge b-' + r.st.cls + '"><i>' + r.st.ic + '</i>' + r.st.txt + '</span></td></tr>';
+  }).join('');
+}
+
+function tk() { return P.tokens[mode]; }
+
+function dadosGraficos() {
+  var sel = unidadesSel(), at = janela(0), K = M.kpis[0];
+  var porReg = state.reg === '';
+  var cats = porReg ? REG : sel.map(function (ui) { return M.units[ui].nome; });
+  var vols = porReg
+    ? REG.map(function (r, ri) { return at.reduce(function (s, m) { return s + M.units.filter(function (u) { return u.reg === ri; }).reduce(function (a, u) { return a + u.vol[m]; }, 0); }, 0); })
+    : sel.map(function (ui) { return at.reduce(function (s, m) { return s + M.units[ui].vol[m]; }, 0); });
+  var linha = at.map(function (m) { return agregar(0, [m], sel); });
+  return { cats: cats, vols: vols, labels: at.map(rotuloMes), linha: linha, meta: at.map(function () { return K.meta; }), K: K, porReg: porReg };
+}
+
+function opcoesBase(t) {
+  return {
+    responsive: true, maintainAspectRatio: false, animation: { duration: 250 },
+    plugins: {
+      legend: { display: false, labels: { color: t['text-2'], usePointStyle: true, pointStyle: 'line', boxWidth: 24, font: { size: 12 } }, position: 'bottom' },
+      tooltip: { backgroundColor: t.surface, titleColor: t.text, bodyColor: t['text-2'], borderColor: t['border-strong'], borderWidth: 1, padding: 10, cornerRadius: 8, boxPadding: 4 }
+    },
+    scales: {
+      x: { grid: { display: false }, border: { color: t['border-strong'] }, ticks: { color: t.muted, font: { size: 11 } } },
+      y: { grid: { color: t.grid }, border: { display: false }, ticks: { color: t.muted, font: { size: 11 } }, beginAtZero: false }
+    }
+  };
+}
+
+function renderGraficos() {
+  var D = dadosGraficos(), t = tk(), fP = function (v) { return fmt(v, D.K.p); };
+  document.getElementById('c1-t').textContent = D.porReg ? 'Volume por região' : 'Volume por unidade';
+  document.getElementById('c1-s').textContent = perTxt() + ' · total de registros';
+  document.getElementById('c2-t').textContent = D.K.nome + ': realizado vs meta';
+  document.getElementById('c2-s').textContent = 'Mensal · ' + (D.K.p.menor ? 'menor é melhor' : 'maior é melhor');
+  document.getElementById('c1').setAttribute('aria-label', 'Barras: ' + D.cats.map(function (c, i) { return c + ' ' + D.vols[i].toLocaleString('pt-BR'); }).join(', '));
+  document.getElementById('c2').setAttribute('aria-label', 'Linha mensal de ' + D.K.nome);
+  if (!window.Chart) return;
+  Chart.defaults.font.family = "'" + P.fonte + "', Arial, sans-serif";
+
+  var o1 = opcoesBase(t);
+  o1.scales.y.beginAtZero = true;
+  o1.scales.y.ticks.callback = function (v) { return v >= 1000 ? (v / 1000).toLocaleString('pt-BR') + ' mil' : v; };
+  o1.plugins.tooltip.callbacks = { label: function (c) { return ' Volume: ' + c.parsed.y.toLocaleString('pt-BR'); } };
+  var ds1 = [{ label: 'Volume', data: D.vols, backgroundColor: t.series[0], hoverBackgroundColor: t.series[0], borderRadius: { topLeft: 4, topRight: 4 }, borderSkipped: 'bottom', maxBarThickness: 40, categoryPercentage: 0.7 }];
+  if (charts.c1) { charts.c1.data.labels = D.cats; charts.c1.data.datasets = ds1; charts.c1.options = o1; charts.c1.update(); }
+  else charts.c1 = new Chart(document.getElementById('c1'), { type: 'bar', data: { labels: D.cats, datasets: ds1 }, options: o1 });
+
+  var o2 = opcoesBase(t);
+  o2.interaction = { mode: 'index', intersect: false };
+  o2.plugins.legend.display = D.K.meta != null;
+  o2.scales.y.ticks.callback = function (v) { return fP(v); };
+  o2.plugins.tooltip.callbacks = { label: function (c) { return ' ' + c.dataset.label + ': ' + fP(c.parsed.y); } };
+  var ds2 = [{ label: 'Realizado', data: D.linha, borderColor: t.series[0], backgroundColor: t.series[0], borderWidth: 2, pointRadius: 0, pointHoverRadius: 5, pointHoverBorderColor: t.surface, pointHoverBorderWidth: 2, tension: 0.3 }];
+  if (D.K.meta != null) ds2.push({ label: 'Meta', data: D.meta, borderColor: t.series[1], backgroundColor: t.series[1], borderWidth: 2, borderDash: [6, 4], pointRadius: 0, pointHoverRadius: 0 });
+  if (charts.c2) { charts.c2.data.labels = D.labels; charts.c2.data.datasets = ds2; charts.c2.options = o2; charts.c2.update(); }
+  else charts.c2 = new Chart(document.getElementById('c2'), { type: 'line', data: { labels: D.labels, datasets: ds2 }, options: o2 });
+}
+
+function renderChips() {
+  var c = ['Período: ' + state.per + ' meses'];
+  if (state.reg !== '') c.push('Região: ' + REG[+state.reg]);
+  document.getElementById('chips').innerHTML = c.map(function (x) { return '<span class="chip">' + esc(x) + '</span>'; }).join('');
+  document.getElementById('f-clear').disabled = state.per === 6 && state.reg === '';
+}
+
+function renderDS() {
+  var t = tk(), itens = [['primary', 'Primária'], ['on-primary', 'Texto na primária'], ['secondary', 'Secundária'], ['on-secondary', 'Texto na secundária'], ['bg', 'Fundo'], ['surface', 'Superfície'], ['sidebar', 'Sidebar'], ['text', 'Texto'], ['text-2', 'Texto secundário'], ['muted', 'Apoio'], ['success', 'Sucesso'], ['danger', 'Erro'], ['warning', 'Alerta'], ['info', 'Informação']];
+  document.getElementById('ds-sw').innerHTML = itens.map(function (x) { return '<div class="sw"><div style="background:' + t[x[0]] + '"></div><p><b>' + x[1] + '</b><span>--' + x[0] + ' ' + String(t[x[0]]).toUpperCase() + '</span></p></div>'; }).join('');
+}
+
+function renderTudo() {
+  if (state.view === 'ds') { renderDS(); return; }
+  renderChips(); renderKpis(); renderTabela(); renderGraficos();
+}
+
+function aplicarMarca() {
+  var t = tk(), root = document.documentElement;
+  Object.keys(t).forEach(function (k) { if (k !== 'series') root.style.setProperty('--' + k, t[k]); });
+  root.style.setProperty('--font', "'" + P.fonte + "'");
+  root.style.colorScheme = mode === 'dark' ? 'dark' : 'light';
+  root.setAttribute('data-theme', mode);
+  document.getElementById('font-link').href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(P.fonte).replace(/%20/g, '+') + ':wght@400;500;600;700&display=swap';
+  var nome = P.nome || 'Sua empresa';
+  document.getElementById('logo-slot').innerHTML = P.logo ? '<img src="' + P.logo + '" alt="' + esc(nome) + '">' : '<span class="mono">' + esc(P.sigla || 'SE') + '</span>';
+  document.getElementById('brand-name').textContent = P.logo && P.nome ? '' : nome;
+  document.getElementById('brand-name').style.display = P.logo && P.nome ? 'none' : '';
+  document.getElementById('prof-org').textContent = nome;
+  document.getElementById('theme-btn').textContent = mode === 'dark' ? 'Tema claro' : 'Tema escuro';
+  document.title = nome + ' · Protótipo';
+  renderTudo();
+}
+
+function montarNav() {
+  document.getElementById('nav-abas').innerHTML = CTX.abas.map(function (a, i) { return '<button class="nav" data-aba="' + i + '">' + ICON + esc(a) + '</button>'; }).join('');
+  var sel = document.getElementById('f-reg');
+  REG.forEach(function (r, i) { var o = document.createElement('option'); o.value = i; o.textContent = r; sel.appendChild(o); });
+}
+
+function marcarNav() {
+  document.querySelectorAll('.nav').forEach(function (b) {
+    var on = state.view === 'ds' ? b.dataset.view === 'ds' : b.dataset.aba == state.aba;
+    b.classList.toggle('active', on);
+  });
+  document.getElementById('view-dash').classList.toggle('off', state.view === 'ds');
+  document.getElementById('view-ds').classList.toggle('on', state.view === 'ds');
+  document.getElementById('title').textContent = state.view === 'ds' ? 'Design system' : CTX.abas[state.aba];
+  document.getElementById('crumb').textContent = CTX.segmento + (CTX.area ? ' · ' + CTX.area : '');
+}
+
+document.addEventListener('click', function (e) {
+  var n = e.target.closest('.nav');
+  if (n) {
+    if (n.dataset.view === 'ds') state.view = 'ds';
+    else { state.view = 'dash'; if (+n.dataset.aba !== state.aba) { state.aba = +n.dataset.aba; construirModelo(); } }
+    marcarNav(); renderTudo(); return;
+  }
+  if (e.target.id === 'theme-btn') { mode = mode === 'dark' ? 'light' : 'dark'; aplicarMarca(); return; }
+  if (e.target.id === 'f-clear') { state.per = 6; state.reg = ''; document.getElementById('f-per').value = '6'; document.getElementById('f-reg').value = ''; renderTudo(); }
+});
+document.getElementById('f-per').addEventListener('change', function (e) { state.per = +e.target.value; renderTudo(); });
+document.getElementById('f-reg').addEventListener('change', function (e) { state.reg = e.target.value; renderTudo(); });
+
+/* atualizacoes ao vivo vindas do painel de marca */
+window.addEventListener('message', function (e) {
+  if (!e.data || !e.data._dgBrand) return;
+  P = e.data.payload; mode = P.mode || mode;
+  aplicarMarca();
+});
+
+function semGrafico() { document.querySelectorAll('.ch-fallback').forEach(function (el) { el.style.display = 'flex'; }); }
+
+montarNav(); construirModelo(); marcarNav(); aplicarMarca();
+<\/script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" onload="renderGraficos()" onerror="semGrafico()"><\/script>
+</body></html>`;
 }
 </script>
 </body>
