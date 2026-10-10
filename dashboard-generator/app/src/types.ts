@@ -18,6 +18,8 @@ export interface KPI {
   value: string
   change: string
   trend: 'up' | 'down' | 'neutral'
+  /* sentido favoravel: 'down' para custo, tempo, atraso, churn... (dashboards antigos do cache nao tem) */
+  goodWhen?: 'up' | 'down'
 }
 
 export interface ChartDataset {

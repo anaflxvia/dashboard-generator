@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ChatInterface from './components/ChatInterface'
 import Dashboard from './components/Dashboard'
 import { generateDashboard } from './lib/anthropic'
 import { gerarEmbedding, geminiConfigurado } from './services/embeddings'
 import { buscarSimilar, salvarDashboard } from './services/dashboardCache'
 import type { DashboardData, UserAnswers } from './types'
+import { carregarBrand, salvarBrand, type Brand } from './lib/brand'
 
 type AppState = 'chat' | 'dashboard'
 
@@ -14,6 +15,10 @@ export default function App() {
   const [error, setError] = useState<string | null>(null)
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
   const [fromCache, setFromCache] = useState(false)
+  const [brand, setBrand] = useState<Brand>(carregarBrand)
+
+  // a marca e so apresentacao: nao entra no prompt nem no cache, e fica salva no navegador
+  useEffect(() => { salvarBrand(brand) }, [brand])
 
   async function handleChatComplete(answers: UserAnswers) {
     setIsGenerating(true)
@@ -37,7 +42,7 @@ export default function App() {
             return
           }
 
-          // 3. cache miss — gera via Anthropic
+          // 3. cache miss — gera via Gemini
           data = await generateDashboard(answers)
 
           // 4. salva no cache em segundo plano (nao bloqueia o fluxo)
@@ -72,7 +77,7 @@ export default function App() {
   }
 
   if (state === 'dashboard' && dashboardData) {
-    return <Dashboard data={dashboardData} onBack={handleBack} fromCache={fromCache} />
+    return <Dashboard data={dashboardData} onBack={handleBack} fromCache={fromCache} brand={brand} />
   }
 
   return (
@@ -80,6 +85,8 @@ export default function App() {
       onComplete={handleChatComplete}
       isGenerating={isGenerating}
       error={error}
+      brand={brand}
+      setBrand={setBrand}
     />
   )
 }

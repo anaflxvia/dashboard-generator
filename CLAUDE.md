@@ -18,8 +18,10 @@ dashboard-generator/                 (raiz do repo)
     ├── .env                         VITE_GEMINI_API_KEY, VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY (nao versionado)
     └── src/
         ├── App.tsx
-        ├── components/              ChatInterface, Dashboard
+        ├── components/              ChatInterface, Dashboard, BrandStep (etapa de identidade visual)
         ├── lib/gemini.ts            monta o prompt e chama o Gemini
+        ├── lib/brand.ts             tokens da marca, contraste, export Figma (mesma logica do app.html)
+        ├── lib/dadosExemplo.ts      dados ficticios da previa da marca
         └── services/
             ├── embeddings.ts        embeddings do Gemini para as respostas do questionario
             └── dashboardCache.ts    cache semantico no Supabase (rpc match_dashboards)
@@ -31,7 +33,7 @@ Existem duas versoes do app: `frontend/app.html` (HTML unico) e o app React em `
 
 Fluxo em 3 telas:
 
-1. Questionário — usuário seleciona segmento, responde 5 perguntas em texto livre e, opcionalmente, configura a identidade visual da marca (etapa 6, so no `frontend/app.html`)
+1. Questionário — usuário seleciona segmento, responde 5 perguntas em texto livre e, opcionalmente, configura a identidade visual da marca (etapa 6 no `frontend/app.html`, etapa 3 no app React)
 2. Prompt gerado — aplicação monta o prompt automaticamente com KPIs do segmento, usuário pode editar
 3. Dashboard — Gemini recebe o prompt e retorna HTML completo renderizado em iframe
 
@@ -95,7 +97,7 @@ Sem a marca ativa, o template sai identico ao original (`PALETA_TEMPLATE_PADRAO`
 
 ## Identidade visual (white-label)
 
-Etapa 6 do questionario em `frontend/app.html`, opcional. Codigo no bloco `IDENTIDADE VISUAL` do arquivo.
+Opcional nas duas versoes: etapa 6 em `frontend/app.html` (bloco `IDENTIDADE VISUAL`) e etapa 3 no app React (`BrandStep.tsx` + `lib/brand.ts`). As duas usam a mesma chave `localStorage['dashgen_brand']`.
 
 - Entrada: nome da empresa, logo (PNG/JPG/SVG/WebP ate 2 MB; bitmaps reduzidos a 320px), 4 cores por tema (primaria, secundaria, fundo, superficie), fonte e tema inicial
 - Paletas de partida em `BRAND_PRESETS`
@@ -106,6 +108,13 @@ Etapa 6 do questionario em `frontend/app.html`, opcional. Codigo no bloco `IDENT
 - Logo fora do prompt: a IA usa o placeholder `__BRAND_LOGO__` e `injetarLogoMarca()` troca pelo arquivo na exibicao, inclusive no cache
 - Export: JSON no formato Tokens Studio (sets global, light, dark e $themes) para importar no Figma
 - Persistencia: `localStorage['dashgen_brand']`; se o logo exceder a cota, vale so na sessao
+
+No app React a marca e so apresentacao: o Gemini gera JSON de dados e o `Dashboard.tsx` aplica os tokens como CSS vars (`bg-[var(--surface)]` etc.). Por isso a marca nao entra no prompt nem no cache semantico, e trocar cores nao exige gerar de novo.
+- Previa: o proprio `Dashboard` com `embedded` e `modo` fixo, alimentado por `dadosExemplo(segmento)`
+- Botao de tema claro/escuro no topo do dashboard; tema inicial vem da marca (padrao escuro sem marca)
+- Grades de KPIs e graficos usam container queries (`@container`), para funcionar tanto na tela cheia quanto na previa
+- KPI tem `goodWhen` ('up' ou 'down'): a seta mostra a direcao e a cor mostra se a mudanca e favoravel. Dashboards antigos do cache sem o campo assumem 'up'
+- O filtro de periodo do topo continua demonstrativo (nao recalcula os dados gerados)
 
 ## Principios de desenvolvimento (baseado no metodo Akita)
 
@@ -136,7 +145,6 @@ melhorias que so aparecem no uso cotidiano.
 
 ## Proximos passos sugeridos
 
-- Levar a identidade visual para o app React (tokens em CSS vars, KPICard com sentido favoravel)
 - Conectar dados reais via upload de CSV
 - Salvar dashboards gerados localmente
 - Adicionar mais segmentos
