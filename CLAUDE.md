@@ -44,9 +44,14 @@ Cada segmento tem abas, KPIs e tipos de graficos pre-definidos no dicionario `KP
 ## API
 
 - Provedor: Google Gemini
-- Modelo: gemini-2.5-pro (app React cai para gemini-2.5-flash se falhar)
+- Modelo: gemini-3.8-flash, com reserva gemini-3.6-flash (nos dois apps). Troca automatica quando o primeiro responde 404, 429, 503 ou "modelo indisponivel"
+- Historico: gemini-2.5-pro deixou de aceitar chaves novas em out/2026 (erro "no longer available to new users"), por isso a troca
+- generationConfig: `thinkingConfig: { thinkingLevel: 'low' }` e temperatura padrao (1.0). Nos modelos 3.x o `thinkingBudget` virou legado e nao pode ser enviado junto com `thinkingLevel` (erro 400); temperatura abaixo de 1.0 pode causar loop
+- O raciocinio consome tokens de saida: o app HTML usa 65536 e o React 16384 para nao cortar a resposta
+- A resposta e lida juntando todas as partes de texto (`parts`), ignorando partes de raciocinio
 - Endpoint: `https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent`
 - Embeddings (app React): text-embedding-004, com fallback para embedding-001
+  - Pendente: verificar se text-embedding-004 ainda responde; o substituto atual e gemini-embedding-001/gemini-embedding-2 (3072 dimensoes por padrao, usar outputDimensionality para casar com a coluna do pgvector)
 - Autenticacao:
   - `frontend/app.html`: API Key colada na barra do topo (salva em localStorage) ou injetada pelo `server.py`
   - App React: `VITE_GEMINI_API_KEY` no `.env`

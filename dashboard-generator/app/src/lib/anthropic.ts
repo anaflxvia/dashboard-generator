@@ -85,16 +85,18 @@ trend deve ser "up", "down" ou "neutral".
 type dos charts deve ser "bar", "line", "pie" ou "doughnut".
 Para pie/doughnut, use apenas 1 dataset com 5-7 itens.`
 
-  const models = ['gemini-2.5-pro', 'gemini-2.5-flash']
+  // gemini-2.5-* deixou de aceitar chaves novas; 3.6 Flash fica como reserva
+  const models = ['gemini-3.8-flash', 'gemini-3.6-flash']
   const body = JSON.stringify({
     systemInstruction: {
       parts: [{ text: 'Você é um especialista em business intelligence. Gere dados fictícios realistas para dashboards brasileiros. Retorne APENAS JSON válido, sem markdown, sem código, sem explicações.' }],
     },
     contents: [{ parts: [{ text: prompt }] }],
     generationConfig: {
-      maxOutputTokens: 8192,
-      temperature: 0.7,
+      // o raciocinio consome tokens de saida: limite folgado e thinking baixo evitam JSON cortado
+      maxOutputTokens: 16384,
       responseMimeType: 'application/json',
+      thinkingConfig: { thinkingLevel: 'low' },
     },
   })
 
@@ -110,14 +112,15 @@ Para pie/doughnut, use apenas 1 dataset com 5-7 itens.`
     if (!response.ok) {
       const err = await response.json().catch(() => ({}) as Record<string, unknown>) as { error?: { message?: string } }
       lastError = err.error?.message ?? `Gemini: HTTP ${response.status}`
-      if (response.status === 503 || response.status === 429) continue
+      const modeloIndisponivel = response.status === 404 || /not found|no longer available|not supported/i.test(lastError)
+      if (response.status === 503 || response.status === 429 || modeloIndisponivel) continue
       throw new Error(lastError)
     }
 
     const result = await response.json() as {
-      candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>
+      candidates?: Array<{ content?: { parts?: Array<{ text?: string; thought?: boolean }> } }>
     }
-    text = result.candidates?.[0]?.content?.parts?.[0]?.text
+    text = (result.candidates?.[0]?.content?.parts ?? []).filter(p => p.text && !p.thought).map(p => p.text).join('') || undefined
     break
   }
 
