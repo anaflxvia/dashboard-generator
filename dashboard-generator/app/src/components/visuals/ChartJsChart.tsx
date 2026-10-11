@@ -92,7 +92,7 @@ function getChartOptions(chart: ChartConfig, t: BrandTokens, deltas?: number[]) 
   const categoryAxis = {
     stacked,
     // rotulos longos quebram em duas linhas em vez de girar
-    ticks: { color: t.textMuted, font: { size: 11 }, maxRotation: 0, autoSkip: chart.labels.length > 8 },
+    ticks: { color: t.textMuted, font: { size: 11 }, maxRotation: 35, autoSkip: chart.labels.length > 8 },
     grid: { display: false },
     border: { display: false },
   }
@@ -106,7 +106,9 @@ function getChartOptions(chart: ChartConfig, t: BrandTokens, deltas?: number[]) 
     const lo = Math.min(...niveis)
     const hi = Math.max(...niveis)
     if (maiorDelta < Math.abs(hi) * 0.15) {
-      Object.assign(valueAxis, { beginAtZero: false, min: lo - (hi - lo) * 0.6 - maiorDelta })
+      const bruto = lo - (hi - lo) * 0.6 - maiorDelta
+      const passo = 10 ** Math.floor(Math.log10(Math.abs(bruto) || 1) - 1) // arredonda para um valor redondo
+      Object.assign(valueAxis, { beginAtZero: false, min: Math.floor(bruto / passo) * passo })
     }
   }
   return {
@@ -181,7 +183,7 @@ function buildChartData(chart: ChartConfig, t: BrandTokens) {
       return {
         label: ds.label,
         data: ds.data,
-        backgroundColor: isBar ? color : color + '33',
+        backgroundColor: isBar ? color : color + (chart.datasets.length > 1 ? '1a' : '33'),
         borderColor: isBar ? t.surface : color,
         // empilhadas: 2px na cor da superficie separam os segmentos
         borderWidth: chart.type === 'stackedBar' ? { top: 2 } : isBar ? 0 : 2,

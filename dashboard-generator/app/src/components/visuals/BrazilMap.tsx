@@ -3,7 +3,8 @@ import type { ChartConfig } from '../../types'
 import { mix, type BrandTokens } from '../../lib/brand'
 import { ESTADOS, VIEWBOX, acharEstado, type Estado } from '../../lib/brasil'
 import { formatValue } from '../../lib/format'
-import { HoverTip, useHoverTip } from './HoverTip'
+import { HoverTip } from './HoverTip'
+import { useHoverTip } from './useHoverTip'
 
 interface Props {
   chart: ChartConfig

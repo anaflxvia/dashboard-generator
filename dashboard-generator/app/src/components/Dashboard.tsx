@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import type { DashboardData, DashboardTab } from '../types'
 import { brandStyle, deriveTokens, mix, type Brand, type BrandTokens } from '../lib/brand'
-import { resolveIcon } from '../lib/icons'
+import Icone from './visuals/Icone'
 import VisualCard from './visuals/VisualCard'
 
 // tons 400 so passam contraste em fundo escuro; em fundo claro usa os 700
@@ -27,11 +27,6 @@ const ICONE_CONFIG = (
     <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
   </svg>
 )
-
-function TabIcon({ name, label }: { name?: string; label: string }) {
-  const Icon = resolveIcon(name, label)
-  return <Icon className="w-5 h-5" strokeWidth={1.8} />
-}
 
 const DATE_FILTERS = ['Últimos 7 dias', 'Últimos 30 dias', 'Últimos 90 dias', 'Este ano', 'Personalizado']
 
@@ -59,7 +54,6 @@ function Sparkline({ values }: { values: number[] }) {
 }
 
 function KPICard({ kpi, status, tokens }: { kpi: DashboardTab['kpis'][0]; status: StatusClasses; tokens: BrandTokens }) {
-  const Icon = resolveIcon(kpi.icon, kpi.label)
   // seta = direcao da mudanca; cor = se a mudanca e boa (custo caindo e verde)
   const favoravel = kpi.trend === 'neutral' ? null : kpi.trend === (kpi.goodWhen ?? 'up')
   const corVariacao = favoravel === null ? 'text-(--brand-muted)' : favoravel ? status.successText : status.errorText
@@ -73,7 +67,7 @@ function KPICard({ kpi, status, tokens }: { kpi: DashboardTab['kpis'][0]; status
           style={{ background: mix(tokens.primary, tokens.surface, 0.16), color: tokens.primary }}
           aria-hidden="true"
         >
-          <Icon className="w-[18px] h-[18px]" strokeWidth={1.8} />
+          <Icone name={kpi.icon} label={kpi.label} className="w-[18px] h-[18px]" />
         </span>
       </div>
       <p className="text-2xl font-bold text-(--brand-text) mt-1 mb-2 tabular-nums">{kpi.value}</p>
@@ -109,7 +103,7 @@ export default function Dashboard({ data, brand, onBack, onOpenBrand, fromCache 
   const status = tokens.dark ? STATUS_DARK : STATUS_LIGHT
   const [activeTab, setActiveTab] = useState(0)
   const [dateFilter, setDateFilter] = useState('Últimos 30 dias')
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 768) // no celular comeca recolhida
 
   const tab = data.tabs[activeTab] ?? data.tabs[0]
 
@@ -148,7 +142,7 @@ export default function Dashboard({ data, brand, onBack, onOpenBrand, fromCache 
                   : 'text-(--brand-muted) hover:text-(--brand-text) hover:bg-(--brand-surface-hover)'
               }`}
             >
-              <span className="shrink-0"><TabIcon name={t.icon} label={t.name} /></span>
+              <span className="shrink-0"><Icone name={t.icon} label={t.name} className="w-5 h-5" /></span>
               {sidebarOpen && <span className="truncate text-left">{t.name}</span>}
             </button>
           ))}
@@ -178,7 +172,7 @@ export default function Dashboard({ data, brand, onBack, onOpenBrand, fromCache 
       </aside>
 
       {/* Main */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
         {/* Topbar */}
         <header className="h-14 bg-(--brand-surface) border-b border-(--brand-border) flex items-center gap-4 px-4 shrink-0">
           <button
@@ -236,7 +230,7 @@ export default function Dashboard({ data, brand, onBack, onOpenBrand, fromCache 
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-y-auto bg-(--brand-bg) p-6 space-y-6">
+        <main className="flex-1 overflow-y-auto bg-(--brand-bg) p-4 sm:p-6 space-y-6">
           {/* Summary banner */}
           <div className="bg-(--brand-surface) border border-(--brand-border) rounded-xl px-5 py-3 flex items-center gap-3">
             <div className="w-2 h-2 rounded-full bg-(--brand-primary) shrink-0" />
