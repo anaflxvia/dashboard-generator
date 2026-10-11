@@ -7,14 +7,18 @@ import { generateDashboard } from './lib/gemini'
 import { gerarEmbedding, geminiConfigurado } from './services/embeddings'
 import { buscarSimilar, salvarDashboard } from './services/dashboardCache'
 import type { DashboardData, UserAnswers } from './types'
+import { EXEMPLO_LOGISTICA } from './lib/exemplos'
+
+// ?demo=logistica abre direto um dashboard de exemplo com todos os tipos de visual
+const DEMO = new URLSearchParams(window.location.search).get('demo') === 'logistica' ? EXEMPLO_LOGISTICA : null
 
 type AppState = 'chat' | 'dashboard' | 'brand'
 
 export default function App() {
-  const [state, setState] = useState<AppState>('chat')
+  const [state, setState] = useState<AppState>(DEMO ? 'dashboard' : 'chat')
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(DEMO)
   const [fromCache, setFromCache] = useState(false)
   const [brand, setBrand] = useState<Brand>(loadBrand)
 
