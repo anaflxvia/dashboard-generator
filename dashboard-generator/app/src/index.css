@@ -43,3 +43,21 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .route-flow { animation: none; }
 }
+
+/* troca de aba: conteudo entra com um fade curto */
+.animate-entrada {
+  animation: entrada 220ms ease-out;
+}
+@keyframes entrada {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-entrada { animation: none; }
+}
+
+/* exportar PDF: imprime so o conteudo, sem os filtros */
+@media print {
+  header select, header button { display: none !important; }
+  main { overflow: visible !important; }
+}

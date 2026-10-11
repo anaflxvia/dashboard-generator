@@ -5,11 +5,13 @@ import type { DashboardData } from '../types'
 export const EXEMPLO_LOGISTICA: DashboardData = {
   version: 2,
   title: 'Custo e Desempenho da Frota',
+  filters: [{ label: 'Tipo de veículo', options: ['Truck', 'Carreta LS', 'Toco', 'Cavalo', 'Furgão', 'VUC'] }],
   segment: 'Logística',
   summary: 'Custo por km caiu 10% no ano, puxado pela troca de rotas no eixo SP-BA; OTIF ainda abaixo da meta no Norte.',
   tabs: [
     {
       name: 'Custo com Frota',
+      description: 'Quanto a frota custa, onde roda e se as entregas cumprem a meta de OTIF.',
       icon: 'truck',
       kpis: [
         { label: 'Despesa total', value: 'R$ 1,89 mi', change: '-0,54%', trend: 'down', goodWhen: 'down', icon: 'wallet', sparkline: [2.05, 2.01, 1.98, 1.97, 1.95, 1.92, 1.9, 1.89] },
@@ -72,6 +74,7 @@ export const EXEMPLO_LOGISTICA: DashboardData = {
     },
     {
       name: 'Entregas por Região',
+      description: 'Prazo, volume e perdas do pedido à entrega, por UF e faixa horária.',
       icon: 'map-pin',
       kpis: [
         { label: 'Entregas no mês', value: '18.420', change: '+6,8%', trend: 'up', goodWhen: 'up', icon: 'package', sparkline: [15900, 16200, 16800, 17100, 17300, 17900, 18420] },

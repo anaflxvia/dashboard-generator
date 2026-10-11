@@ -30,19 +30,35 @@ function Corpo({ chart, tokens }: { chart: ChartConfig; tokens: BrandTokens }) {
   }
 }
 
-export default function VisualCard({ chart, tokens }: { chart: ChartConfig; tokens: BrandTokens }) {
+export default function VisualCard({ chart, tokens, filtrado = false, vazio = false }: {
+  chart: ChartConfig
+  tokens: BrandTokens
+  filtrado?: boolean
+  vazio?: boolean
+}) {
   return (
     <section
-      className={`bg-(--brand-surface) border border-(--brand-border) rounded-xl p-5 flex flex-col ${
+      className={`bg-(--brand-surface) border border-(--brand-border) rounded-xl p-5 flex flex-col transition-colors duration-200 hover:border-(--brand-muted) ${
         chart.span === 2 ? 'lg:col-span-2' : ''
       }`}
     >
-      <header className="mb-4">
-        <h3 className="text-(--brand-text) font-medium text-sm">{chart.title}</h3>
-        {chart.subtitle && <p className="text-(--brand-muted) text-xs mt-0.5">{chart.subtitle}</p>}
+      <header className="mb-4 flex items-start gap-3">
+        <div className="flex-1 min-w-0">
+          <h3 className="text-(--brand-text) font-medium text-sm">{chart.title}</h3>
+          {chart.subtitle && <p className="text-(--brand-muted) text-xs mt-0.5">{chart.subtitle}</p>}
+        </div>
+        {filtrado && (
+          <span className="shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full bg-(--tab-hover) text-(--brand-primary)">Filtrado</span>
+        )}
       </header>
       <div className={`flex-1 ${ALTURA[chart.type] ?? ''}`}>
-        <Corpo chart={chart} tokens={tokens} />
+        {vazio ? (
+          <div className="h-full min-h-40 flex items-center justify-center text-sm text-(--brand-muted)">
+            Sem dados para os filtros escolhidos
+          </div>
+        ) : (
+          <Corpo chart={chart} tokens={tokens} />
+        )}
       </div>
     </section>
   )

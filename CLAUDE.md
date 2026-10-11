@@ -185,6 +185,23 @@ esses tipos e o prompt nao tinha nenhum conhecimento do segmento.
 - Sem logo, o monograma usa as iniciais do nome da marca
 - Pendente: testar o prompt novo com o Gemini em todos os segmentos e ajustar playbooks pelo resultado
 
+## Cabecalho, filtros e grade (app React)
+
+- Sem sidebar: cabecalho com duas linhas. Linha 1: marca, abas (icone + nome; hover com tom suave da primaria,
+  aba ativa na primaria solida, transicao de 200 ms), identidade visual, novo dashboard e "Exportar PDF" (window.print()).
+  Linha 2: filtros, "Limpar filtros" e "Atualizado em" (`generatedAt`, gravado na geracao; demos mostram a hora de abertura)
+- Filtros (`lib/filters.ts`) recortam o que ja esta desenhado, porque os dados vem agregados; os KPIs nao mudam e o
+  app avisa isso quando ha filtro ativo. Periodo: ultimos 3/6/12 pontos das series temporais (rotulos de mes, trimestre,
+  ano, data). Regiao: mapas, rotas, graficos e tabelas com UF, estado ou regiao. Dimensoes: campo `filters` do JSON
+  (a IA define 1 ou 2, ex.: Canal, Area), aplicado a graficos cujos rotulos ou series batem com as opcoes e a colunas
+  de tabela. Cascata e funil nao sao recortados. Visual afetado ganha o selo "Filtrado"; vazio mostra aviso
+- Titulo por aba: H1 com o nome da aba e `tab.description` (a IA gera uma frase por aba)
+- Grade sem buraco: o prompt pede exatamente 4 visuais por aba (ou 3 com um largo) e `completarGrade` alarga o visual
+  que ficaria sozinho na linha, entao nunca sobra celula vazia mesmo quando a IA nao obedece
+- Troca de aba com fade de 220 ms (desligado em prefers-reduced-motion)
+- No `frontend/app.html` o template pede o mesmo layout: abas no topo com hover e selecao, filtros funcionais com
+  "Limpar filtros", titulo por aba, "Atualizado em" e exatamente 4 visuais por aba
+
 ## Visuais dinamicos (frontend/app.html)
 
 No HTML unico o Gemini escreve o dashboard inteiro, entao a mesma ideia entra de outro jeito:

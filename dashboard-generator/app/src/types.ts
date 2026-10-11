@@ -70,14 +70,23 @@ export interface TableData {
 
 export interface DashboardTab {
   name: string
+  description?: string // uma frase sob o titulo da aba
   icon?: string
   kpis: KPI[]
   charts: ChartConfig[]
   tables: TableData[]
 }
 
+// filtro de dimensao: as opcoes aparecem como rotulos em graficos ou celulas de tabelas
+export interface DimensionFilter {
+  label: string // ex.: "Canal"
+  options: string[] // ex.: ["Inbound", "Outbound", "Parceiros"]
+}
+
 export interface DashboardData {
   version?: number // versao do formato; o cache ignora dashboards de versoes antigas
+  generatedAt?: string // ISO; mostrado como "Atualizado em"
+  filters?: DimensionFilter[]
   title: string
   segment: string
   summary: string

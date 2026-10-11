@@ -34,7 +34,7 @@ KPIs (camada de resumo — "como estamos indo?"):
   (receita, conversão, OTIF), "down" quando menor é melhor (custo, tempo, atraso, churn, inadimplência).
 - "icon": escolha o ícone que representa o KPI, SOMENTE desta lista: ${ICON_NAMES.join(', ')}.
 - "sparkline": 7 a 12 números do mais antigo ao mais recente, coerentes com "value" e "trend".
-- Cada aba também tem "icon" (mesma lista) para o menu lateral.
+- Cada aba também tem "icon" (mesma lista) para o menu de abas e "description": uma frase dizendo o que a aba responde.
 
 Escolha do visual pela pergunta que ele responde (não pelo hábito):
 - Onde? (UF, região, origem/destino) → "mapUF" ou "routeMap".
@@ -47,10 +47,17 @@ Escolha do visual pela pergunta que ele responde (não pelo hábito):
 - Quando concentra? (dia x hora, área x mês) → "heatmap".
 
 Variedade (o dashboard não pode parecer um template):
-- Cada aba tem 3 ou 4 visuais que respondem perguntas DIFERENTES, com no máximo 1 visual de cada tipo por aba.
+- Cada aba tem EXATAMENTE 4 visuais que respondem perguntas DIFERENTES, com no máximo 1 visual de cada tipo por aba.
+  A grade tem 2 colunas: 4 visuais de meia largura fecham 2 linhas. Use "span": 2 só em heatmap largo ou cascata longa,
+  e nesse caso a aba tem 3 visuais (1 largo + 2 de meia largura), para não sobrar buraco na grade.
 - No dashboard inteiro, use pelo menos 6 tipos diferentes e no máximo 4 "bar"/"horizontalBar" somados.
 - Inclua os visuais assinatura do segmento (playbook abaixo) onde fizerem sentido.
 - Tabelas são opcionais: no máximo 1 por aba e só onde o detalhe linha a linha ajuda a agir (ex.: entregas atrasadas).
+
+Filtros (campo "filters" na raiz do JSON):
+- 1 ou 2 dimensões de negócio para o usuário filtrar (ex.: Canal, Área, Tipo de veículo, Unidade, Produto), com 3 a 6 opções.
+- Cada opção precisa aparecer EXATAMENTE igual como rótulo (labels) ou nome de série (datasets.label) em pelo menos 2 visuais,
+  ou como valor em uma coluna de tabela. Período e região o app cria sozinho a partir de meses e UFs.
 
 Dados:
 - Valores coerentes entre KPIs, gráficos e tabelas da mesma aba.

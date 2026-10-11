@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, type CSSProperties } from 'react'
 import { fontFamily, siglaMarca, useGoogleFont } from '../lib/fonts'
-import type { DashboardData, DashboardTab } from '../types'
+import type { DashboardData, DashboardTab, TableData } from '../types'
+import { SEM_FILTROS, completarGrade, filtrarGrafico, filtrarTabela, opcoesDisponiveis, temFiltro, type FiltrosAtivos } from '../lib/filters'
 import { brandStyle, deriveTokens, mix, type Brand, type BrandTokens } from '../lib/brand'
 import Icone from './visuals/Icone'
 import VisualCard from './visuals/VisualCard'
@@ -29,7 +30,6 @@ const ICONE_CONFIG = (
   </svg>
 )
 
-const DATE_FILTERS = ['Últimos 7 dias', 'Últimos 30 dias', 'Últimos 90 dias', 'Este ano', 'Personalizado']
 
 // linha limpa, sem eixos nem marcadores — so o contexto historico do KPI
 function Sparkline({ values }: { values: number[] }) {
@@ -99,218 +99,285 @@ interface Props {
   fromCache?: boolean
 }
 
+function TabelaCard({ table, status }: { table: TableData; status: StatusClasses }) {
+  return (
+    <div className="bg-(--brand-surface) border border-(--brand-border) rounded-xl overflow-hidden">
+      <div className="px-5 py-4 border-b border-(--brand-border) flex items-center justify-between">
+        <h3 className="text-(--brand-text) font-medium text-sm">{table.title}</h3>
+        <span className="text-(--brand-muted) text-xs">{table.rows.length} registros</span>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-(--brand-border)">
+              {table.columns.map((col, j) => (
+                <th key={j} className="text-left px-5 py-3 text-(--brand-muted) text-xs font-medium uppercase tracking-wide whitespace-nowrap">
+                  {col}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {table.rows.length === 0 && (
+              <tr>
+                <td colSpan={table.columns.length} className="px-5 py-6 text-center text-sm text-(--brand-muted)">
+                  Nenhum registro para os filtros escolhidos
+                </td>
+              </tr>
+            )}
+            {table.rows.map((row, ri) => (
+              <tr key={ri} className="border-b border-(--brand-border) hover:bg-(--brand-surface-hover) transition-colors">
+                {row.map((cell, ci) => (
+                  <td key={ci} className="px-5 py-3 text-(--brand-text) text-sm whitespace-nowrap">
+                    {['Ativo', 'Concluído', 'Aprovado', 'Pago'].includes(cell) ? (
+                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs border ${status.success}`}>{cell}</span>
+                    ) : ['Inativo', 'Cancelado', 'Reprovado', 'Atrasado'].includes(cell) ? (
+                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs border ${status.error}`}>{cell}</span>
+                    ) : ['Pendente', 'Em andamento', 'Em análise'].includes(cell) ? (
+                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs border ${status.warning}`}>{cell}</span>
+                    ) : (
+                      cell
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+// select do cabecalho: fica destacado na cor da marca quando tem filtro escolhido
+function FiltroSelect({ rotulo, valor, onChange, opcoes }: {
+  rotulo: string
+  valor: string
+  onChange: (v: string) => void
+  opcoes: Array<{ valor: string; rotulo: string }>
+}) {
+  const ativo = valor !== ''
+  return (
+    <label className="flex items-center">
+      <span className="sr-only">{rotulo}</span>
+      <select
+        value={valor}
+        onChange={(e) => onChange(e.target.value)}
+        className={`text-xs rounded-lg pl-3 pr-8 py-1.5 border outline-none cursor-pointer transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-(--brand-primary) ${
+          ativo
+            ? 'border-(--brand-primary) bg-(--tab-hover) text-(--brand-text) font-medium'
+            : 'border-(--brand-border) bg-(--brand-surface) text-(--brand-muted) hover:border-(--brand-muted) hover:text-(--brand-text)'
+        }`}
+      >
+        <option value="">{rotulo}: todos</option>
+        {opcoes.map((o) => (
+          <option key={o.valor} value={o.valor}>{o.rotulo}</option>
+        ))}
+      </select>
+    </label>
+  )
+}
+
+const BOTAO_ICONE =
+  'p-2 rounded-lg text-(--brand-muted) cursor-pointer transition-colors duration-200 hover:text-(--brand-primary) hover:bg-(--tab-hover) focus-visible:outline-2 focus-visible:outline-(--brand-primary)'
+
 export default function Dashboard({ data, brand, onBack, onOpenBrand, fromCache = false }: Props) {
   const tokens = useMemo(() => deriveTokens(brand), [brand])
   useGoogleFont(brand.font)
   const status = tokens.dark ? STATUS_DARK : STATUS_LIGHT
   const [activeTab, setActiveTab] = useState(0)
-  const [dateFilter, setDateFilter] = useState('Últimos 30 dias')
-  const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 768) // no celular comeca recolhida
+  const [filtros, setFiltros] = useState<FiltrosAtivos>(SEM_FILTROS)
+  const [abertoEm] = useState(() => new Date())
 
   const tab = data.tabs[activeTab] ?? data.tabs[0]
+  const opcoes = useMemo(() => opcoesDisponiveis(data), [data])
+  const algumFiltro = temFiltro(filtros)
+
+  const visuais = useMemo(() => {
+    const filtrados = tab.charts.map((c) => ({ ...filtrarGrafico(c, filtros, opcoes), span: c.span }))
+    return completarGrade(filtrados)
+  }, [tab, filtros, opcoes])
+  const tabelas = useMemo(() => tab.tables.map((t) => filtrarTabela(t, filtros, opcoes)), [tab, filtros, opcoes])
+
+  const atualizado = new Date(data.generatedAt ?? abertoEm)
+  const atualizadoTexto = `${atualizado.toLocaleDateString('pt-BR')} às ${atualizado.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
+
+  // tom suave da primaria para hover das abas, filtros ativos e botoes
+  const estilo = {
+    ...brandStyle(tokens),
+    '--tab-hover': mix(tokens.primary, tokens.surface, 0.14),
+    fontFamily: fontFamily(brand.font),
+  } as CSSProperties
 
   return (
-    <div style={{ ...brandStyle(tokens), fontFamily: fontFamily(brand.font) }} className="flex h-screen bg-(--brand-bg) text-(--brand-text) overflow-hidden">
-      {/* Sidebar */}
-      <aside className={`${sidebarOpen ? 'w-60' : 'w-16'} bg-(--brand-surface) border-r border-(--brand-border) flex flex-col transition-all duration-200 shrink-0`}>
-        {/* Logo */}
-        <div className="flex items-center gap-3 px-4 py-4 border-b border-(--brand-border)">
-          {brand.logo ? (
-            <img
-              src={brand.logo}
-              alt={brand.name || 'Logo'}
-              className={`h-8 object-contain shrink-0 ${sidebarOpen ? 'max-w-[140px]' : 'w-8'}`}
-            />
-          ) : (
-            <div className="w-8 h-8 rounded-lg bg-(--brand-primary) flex items-center justify-center text-(--brand-on-primary) text-xs font-bold shrink-0">
-              {siglaMarca(brand.name || data.title)}
-            </div>
-          )}
-          {sidebarOpen && !brand.logo && (
-            <span className="text-(--brand-text) font-semibold text-sm truncate">{brand.name || data.title}</span>
-          )}
-        </div>
-
-        {/* Nav */}
-        <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
-          {data.tabs.map((t, i) => (
-            <button
-              key={i}
-              onClick={() => setActiveTab(i)}
-              title={t.name}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
-                i === activeTab
-                  ? 'bg-(--brand-primary) text-(--brand-on-primary)'
-                  : 'text-(--brand-muted) hover:text-(--brand-text) hover:bg-(--brand-surface-hover)'
-              }`}
-            >
-              <span className="shrink-0"><Icone name={t.icon} label={t.name} className="w-5 h-5" /></span>
-              {sidebarOpen && <span className="truncate text-left">{t.name}</span>}
-            </button>
-          ))}
-        </nav>
-
-        {/* Back button */}
-        <div className="p-2 border-t border-(--brand-border) space-y-1">
-          <button
-            onClick={onOpenBrand}
-            title="Identidade visual"
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-(--brand-muted) hover:text-(--brand-text) hover:bg-(--brand-surface-hover) transition-colors"
-          >
-            <span className="shrink-0">{ICONE_CONFIG}</span>
-            {sidebarOpen && <span>Identidade visual</span>}
-          </button>
-          <button
-            onClick={onBack}
-            title="Novo dashboard"
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-(--brand-muted) hover:text-(--brand-text) hover:bg-(--brand-surface-hover) transition-colors"
-          >
-            <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-            </svg>
-            {sidebarOpen && <span>Novo dashboard</span>}
-          </button>
-        </div>
-      </aside>
-
-      {/* Main */}
-      <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
-        {/* Topbar */}
-        <header className="h-14 bg-(--brand-surface) border-b border-(--brand-border) flex items-center gap-4 px-4 shrink-0">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="text-(--brand-muted) hover:text-(--brand-text) transition-colors p-1 rounded"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-          </button>
-
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="text-(--brand-muted) text-sm hidden sm:block">{data.segment}</span>
-            <span className="text-(--brand-muted) hidden sm:block">/</span>
-            <h2 className="text-(--brand-text) font-medium text-sm truncate">{tab.name}</h2>
+    <div style={estilo} className="flex flex-col h-screen bg-(--brand-bg) text-(--brand-text) overflow-hidden">
+      <header className="bg-(--brand-surface) border-b border-(--brand-border) shrink-0">
+        {/* Linha 1: marca, abas e acoes */}
+        <div className="h-16 flex items-center gap-4 px-4">
+          <div className="flex items-center gap-3 shrink-0">
+            {brand.logo ? (
+              <img src={brand.logo} alt={brand.name || 'Logo'} className="h-8 max-w-[140px] object-contain" />
+            ) : (
+              <div className="w-8 h-8 rounded-lg bg-(--brand-primary) flex items-center justify-center text-(--brand-on-primary) text-xs font-bold">
+                {siglaMarca(brand.name || data.title)}
+              </div>
+            )}
+            {!brand.logo && (
+              <span className="hidden md:block text-(--brand-text) font-semibold text-sm max-w-[180px] truncate">{brand.name || data.title}</span>
+            )}
           </div>
 
-          <div className="ml-auto flex items-center gap-2">
-            {/* Cache badge */}
+          <nav role="tablist" aria-label="Abas do dashboard" className="flex-1 min-w-0 flex items-center gap-1 overflow-x-auto">
+            {data.tabs.map((t, i) => {
+              const ativa = i === activeTab
+              return (
+                <button
+                  key={i}
+                  role="tab"
+                  aria-selected={ativa}
+                  onClick={() => setActiveTab(i)}
+                  className={`group shrink-0 flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm cursor-pointer transition-all duration-200 ease-out focus-visible:outline-2 focus-visible:outline-(--brand-primary) ${
+                    ativa
+                      ? 'bg-(--brand-primary) text-(--brand-on-primary) font-medium shadow-sm'
+                      : 'text-(--brand-muted) hover:text-(--brand-primary) hover:bg-(--tab-hover)'
+                  }`}
+                >
+                  <span className={`transition-transform duration-200 ${ativa ? '' : 'group-hover:scale-110'}`}>
+                    <Icone name={t.icon} label={t.name} className="w-4 h-4" />
+                  </span>
+                  <span className="whitespace-nowrap">{t.name}</span>
+                </button>
+              )
+            })}
+          </nav>
+
+          <div className="flex items-center gap-1 shrink-0">
             {fromCache && (
-              <span className={`flex items-center gap-1.5 text-xs font-medium border px-2.5 py-1 rounded-full ${status.success}`}>
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-                </svg>
-                Dashboard recuperado do cache
+              <span className={`hidden lg:flex items-center gap-1.5 text-xs font-medium border px-2.5 py-1 rounded-full mr-1 ${status.success}`}>
+                Do cache
               </span>
             )}
-
-            {/* Date filter */}
-            <select
-              value={dateFilter}
-              onChange={(e) => setDateFilter(e.target.value)}
-              className="bg-(--brand-surface) border border-(--brand-border) text-(--brand-text) text-xs rounded-lg px-3 py-1.5 outline-none focus:border-(--brand-primary) transition-colors cursor-pointer"
-            >
-              {DATE_FILTERS.map((f) => (
-                <option key={f} value={f}>{f}</option>
-              ))}
-            </select>
-
-            {/* Refresh */}
-            <button className="p-1.5 text-(--brand-muted) hover:text-(--brand-text) hover:bg-(--brand-surface-hover) rounded-lg transition-colors">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+            <button onClick={onOpenBrand} title="Identidade visual" aria-label="Identidade visual" className={BOTAO_ICONE}>
+              {ICONE_CONFIG}
+            </button>
+            <button onClick={onBack} title="Novo dashboard" aria-label="Novo dashboard" className={BOTAO_ICONE}>
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
               </svg>
             </button>
-
-            {/* Export */}
-            <button className="flex items-center gap-1.5 bg-(--brand-primary) hover:opacity-90 text-(--brand-on-primary) text-xs px-3 py-1.5 rounded-lg transition-colors">
+            <button
+              onClick={() => window.print()}
+              className="ml-1 flex items-center gap-1.5 bg-(--brand-primary) text-(--brand-on-primary) text-xs font-medium px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:opacity-90 hover:-translate-y-px active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--brand-primary)"
+            >
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
               </svg>
-              Exportar
+              <span className="hidden sm:inline">Exportar PDF</span>
             </button>
           </div>
-        </header>
+        </div>
 
-        {/* Content */}
-        <main className="flex-1 overflow-y-auto bg-(--brand-bg) p-4 sm:p-6 space-y-6">
-          {/* Summary banner */}
+        {/* Linha 2: filtros e atualizacao */}
+        <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 border-t border-(--brand-border)">
+          <span className="flex items-center gap-1.5 text-xs font-medium text-(--brand-muted) mr-1">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
+            </svg>
+            Filtros
+          </span>
+          {opcoes.periodos.length > 0 && (
+            <FiltroSelect
+              rotulo="Período"
+              valor={filtros.periodo ? String(filtros.periodo) : ''}
+              onChange={(v) => setFiltros((f) => ({ ...f, periodo: v ? Number(v) : null }))}
+              opcoes={opcoes.periodos.map((p) => ({ valor: String(p.valor), rotulo: p.rotulo }))}
+            />
+          )}
+          {opcoes.regioes.length > 0 && (
+            <FiltroSelect
+              rotulo="Região"
+              valor={filtros.regiao ?? ''}
+              onChange={(v) => setFiltros((f) => ({ ...f, regiao: v || null }))}
+              opcoes={opcoes.regioes.map((r) => ({ valor: r, rotulo: r }))}
+            />
+          )}
+          {opcoes.dimensoes.map((d) => (
+            <FiltroSelect
+              key={d.label}
+              rotulo={d.label}
+              valor={filtros.dimensoes[d.label] ?? ''}
+              onChange={(v) =>
+                setFiltros((f) => {
+                  const dimensoes = { ...f.dimensoes }
+                  if (v) dimensoes[d.label] = v
+                  else delete dimensoes[d.label]
+                  return { ...f, dimensoes }
+                })
+              }
+              opcoes={d.options.map((o) => ({ valor: o, rotulo: o }))}
+            />
+          ))}
+          {opcoes.periodos.length + opcoes.regioes.length + opcoes.dimensoes.length === 0 && (
+            <span className="text-xs text-(--brand-muted)">Este dashboard não tem dimensões para filtrar</span>
+          )}
+          <button
+            onClick={() => setFiltros(SEM_FILTROS)}
+            disabled={!algumFiltro}
+            className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors duration-200 text-(--brand-primary) hover:bg-(--tab-hover) disabled:text-(--brand-muted) disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Limpar filtros
+          </button>
+          <span className="ml-auto flex items-center gap-1.5 text-xs text-(--brand-muted)">
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Atualizado em {atualizadoTexto}
+          </span>
+        </div>
+      </header>
+
+      <main className="flex-1 overflow-y-auto bg-(--brand-bg) p-4 sm:p-6">
+        <div key={activeTab} className="space-y-6 animate-entrada">
+          {/* Titulo da aba */}
+          <div>
+            <p className="text-xs text-(--brand-muted) mb-1">{data.segment} · {data.title}</p>
+            <h1 className="text-2xl font-semibold text-(--brand-text) tracking-tight">{tab.name}</h1>
+            {tab.description && <p className="text-sm text-(--brand-muted) mt-1">{tab.description}</p>}
+          </div>
+
           <div className="bg-(--brand-surface) border border-(--brand-border) rounded-xl px-5 py-3 flex items-center gap-3">
             <div className="w-2 h-2 rounded-full bg-(--brand-primary) shrink-0" />
             <p className="text-(--brand-muted) text-sm">{data.summary}</p>
           </div>
 
-          {/* KPI Cards */}
+          {algumFiltro && (
+            <p className="text-xs text-(--brand-muted)" role="status">
+              Filtros aplicados aos gráficos e tabelas. Os indicadores do topo mostram o período completo.
+            </p>
+          )}
+
           <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(180px,1fr))]">
             {tab.kpis.map((kpi, i) => (
               <KPICard key={i} kpi={kpi} status={status} tokens={tokens} />
             ))}
           </div>
 
-          {/* Visuais: grade de 2 colunas; span 2 ocupa a linha inteira */}
-          {tab.charts.length > 0 && (
+          {visuais.length > 0 && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {tab.charts.map((chart, i) => (
-                <VisualCard key={`${activeTab}-${i}`} chart={chart} tokens={tokens} />
+              {visuais.map((v, i) => (
+                <VisualCard key={i} chart={{ ...v.chart, span: v.span }} tokens={tokens} filtrado={v.filtrado} vazio={v.vazio} />
               ))}
             </div>
           )}
 
-          {/* Tables */}
-          {tab.tables.map((table, i) => (
-            <div key={i} className="bg-(--brand-surface) border border-(--brand-border) rounded-xl overflow-hidden">
-              <div className="px-5 py-4 border-b border-(--brand-border) flex items-center justify-between">
-                <h3 className="text-(--brand-text) font-medium text-sm">{table.title}</h3>
-                <span className="text-(--brand-muted) text-xs">{table.rows.length} registros</span>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-(--brand-border)">
-                      {table.columns.map((col, j) => (
-                        <th
-                          key={j}
-                          className="text-left px-5 py-3 text-(--brand-muted) text-xs font-medium uppercase tracking-wide whitespace-nowrap"
-                        >
-                          {col}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {table.rows.map((row, ri) => (
-                      <tr
-                        key={ri}
-                        className="border-b border-(--brand-border) hover:bg-(--brand-surface-hover) transition-colors"
-                      >
-                        {row.map((cell, ci) => (
-                          <td key={ci} className="px-5 py-3 text-(--brand-text) text-sm whitespace-nowrap">
-                            {/* Color-code common status values */}
-                            {['Ativo', 'Concluído', 'Aprovado', 'Pago'].includes(cell) ? (
-                              <span className={`inline-flex px-2 py-0.5 rounded-full text-xs border ${status.success}`}>
-                                {cell}
-                              </span>
-                            ) : ['Inativo', 'Cancelado', 'Reprovado', 'Atrasado'].includes(cell) ? (
-                              <span className={`inline-flex px-2 py-0.5 rounded-full text-xs border ${status.error}`}>
-                                {cell}
-                              </span>
-                            ) : ['Pendente', 'Em andamento', 'Em análise'].includes(cell) ? (
-                              <span className={`inline-flex px-2 py-0.5 rounded-full text-xs border ${status.warning}`}>
-                                {cell}
-                              </span>
-                            ) : (
-                              cell
-                            )}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+          {tabelas.map((table, i) => (
+            <TabelaCard key={i} table={table} status={status} />
           ))}
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   )
 }
