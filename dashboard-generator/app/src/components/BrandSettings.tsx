@@ -77,11 +77,11 @@ function LivePreview({ brand }: { brand: Brand }) {
       <div className="w-36 bg-(--brand-surface) border-r border-(--brand-border) p-2.5 flex flex-col gap-1.5 shrink-0">
         <div className="flex items-center gap-2 pb-2.5 mb-1 border-b border-(--brand-border)">
           {brand.logo ? (
-            <img src={brand.logo} alt="" className="h-6 max-w-full object-contain" />
+            <img src={brand.logo} alt="" className="h-6 max-w-[56px] object-contain shrink-0" />
           ) : (
             <div className="w-6 h-6 rounded-md bg-(--brand-primary) text-(--brand-on-primary) text-[9px] font-bold flex items-center justify-center">{siglaMarca(brand.name || 'Sua marca')}</div>
           )}
-          {!brand.logo && <span className="text-[11px] font-semibold truncate">{brand.name || 'Sua marca'}</span>}
+          <span className="text-[11px] font-semibold truncate">{brand.name || 'Sua marca'}</span>
         </div>
         {['Visão geral', 'Receita', 'Clientes'].map((t, i) => (
           <div

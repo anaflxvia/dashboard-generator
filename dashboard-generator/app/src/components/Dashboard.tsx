@@ -221,9 +221,8 @@ export default function Dashboard({ data, brand, onBack, onOpenBrand, fromCache 
                 {siglaMarca(brand.name || data.title)}
               </div>
             )}
-            {!brand.logo && (
-              <span className="text-(--brand-text) font-semibold text-sm truncate">{brand.name || data.title}</span>
-            )}
+            {/* nome sempre ao lado do logo; sem nome cadastrado, usa o titulo do dashboard */}
+            <span className="text-(--brand-text) font-semibold text-sm truncate">{brand.name || data.title}</span>
           </div>
       </header>
 

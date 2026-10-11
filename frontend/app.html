@@ -1600,7 +1600,7 @@ function montarBlocoMarca(b = brand) {
     .map(k => `--${k}: ${t[k]}`).join('; ');
   const nome = b.nome.trim() || 'Empresa Demo';
   const logo = b.logo
-    ? `- Logo: no cabecalho, a esquerda, use exatamente <img class="brand-logo" src="__BRAND_LOGO__" alt="${nome.replace(/"/g, '')}" style="max-height:32px;max-width:140px;object-fit:contain">. NAO altere o valor do src: o sistema substitui pelo arquivo real.`
+    ? `- Logo: no cabecalho, a esquerda, use exatamente <img class="brand-logo" src="__BRAND_LOGO__" alt="${nome.replace(/"/g, '')}" style="max-height:32px;max-width:140px;object-fit:contain">. NAO altere o valor do src: o sistema substitui pelo arquivo real. Logo ao lado do logo, escreva SEMPRE o nome da empresa em texto (14px peso 600), mesmo que o logo tenha o nome.`
     : `- Logo: a empresa nao enviou arquivo. Use um monograma com as iniciais "${siglaMarca(b)}" em um quadrado 32x32 com cantos de 8px, fundo var(--primary) e texto var(--on-primary).`;
   const cabecalho = b.doSegmento
     ? `TEMA VISUAL DO SEGMENTO (OBRIGATORIO; estilo "${b.estilo}" da skill ui-ux-pro-max; estas regras substituem qualquer cor, fonte ou tema citados acima):
@@ -2083,8 +2083,9 @@ function aplicarMarca() {
   document.getElementById('font-link').href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(P.fonte).replace(/%20/g, '+') + ':wght@400;500;600;700&display=swap';
   var nome = P.nome || 'Sua empresa';
   document.getElementById('logo-slot').innerHTML = P.logo ? '<img src="' + P.logo + '" alt="' + esc(nome) + '">' : '<span class="mono">' + esc(P.sigla || 'SE') + '</span>';
-  document.getElementById('brand-name').textContent = P.logo && P.nome ? '' : nome;
-  document.getElementById('brand-name').style.display = P.logo && P.nome ? 'none' : '';
+  /* o nome aparece sempre ao lado do logo */
+  document.getElementById('brand-name').textContent = nome;
+  document.getElementById('brand-name').style.display = '';
   document.getElementById('prof-org').textContent = nome;
   document.getElementById('theme-btn').textContent = mode === 'dark' ? 'Tema claro' : 'Tema escuro';
   document.title = nome + ' · Protótipo';
