@@ -971,7 +971,7 @@ function injetarValidacaoAbas(html) {
    Roda na exibicao, entao vale tambem para dashboards que vem do cache. Fonte: bloco #dashkit-src */
 function injetarKitVisual(html) {
   if (!html || html.includes('<script id="dashkit">')) return html;
-  const cor = brand.ativo ? paletaTemplateDaMarca().primary : PALETA_TEMPLATE_PADRAO.primary;
+  const cor = paletaTemplateDaMarca(marcaEfetiva(formData.segmento)).primary;
   const tag = '<script id="dashkit">window.DASHKIT_COR=' + JSON.stringify(cor) + ';\n' +
     document.getElementById('dashkit-src').textContent + '<\/script>';
   return /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, m => m + tag) : tag + html;
@@ -1110,12 +1110,10 @@ function goToScreen2() {
   prompt += `KPIs OBRIGATORIOS (minimo 6 por aba, em grid horizontal sem quebra de linha):\n${todosKpis.join(', ')}\n\n`;
   prompt += `GRAFICOS E VISUAIS DO SEGMENTO (distribua entre as abas; minimo 4 por aba em grid 2x2, dados ficticios realistas):\n${base.graficos}\n`;
   prompt += `ICONES SUGERIDOS PARA OS KPIs: ${base.icones}\n`;
-  if (brand.ativo) {
-    prompt += montarTemplateFixo(paletaTemplateDaMarca());
-    prompt += '\n\n' + montarBlocoMarca();
-  } else {
-    prompt += TEMPLATE_FIXO;
-  }
+  /* sem identidade visual ativa, o dashboard usa o tema do segmento gerado com a skill ui-ux-pro-max */
+  const marca = marcaEfetiva(seg);
+  prompt += montarTemplateFixo(paletaTemplateDaMarca(marca));
+  prompt += '\n\n' + montarBlocoMarca(marca);
   renderBrandResumo();
 
   document.getElementById('prompt-edit').value = prompt;
@@ -1291,6 +1289,37 @@ const BRAND_PRESETS = {
   grafite:   { nome: 'Grafite e laranja', light: { primary: '#c2410c', secondary: '#334155', background: '#f6f5f4', surface: '#ffffff' }, dark: { primary: '#fb923c', secondary: '#cbd5e1', background: '#121212', surface: '#1c1c1e' } },
   vinho:     { nome: 'Vinho e dourado',   light: { primary: '#9f1239', secondary: '#a16207', background: '#faf7f5', surface: '#ffffff' }, dark: { primary: '#fb7185', secondary: '#facc15', background: '#140d0f', surface: '#1f1518' } }
 };
+/* tema padrao de cada segmento quando a identidade visual nao esta ativa.
+   Gerados com a skill ui-ux-pro-max (search.py --design-system --density 8), com os mesmos ajustes do app React
+   (lib/segmentThemes.ts): verde e vermelho so para status, contraste AA. 'tema' e o modo que a skill recomendou;
+   o outro modo foi derivado clareando/escurecendo primaria e secundaria ate passar o contraste.
+   Ao mudar aqui, atualize lib/segmentThemes.ts. */
+const TEMAS_SEGMENTO = {
+  "Financeiro": { estilo: "Dark Mode (OLED)", fonte: "Fira Sans", tema: 'dark',
+    light: {"background": "#f8fafc", "surface": "#ffffff", "primary": "#9f6707", "secondary": "#967de1"}, dark: {"background": "#020617", "surface": "#0e1223", "primary": "#f59e0b", "secondary": "#a78bfa"} },
+  "CRM / Vendas": { estilo: "Flat Design", fonte: "Plus Jakarta Sans", tema: 'light',
+    light: {"background": "#f8fafc", "surface": "#ffffff", "primary": "#2563eb", "secondary": "#0891b2"}, dark: {"background": "#0b1120", "surface": "#151b2b", "primary": "#4b7eee", "secondary": "#0891b2"} },
+  "Recursos Humanos": { estilo: "Data-Dense Dashboard", fonte: "Inter", tema: 'light',
+    light: {"background": "#f8fafc", "surface": "#ffffff", "primary": "#1e40af", "secondary": "#d97706"}, dark: {"background": "#0b1120", "surface": "#151b2b", "primary": "#6d83cb", "secondary": "#d97706"} },
+  "Advocacia": { estilo: "Accessible & Ethical", fonte: "Lato", tema: 'light',
+    light: {"background": "#f8fafc", "surface": "#ffffff", "primary": "#1e3a8a", "secondary": "#b45309"}, dark: {"background": "#0b1120", "surface": "#151b2b", "primary": "#7284b6", "secondary": "#c17134"} },
+  "Observabilidade TI": { estilo: "Glassmorphism", fonte: "Fira Sans", tema: 'dark',
+    light: {"background": "#f8fafc", "surface": "#ffffff", "primary": "#247ba1", "secondary": "#967de1"}, dark: {"background": "#0f172a", "surface": "#1b2336", "primary": "#38bdf8", "secondary": "#a78bfa"} },
+  "FinOps": { estilo: "Minimalism & Swiss Style", fonte: "Fira Sans", tema: 'light',
+    light: {"background": "#f8fafc", "surface": "#ffffff", "primary": "#2563eb", "secondary": "#ea580c"}, dark: {"background": "#0b1120", "surface": "#151b2b", "primary": "#4b7eee", "secondary": "#ea580c"} },
+  "Gerencial / PMO": { estilo: "Flat Design", fonte: "Space Grotesk", tema: 'light',
+    light: {"background": "#eef2ff", "surface": "#ffffff", "primary": "#4f46e5", "secondary": "#0891b2"}, dark: {"background": "#0b1120", "surface": "#151b2b", "primary": "#7b74ec", "secondary": "#0891b2"} },
+  "Juridico": { estilo: "Accessible & Ethical", fonte: "Lato", tema: 'light',
+    light: {"background": "#f8fafc", "surface": "#ffffff", "primary": "#1e3a8a", "secondary": "#b45309"}, dark: {"background": "#0b1120", "surface": "#151b2b", "primary": "#7284b6", "secondary": "#c17134"} },
+  "Educacao": { estilo: "Claymorphism", fonte: "Baloo 2", tema: 'light',
+    light: {"background": "#eef2ff", "surface": "#ffffff", "primary": "#4f46e5", "secondary": "#ea580c"}, dark: {"background": "#0b1120", "surface": "#151b2b", "primary": "#7b74ec", "secondary": "#ea580c"} },
+  "Logistica": { estilo: "HUD / Sci-Fi FUI", fonte: "Fira Sans", tema: 'dark',
+    light: {"background": "#f8fafc", "surface": "#ffffff", "primary": "#147f8f", "secondary": "#c47e09"}, dark: {"background": "#0d1117", "surface": "#182424", "primary": "#22d3ee", "secondary": "#f59e0b"} },
+  "SLA / Suporte": { estilo: "Dark Mode (OLED)", fonte: "Fira Sans", tema: 'dark',
+    light: {"background": "#f8fafc", "surface": "#ffffff", "primary": "#4678b5", "secondary": "#b08619"}, dark: {"background": "#0f172a", "surface": "#111827", "primary": "#60a5fa", "secondary": "#fbbf24"} },
+  "Outro": { estilo: "Data-Dense Dashboard", fonte: "Fira Sans", tema: 'light',
+    light: {"background": "#f8fafc", "surface": "#ffffff", "primary": "#1e40af", "secondary": "#d97706"}, dark: {"background": "#0b1120", "surface": "#151b2b", "primary": "#6d83cb", "secondary": "#d97706"} },
+};
 /* cores semanticas: reservadas para status, nunca usadas como serie de grafico */
 const BRAND_SEMANTICAS = {
   light: { success: '#15803d', danger: '#b91c1c', warning: '#b45309', info: '#1d4ed8' },
@@ -1341,8 +1370,8 @@ function comAlpha(h, a) { const [r, g, b] = hexToRgb(h); return `rgba(${r},${g},
 function melhorTextoSobre(fundo) { return contraste(fundo, '#ffffff') >= contraste(fundo, '#111827') ? '#ffffff' : '#111827'; }
 
 /* tokens completos de um tema, derivados das 4 cores escolhidas */
-function derivarTokens(modo) {
-  const c = brand[modo];
+function derivarTokens(modo, b = brand) {
+  const c = b[modo];
   const escuro = luminancia(c.background) < 0.2;
   const text = escuro ? '#f3f4f6' : '#111827';
   return {
@@ -1516,18 +1545,26 @@ function renderBrandResumo() {
 }
 
 function escHtml(s) { return String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch])); }
-function siglaMarca() {
-  const p = (brand.nome || '').trim().split(/\s+/).filter(Boolean);
+function siglaMarca(b = brand) {
+  const p = (b.nome || '').trim().split(/\s+/).filter(Boolean);
   return ((p[0] || 'S')[0] + (p[1] ? p[1][0] : (p[0] || 'ua')[1] || '')).toUpperCase();
 }
 
+/* marca usada no prompt: a do usuario quando ativa; senao o tema do segmento (TEMAS_SEGMENTO) */
+function marcaEfetiva(segmento) {
+  if (brand.ativo) return brand;
+  const t = TEMAS_SEGMENTO[segmento] || TEMAS_SEGMENTO['Outro'];
+  return { ativo: true, doSegmento: true, estilo: t.estilo, nome: '', logo: '', fonte: t.fonte, tema: t.tema,
+           light: { ...t.light }, dark: { ...t.dark } };
+}
+
 /* ── integracao com o prompt da IA ── */
-function paletaTemplateDaMarca() {
-  const L = derivarTokens('light'), D = derivarTokens('dark');
-  const ini = brand.tema === 'dark' ? D : L;
+function paletaTemplateDaMarca(b = brand) {
+  const L = derivarTokens('light', b), D = derivarTokens('dark', b);
+  const ini = b.tema === 'dark' ? D : L;
   return {
     linhaTema:
-      `- Tema inicial: ${brand.tema === 'dark' ? 'escuro' : 'claro'}. Tema claro: fundo ${L.bg}, cards ${L.surface}, sidebar ${L.sidebar}, texto ${L.text}, bordas ${L.border}\n` +
+      `- Tema inicial: ${b.tema === 'dark' ? 'escuro' : 'claro'}. Tema claro: fundo ${L.bg}, cards ${L.surface}, sidebar ${L.sidebar}, texto ${L.text}, bordas ${L.border}\n` +
       `- Tema escuro: fundo ${D.bg}, cards ${D.surface}, sidebar ${D.sidebar}, texto ${D.text}, bordas ${D.border}. Toggle claro/escuro no canto superior direito`,
     datasets: '[' + ini.series.map(c => `'${c}'`).join(',') + ']',
     primary: ini.primary, primaryRgb: hexToRgb(ini.primary).join(','), grid: ini.grid, muted: ini.muted,
@@ -1535,19 +1572,24 @@ function paletaTemplateDaMarca() {
   };
 }
 
-function montarBlocoMarca() {
-  const L = derivarTokens('light'), D = derivarTokens('dark');
+function montarBlocoMarca(b = brand) {
+  const L = derivarTokens('light', b), D = derivarTokens('dark', b);
   const vars = t => ['primary', 'on-primary', 'secondary', 'on-secondary', 'bg', 'surface', 'sidebar', 'text', 'text-2', 'muted', 'border', 'success', 'danger', 'warning', 'info']
     .map(k => `--${k}: ${t[k]}`).join('; ');
-  const nome = brand.nome.trim() || 'Empresa Demo';
-  const logo = brand.logo
+  const nome = b.nome.trim() || 'Empresa Demo';
+  const logo = b.logo
     ? `- Logo: no topo da sidebar e no header use exatamente <img class="brand-logo" src="__BRAND_LOGO__" alt="${nome.replace(/"/g, '')}" style="max-height:32px;max-width:140px;object-fit:contain">. NAO altere o valor do src: o sistema substitui pelo arquivo real.`
-    : `- Logo: a empresa nao enviou arquivo. Use um monograma com as iniciais "${siglaMarca()}" em um quadrado 32x32 com cantos de 8px, fundo var(--primary) e texto var(--on-primary).`;
-  return `IDENTIDADE VISUAL DA MARCA (OBRIGATORIO; estas regras substituem qualquer cor, fonte, logo ou tema citados acima):
+    : `- Logo: a empresa nao enviou arquivo. Use um monograma com as iniciais "${siglaMarca(b)}" em um quadrado 32x32 com cantos de 8px, fundo var(--primary) e texto var(--on-primary).`;
+  const cabecalho = b.doSegmento
+    ? `TEMA VISUAL DO SEGMENTO (OBRIGATORIO; estilo "${b.estilo}" da skill ui-ux-pro-max; estas regras substituem qualquer cor, fonte ou tema citados acima):
+- Sem marca de empresa: use o titulo do dashboard no topo da sidebar, com um icone lucide do segmento em um quadrado 32x32 com cantos de 8px, fundo var(--primary) e cor var(--on-primary).
+`
+    : `IDENTIDADE VISUAL DA MARCA (OBRIGATORIO; estas regras substituem qualquer cor, fonte, logo ou tema citados acima):
 - Empresa: ${nome}. Use o nome no topo da sidebar, ao lado do logo, e no <title> da pagina.
 ${logo}
-- Fonte: '${brand.fonte}' via Google Fonts, fallback Arial, sans-serif, em todo o dashboard.
-- Tema inicial: ${brand.tema === 'dark' ? 'escuro' : 'claro'}. Defina os tokens abaixo como CSS custom properties: tema claro em :root e tema escuro em [data-theme="dark"] no <html>. O botao de tema alterna o atributo data-theme e preserva aba, filtros e dados.
+`;
+  return cabecalho + `- Fonte: '${b.fonte}' via Google Fonts, fallback Arial, sans-serif, em todo o dashboard.
+- Tema inicial: ${b.tema === 'dark' ? 'escuro' : 'claro'}. Defina os tokens abaixo como CSS custom properties: tema claro em :root e tema escuro em [data-theme="dark"] no <html>. O botao de tema alterna o atributo data-theme e preserva aba, filtros e dados.
 - Tokens tema claro: ${vars(L)}
 - Tokens tema escuro: ${vars(D)}
 - Use sempre var(--token) no CSS; nao escreva cores hexadecimais soltas fora dessas declaracoes.
