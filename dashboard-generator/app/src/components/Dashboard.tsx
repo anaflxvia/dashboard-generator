@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import type { DashboardData, DashboardTab } from '../types'
 import { brandStyle, deriveTokens, mix, type Brand, type BrandTokens } from '../lib/brand'
 import Icone from './visuals/Icone'
@@ -90,6 +90,26 @@ function KPICard({ kpi, status, tokens }: { kpi: DashboardTab['kpis'][0]; status
   )
 }
 
+// monograma quando nao ha logo: iniciais das duas primeiras palavras ("Atlas Capital" -> "AC")
+function siglaMarca(nome: string): string {
+  const partes = nome.trim().split(/\s+/).filter((p) => p.length > 2 || /^[A-Z]/.test(p))
+  return (partes.slice(0, 2).map((p) => p[0]).join('') || 'AI').toUpperCase()
+}
+
+// carrega a fonte da marca do Google Fonts uma vez por familia
+function useGoogleFont(font?: string) {
+  useEffect(() => {
+    if (!font) return
+    const id = `gf-${font.replace(/\s+/g, '-')}`
+    if (document.getElementById(id)) return
+    const link = document.createElement('link')
+    link.id = id
+    link.rel = 'stylesheet'
+    link.href = `https://fonts.googleapis.com/css2?family=${font.trim().replace(/\s+/g, "+")}:wght@400;500;600;700&display=swap`
+    document.head.appendChild(link)
+  }, [font])
+}
+
 interface Props {
   data: DashboardData
   brand: Brand
@@ -100,6 +120,7 @@ interface Props {
 
 export default function Dashboard({ data, brand, onBack, onOpenBrand, fromCache = false }: Props) {
   const tokens = useMemo(() => deriveTokens(brand), [brand])
+  useGoogleFont(brand.font)
   const status = tokens.dark ? STATUS_DARK : STATUS_LIGHT
   const [activeTab, setActiveTab] = useState(0)
   const [dateFilter, setDateFilter] = useState('Últimos 30 dias')
@@ -108,7 +129,7 @@ export default function Dashboard({ data, brand, onBack, onOpenBrand, fromCache 
   const tab = data.tabs[activeTab] ?? data.tabs[0]
 
   return (
-    <div style={brandStyle(tokens)} className="flex h-screen bg-(--brand-bg) text-(--brand-text) overflow-hidden">
+    <div style={{ ...brandStyle(tokens), ...(brand.font && { fontFamily: `'${brand.font}', system-ui, sans-serif` }) }} className="flex h-screen bg-(--brand-bg) text-(--brand-text) overflow-hidden">
       {/* Sidebar */}
       <aside className={`${sidebarOpen ? 'w-60' : 'w-16'} bg-(--brand-surface) border-r border-(--brand-border) flex flex-col transition-all duration-200 shrink-0`}>
         {/* Logo */}
@@ -121,7 +142,7 @@ export default function Dashboard({ data, brand, onBack, onOpenBrand, fromCache 
             />
           ) : (
             <div className="w-8 h-8 rounded-lg bg-(--brand-primary) flex items-center justify-center text-(--brand-on-primary) text-xs font-bold shrink-0">
-              AI
+              {siglaMarca(brand.name || data.title)}
             </div>
           )}
           {sidebarOpen && !brand.logo && (

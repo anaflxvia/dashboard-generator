@@ -28,7 +28,8 @@ dashboard-generator/                 (raiz do repo)
         ├── lib/normalize.ts         valida o JSON da IA e converte o que nao da para desenhar; SCHEMA_VERSION
         ├── lib/icons.ts             lista fechada de icones (lucide-react) e reserva por palavra-chave
         ├── lib/brasil.ts            estados do Brasil (paths SVG, centroides, busca por sigla ou nome)
-        ├── lib/exemplos.ts          dashboard de exemplo de logistica (?demo=logistica)
+        ├── lib/exemplos.ts          dashboard de exemplo de logistica
+        ├── lib/demos.ts             demos por ?demo= (logistica, financeiro, vendas, rh), com marca propria
         └── services/
             ├── embeddings.ts        embeddings do Gemini para as respostas do questionario
             └── dashboardCache.ts    cache semantico no Supabase (rpc match_dashboards)
@@ -166,7 +167,13 @@ esses tipos e o prompt nao tinha nenhum conhecimento do segmento.
   `goodWhen` ausente e inferido pelo rotulo
 - `SCHEMA_VERSION` (hoje 2) vai junto no JSON salvo no Supabase. A busca pede os 5 mais parecidos e usa o
   primeiro da versao atual, para nao devolver dashboards no formato antigo
-- `?demo=logistica` abre um dashboard de exemplo com todos os visuais, sem chamar o Gemini
+- `?demo=logistica|financeiro|vendas|rh` abre um dashboard de exemplo sem chamar o Gemini. As tres ultimas trazem
+  marca propria (cores e fonte) gerada com a skill ui-ux-pro-max; a marca da demo vale so enquanto ela esta aberta.
+  Detalhes e ajustes em `docs/design-systems-demos.md`
+- Marca aceita `font` (familia do Google Fonts, carregada pelo `Dashboard`); ainda nao tem campo na tela de marca
+- Paleta das series: depois de primaria e secundaria, cores extras que nao se parecem com a marca; vermelho e verde
+  por ultimo, porque sao cores de status
+- Sem logo, o monograma usa as iniciais do nome da marca
 - Pendente: testar o prompt novo com o Gemini em todos os segmentos e ajustar playbooks pelo resultado
 
 ## Visuais dinamicos (frontend/app.html)

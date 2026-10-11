@@ -20,11 +20,17 @@ import { formatValue } from '../../lib/format'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend, Filler)
 
-// as duas primeiras series usam primaria e secundaria da marca
-const EXTRA_CHART_COLORS = ['#f59e0b', '#ef4444', '#3b82f6', '#8b5cf6', '#06b6d4', '#f97316', '#84cc16', '#ec4899']
+// as duas primeiras series usam primaria e secundaria da marca. Vermelho e verde ficam por ultimo,
+// porque sao as cores de status (variacao ruim / boa) e confundem quando aparecem como serie.
+const EXTRA_CHART_COLORS = ['#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899', '#3b82f6', '#f97316', '#84cc16', '#ef4444']
+
+const rgb = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16))
+const distancia = (a: string, b: string) => Math.hypot(...rgb(a).map((v, i) => v - rgb(b)[i]))
 
 function chartColors(t: BrandTokens): string[] {
-  return [t.primary, t.secondary, ...EXTRA_CHART_COLORS]
+  // tira da paleta extra as cores parecidas com as da marca (ex.: marca dourada + ambar extra)
+  const extras = EXTRA_CHART_COLORS.filter((c) => distancia(c, t.primary) > 90 && distancia(c, t.secondary) > 90)
+  return [t.primary, t.secondary, ...extras]
 }
 
 // ganho / perda na cascata: tons que passam contraste no fundo atual
@@ -191,6 +197,7 @@ function buildChartData(chart: ChartConfig, t: BrandTokens) {
         pointHoverRadius: isBar ? 0 : 4,
         pointBackgroundColor: color,
         tension: 0.35,
+        cubicInterpolationMode: 'monotone' as const, // curva suave sem passar do valor real
         fill: chart.type === 'area',
         borderRadius: isBar && chart.type !== 'stackedBar' ? 4 : 0,
         maxBarThickness: 36,

@@ -8,6 +8,7 @@ export interface Brand {
   background: string
   surface: string
   text: string
+  font?: string // familia do Google Fonts; sem valor, usa a fonte do app
 }
 
 // padrao = visual do app (slate + indigo). A primaria #5b5bf0 passa nas duas checagens:

@@ -25,7 +25,7 @@ export function BulletChart({ chart, tokens }: Props) {
         const m = meta[i]
         const pct = m ? Math.round((r / m) * 100) : null
         return (
-          <div key={label} className="grid grid-cols-[minmax(0,7.5rem)_1fr_auto] items-center gap-3">
+          <div key={label} className="grid grid-cols-[minmax(0,7.5rem)_minmax(0,1fr)_auto] items-center gap-3">
             <span className="text-xs text-(--brand-text) truncate" title={label}>{label}</span>
             <div className="relative h-5 rounded overflow-hidden" title={`${label}: ${formatValue(r, chart.unit)}${m ? ` de ${formatValue(m, chart.unit)}` : ''}`}>
               {m !== undefined && (
@@ -40,7 +40,7 @@ export function BulletChart({ chart, tokens }: Props) {
                 <div className="absolute top-0.5 bottom-0.5 w-0.5 rounded" style={{ left: `${(m / escala) * 100}%`, background: tokens.text }} />
               )}
             </div>
-            <span className="text-xs tabular-nums text-(--brand-muted) w-24 text-right">
+            <span className="text-xs tabular-nums text-(--brand-muted) text-right whitespace-nowrap">
               <span className="text-(--brand-text) font-medium">{formatValue(r, chart.unit)}</span>
               {pct !== null && <span> · {pct}%</span>}
             </span>
@@ -70,14 +70,15 @@ export function FunnelChart({ chart, tokens }: Props) {
             <span className="text-xs text-(--brand-text) truncate text-right" title={label}>{label}</span>
             <div className="flex justify-center">
               <div
-                className="h-8 rounded-md flex items-center justify-center text-xs font-semibold tabular-nums"
+                className="h-8 rounded-md flex items-center justify-center text-xs font-semibold tabular-nums whitespace-nowrap px-2"
                 style={{
-                  width: `${Math.max(8, (v / max) * 100)}%`,
+                  width: `${Math.max(22, (v / max) * 100)}%`,
                   background: tokens.primary,
                   color: tokens.onPrimary,
                 }}
               >
-                {formatValue(v, chart.unit)}
+                {/* so o numero: a unidade fica no subtitulo, senao nao cabe nas etapas finais */}
+                {formatValue(v)}
               </div>
             </div>
             <span className="text-[11px] text-(--brand-muted) tabular-nums">{conv !== null ? `${conv}% conv.` : ''}</span>
