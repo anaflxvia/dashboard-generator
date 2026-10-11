@@ -201,6 +201,10 @@ esses tipos e o prompt nao tinha nenhum conhecimento do segmento.
 - Grade sem buraco: o prompt pede exatamente 4 visuais por aba (ou 3 com um largo) e `completarGrade` alarga o visual
   que ficaria sozinho na linha, entao nunca sobra celula vazia mesmo quando a IA nao obedece
 - Troca de aba com fade de 220 ms (desligado em prefers-reduced-motion)
+- Tema claro/escuro: botao (sol/lua) ao lado de identidade visual. A marca guarda as cores de um modo so; `brandNoModo`
+  (`lib/brand.ts`) deriva o outro com fundo, superficie e texto neutros e primaria/secundaria clareadas ou escurecidas
+  ate passar o contraste (4,5:1 e 3,2:1 sobre a superficie). Comeca no modo da marca; a escolha fica em
+  `localStorage['dashboard_modo']`. O botao tinha sumido quando o white-label novo substituiu o anterior
 - No `frontend/app.html` o template pede o mesmo layout: cabecalho so com logo e nome, titulo, filtros funcionais com
   "Limpar filtros" e "Atualizado em", abas com hover e selecao, e exatamente 4 visuais por aba
 

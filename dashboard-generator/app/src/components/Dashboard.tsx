@@ -2,7 +2,7 @@ import { useState, useMemo, type CSSProperties } from 'react'
 import { fontFamily, siglaMarca, useGoogleFont } from '../lib/fonts'
 import type { DashboardData, DashboardTab, TableData } from '../types'
 import { SEM_FILTROS, completarGrade, filtrarGrafico, filtrarTabela, opcoesDisponiveis, temFiltro, type FiltrosAtivos } from '../lib/filters'
-import { brandStyle, deriveTokens, mix, type Brand, type BrandTokens } from '../lib/brand'
+import { brandNoModo, brandStyle, deriveTokens, isDark, mix, type Brand, type BrandTokens } from '../lib/brand'
 import Icone from './visuals/Icone'
 import VisualCard from './visuals/VisualCard'
 
@@ -178,11 +178,30 @@ function FiltroSelect({ rotulo, valor, onChange, opcoes }: {
   )
 }
 
+const CHAVE_MODO = 'dashboard_modo'
+
 const BOTAO_ICONE =
   'p-2 rounded-lg text-(--brand-muted) cursor-pointer transition-colors duration-200 hover:text-(--brand-primary) hover:bg-(--tab-hover) focus-visible:outline-2 focus-visible:outline-(--brand-primary)'
 
 export default function Dashboard({ data, brand, onBack, onOpenBrand, fromCache = false }: Props) {
-  const tokens = useMemo(() => deriveTokens(brand), [brand])
+  // claro/escuro: comeca no modo da marca; a escolha fica salva neste navegador
+  const [escuro, setEscuro] = useState<boolean>(() => {
+    try {
+      const salvo = localStorage.getItem(CHAVE_MODO)
+      if (salvo === 'escuro' || salvo === 'claro') return salvo === 'escuro'
+    } catch {
+      // armazenamento bloqueado: usa o modo da marca
+    }
+    return isDark(brand.background)
+  })
+  function alternarModo() {
+    setEscuro((e) => {
+      try { localStorage.setItem(CHAVE_MODO, e ? 'claro' : 'escuro') } catch { /* sem armazenamento */ }
+      return !e
+    })
+  }
+  const marcaNoModo = useMemo(() => brandNoModo(brand, escuro), [brand, escuro])
+  const tokens = useMemo(() => deriveTokens(marcaNoModo), [marcaNoModo])
   useGoogleFont(brand.font)
   const status = tokens.dark ? STATUS_DARK : STATUS_LIGHT
   const [activeTab, setActiveTab] = useState(0)
@@ -238,6 +257,25 @@ export default function Dashboard({ data, brand, onBack, onOpenBrand, fromCache 
                 Do cache
               </span>
             )}
+            <button
+              onClick={alternarModo}
+              title={escuro ? 'Usar tema claro' : 'Usar tema escuro'}
+              aria-label={escuro ? 'Usar tema claro' : 'Usar tema escuro'}
+              aria-pressed={escuro}
+              className={`${BOTAO_ICONE} group`}
+            >
+              <span className="block transition-transform duration-300 group-hover:rotate-12">
+                {escuro ? (
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+                  </svg>
+                )}
+              </span>
+            </button>
             <button onClick={onOpenBrand} title="Identidade visual" aria-label="Identidade visual" className={BOTAO_ICONE}>
               {ICONE_CONFIG}
             </button>

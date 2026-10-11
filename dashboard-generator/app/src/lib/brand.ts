@@ -133,6 +133,34 @@ export function deriveTokens(brand: Brand): BrandTokens {
   }
 }
 
+/* ── Modo claro / escuro ── */
+
+// leva `cor` na direcao de `rumo` (branco ou preto) ate passar o contraste minimo sobre `fundo`
+function ajustarContraste(cor: string, fundo: string, minimo: number, rumo: string): string {
+  for (let i = 0; i <= 40; i++) {
+    const c = mix(rumo, cor, i * 0.025)
+    if (contrast(c, fundo) >= minimo) return c
+  }
+  return rumo
+}
+
+// A marca guarda as cores de um modo so (o do fundo escolhido). O outro modo e derivado:
+// fundo, superficie e texto neutros, e primaria/secundaria clareadas ou escurecidas ate passar o contraste.
+export function brandNoModo(brand: Brand, escuro: boolean): Brand {
+  if (isDark(brand.background) === escuro) return brand
+  const fundo = escuro ? '#0b1120' : '#f8fafc'
+  const superficie = escuro ? '#151b2b' : '#ffffff'
+  const rumo = escuro ? '#ffffff' : '#000000'
+  return {
+    ...brand,
+    background: fundo,
+    surface: superficie,
+    text: escuro ? '#f1f5f9' : '#0f172a',
+    primary: ajustarContraste(brand.primary, superficie, 4.5, rumo),
+    secondary: ajustarContraste(brand.secondary, superficie, 3.2, rumo),
+  }
+}
+
 export function brandStyle(t: BrandTokens): CSSProperties {
   return {
     '--brand-primary': t.primary,
