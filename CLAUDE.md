@@ -169,6 +169,24 @@ esses tipos e o prompt nao tinha nenhum conhecimento do segmento.
 - `?demo=logistica` abre um dashboard de exemplo com todos os visuais, sem chamar o Gemini
 - Pendente: testar o prompt novo com o Gemini em todos os segmentos e ajustar playbooks pelo resultado
 
+## Visuais dinamicos (frontend/app.html)
+
+No HTML unico o Gemini escreve o dashboard inteiro, entao a mesma ideia entra de outro jeito:
+- DashKit: script com o mapa do Brasil (mesmo pacote do app React) e o loader de icones lucide (lucide@1.55.0 via
+  jsdelivr). Fica no bloco `<script type="text/plain" id="dashkit-src">` e `injetarKitVisual()` o coloca no inicio do
+  `<head>` de cada dashboard, na exibicao (vale tambem para o cache). A IA so chama `DashKit.mapaUF(id, { valores, unidade })`
+  e `DashKit.mapaRotas(id, { rotas: [{ de, para, valor }], unidade })` dentro de `inicializarTodos()`
+- Cor dos mapas: `--primary` do dashboard quando for hex (acompanha o tema), senao a primaria da marca ou a padrao.
+  Estados e textos usam currentColor e opacidade, para funcionar no claro e no escuro
+- Icones: a IA escreve `<i data-lucide="nome">` com nomes de `ICONES_PERMITIDOS` (mesma lista de `lib/icons.ts`);
+  um MutationObserver troca tambem os icones criados por JS depois do load
+- `KPI_BASE` ganhou visuais assinatura por segmento em `graficos` e o campo `icones` (sugestao por KPI)
+- Template: bloco VISUAIS ESPECIAIS (mapas, bullet, funil e heatmap em HTML, cascata) e regras de VARIEDADE
+  (pelo menos 6 tipos e 2 visuais especiais no dashboard, no maximo 4 barras e 1 rosca). As abas fixas
+  (Alocacao, Variacao, Predicao) so valem quando o dashboard tem essa aba
+- Abas validas: `validarAbas` aceita `canvas` ou container com `data-visual`, para nao remover aba so com mapa
+- Ao mudar `lib/icons.ts`, `lib/brasil.ts` ou `segmentPlaybooks.ts` no React, atualize o equivalente aqui
+
 ## Principios de desenvolvimento (baseado no metodo Akita)
 
 ### One-shot prompt e um mito
