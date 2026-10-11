@@ -187,20 +187,21 @@ esses tipos e o prompt nao tinha nenhum conhecimento do segmento.
 
 ## Cabecalho, filtros e grade (app React)
 
-- Sem sidebar: cabecalho com duas linhas. Linha 1: marca, abas (icone + nome; hover com tom suave da primaria,
-  aba ativa na primaria solida, transicao de 200 ms), identidade visual, novo dashboard e "Exportar PDF" (window.print()).
-  Linha 2: filtros, "Limpar filtros" e "Atualizado em" (`generatedAt`, gravado na geracao; demos mostram a hora de abertura)
+- Sem sidebar. De cima para baixo: cabecalho so com logo e nome da empresa; titulo "Segmento · Titulo do dashboard"
+  com identidade visual, novo dashboard e "Exportar PDF" (window.print()) a direita; filtros com "Limpar filtros" e
+  "Atualizado em" (`generatedAt`, gravado na geracao; demos mostram a hora de abertura); abas (icone + nome; hover com
+  tom suave da primaria, aba ativa na primaria solida, transicao de 200 ms), presas no topo ao rolar; conteudo.
+  A frase `tab.description` e o nome da aba como titulo sairam a pedido (a aba selecionada ja mostra onde se esta)
 - Filtros (`lib/filters.ts`) recortam o que ja esta desenhado, porque os dados vem agregados; os KPIs nao mudam e o
   app avisa isso quando ha filtro ativo. Periodo: ultimos 3/6/12 pontos das series temporais (rotulos de mes, trimestre,
   ano, data). Regiao: mapas, rotas, graficos e tabelas com UF, estado ou regiao. Dimensoes: campo `filters` do JSON
   (a IA define 1 ou 2, ex.: Canal, Area), aplicado a graficos cujos rotulos ou series batem com as opcoes e a colunas
   de tabela. Cascata e funil nao sao recortados. Visual afetado ganha o selo "Filtrado"; vazio mostra aviso
-- Titulo por aba: H1 com o nome da aba e `tab.description` (a IA gera uma frase por aba)
 - Grade sem buraco: o prompt pede exatamente 4 visuais por aba (ou 3 com um largo) e `completarGrade` alarga o visual
   que ficaria sozinho na linha, entao nunca sobra celula vazia mesmo quando a IA nao obedece
 - Troca de aba com fade de 220 ms (desligado em prefers-reduced-motion)
-- No `frontend/app.html` o template pede o mesmo layout: abas no topo com hover e selecao, filtros funcionais com
-  "Limpar filtros", titulo por aba, "Atualizado em" e exatamente 4 visuais por aba
+- No `frontend/app.html` o template pede o mesmo layout: cabecalho so com logo e nome, titulo, filtros funcionais com
+  "Limpar filtros" e "Atualizado em", abas com hover e selecao, e exatamente 4 visuais por aba
 
 ## Visuais dinamicos (frontend/app.html)
 
