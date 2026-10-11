@@ -1,7 +1,5 @@
 import { useState, type Dispatch, type SetStateAction } from 'react'
 import type { UserAnswers } from '../types'
-import type { Brand } from '../lib/brand'
-import BrandStep from './BrandStep'
 
 const EXEMPLOS_OBJETIVO: Record<string, string[]> = {
   'Financeiro':         ['Ter controle do fluxo de caixa', 'Entender por que o EBITDA caiu', 'Ver centros de custo acima do orçado'],
@@ -54,16 +52,62 @@ const SEGMENTS = [
   { val: 'Outro',             icon: '＋' },
 ]
 
+/* ── Step indicator ── */
+function StepDots({ current }: { current: number }) {
+  const steps = [
+    { n: 1, label: 'Segmento' },
+    { n: 2, label: 'Contexto' },
+    { n: 3, label: 'Dashboard' },
+  ]
+  return (
+    <div className="flex items-center gap-2 mb-10">
+      {steps.map((s, i) => (
+        <div key={s.n} className="flex items-center gap-2">
+          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
+            current > s.n
+              ? 'bg-emerald-900/60 border border-emerald-600 text-emerald-400'
+              : current === s.n
+              ? 'bg-indigo-600 text-white'
+              : 'border border-slate-700 text-slate-500'
+          }`}>
+            {current > s.n ? '✓' : s.n}
+          </div>
+          {i < steps.length - 1 && (
+            <div className={`h-px w-12 transition-colors ${current > s.n + 0.5 ? 'bg-emerald-700' : 'bg-slate-800'}`} />
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/* ── Chips de exemplo ── */
+function Chips({ examples, onPick }: { examples: string[]; onPick: (v: string) => void }) {
+  return (
+    <div className="flex flex-wrap gap-1.5 mt-2">
+      {examples.map((ex) => (
+        <button
+          key={ex}
+          type="button"
+          onClick={() => onPick(ex)}
+          className="px-2.5 py-1 bg-slate-800 border border-slate-700 hover:border-slate-500 hover:text-slate-200 text-slate-400 text-xs rounded-md transition-colors"
+        >
+          {ex}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 interface Props {
   onComplete: (answers: UserAnswers) => void
   isGenerating: boolean
   error: string | null
-  brand: Brand
-  setBrand: Dispatch<SetStateAction<Brand>>
+  onOpenBrand: () => void
 }
 
-export default function ChatInterface({ onComplete, isGenerating, error, brand, setBrand }: Props) {
-  const [step, setStep] = useState<1 | 2 | 3>(1)
+export default function ChatInterface({ onComplete, isGenerating, error, onOpenBrand }: Props) {
+  const [step, setStep] = useState<1 | 2>(1)
   const [segmento, setSegmento] = useState('')
   const [objetivo, setObjetivo] = useState('')
   const [decisao, setDecisao] = useState('')
@@ -81,55 +125,6 @@ export default function ChatInterface({ onComplete, isGenerating, error, brand, 
     onComplete({ segmento, objetivo, decisao, comparacoes, metricas })
   }
 
-  /* ── Step indicator ── */
-  function StepDots() {
-    const steps = [
-      { n: 1, label: 'Segmento' },
-      { n: 2, label: 'Contexto' },
-      { n: 3, label: 'Marca' },
-      { n: 4, label: 'Dashboard' },
-    ]
-    const current = isGenerating ? 4 : step
-    return (
-      <div className="flex items-center gap-2 mb-10">
-        {steps.map((s, i) => (
-          <div key={s.n} className="flex items-center gap-2">
-            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
-              current > s.n
-                ? 'bg-emerald-900/60 border border-emerald-600 text-emerald-400'
-                : current === s.n
-                ? 'bg-indigo-600 text-white'
-                : 'border border-slate-700 text-slate-500'
-            }`}>
-              {current > s.n ? '✓' : s.n}
-            </div>
-            {i < steps.length - 1 && (
-              <div className={`h-px w-12 transition-colors ${current > s.n + 0.5 ? 'bg-emerald-700' : 'bg-slate-800'}`} />
-            )}
-          </div>
-        ))}
-      </div>
-    )
-  }
-
-  /* ── Chips de exemplo ── */
-  function Chips({ examples, onPick }: { examples: string[]; onPick: (v: string) => void }) {
-    return (
-      <div className="flex flex-wrap gap-1.5 mt-2">
-        {examples.map((ex) => (
-          <button
-            key={ex}
-            type="button"
-            onClick={() => onPick(ex)}
-            className="px-2.5 py-1 bg-slate-800 border border-slate-700 hover:border-slate-500 hover:text-slate-200 text-slate-400 text-xs rounded-md transition-colors"
-          >
-            {ex}
-          </button>
-        ))}
-      </div>
-    )
-  }
-
   function appendEx(setter: Dispatch<SetStateAction<string>>, val: string) {
     setter((prev) => (prev ? (prev.endsWith('\n') ? prev + val : prev + '\n' + val) : val))
   }
@@ -139,7 +134,7 @@ export default function ChatInterface({ onComplete, isGenerating, error, brand, 
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
         <div className="w-full max-w-lg px-6 text-center">
-          <StepDots />
+          <StepDots current={isGenerating ? 3 : step} />
           <div className="w-12 h-12 border-2 border-slate-700 border-t-indigo-500 rounded-full animate-spin mx-auto mb-6" />
           <h2 className="text-white font-semibold text-lg mb-2">Gerando seu dashboard...</h2>
           <p className="text-slate-400 text-sm">A IA está montando os KPIs e gráficos</p>
@@ -155,14 +150,20 @@ export default function ChatInterface({ onComplete, isGenerating, error, brand, 
         <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white text-xs font-bold">AI</div>
         <div>
           <h1 className="text-white font-semibold text-sm">Dashboard Generator</h1>
-          <p className="text-slate-500 text-xs">Powered by Gemini</p>
+          <p className="text-slate-500 text-xs">Powered by Ana Flavia Consultoria</p>
         </div>
+        <button
+          onClick={onOpenBrand}
+          className="ml-auto px-3 py-1.5 rounded-lg text-xs text-slate-300 bg-slate-800 border border-slate-700 hover:border-slate-500 transition-colors"
+        >
+          Identidade visual
+        </button>
       </header>
 
       {/* Content */}
       <main className="flex-1 flex justify-center px-4 py-10">
-        <div className={`w-full ${step === 3 ? 'max-w-6xl' : 'max-w-2xl'}`}>
-          <StepDots />
+        <div className="w-full max-w-2xl">
+          <StepDots current={isGenerating ? 3 : step} />
 
           {/* ── STEP 1: Segmento ── */}
           {step === 1 && (
@@ -277,6 +278,13 @@ export default function ChatInterface({ onComplete, isGenerating, error, brand, 
                 </div>
               </div>
 
+              {error && (
+                <div className="mt-4 flex items-start gap-2.5 bg-red-900/30 border border-red-700/50 rounded-xl px-4 py-3">
+                  <span className="text-red-400 mt-0.5 shrink-0">⚠</span>
+                  <p className="text-red-300 text-sm">{error}</p>
+                </div>
+              )}
+
               <div className="flex items-center justify-between mt-8">
                 <button
                   type="button"
@@ -287,46 +295,10 @@ export default function ChatInterface({ onComplete, isGenerating, error, brand, 
                 </button>
                 <button
                   type="button"
-                  onClick={() => setStep(3)}
-                  className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-6 py-2.5 rounded-lg transition-colors"
-                >
-                  Próximo →
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* ── STEP 3: Identidade visual ── */}
-          {step === 3 && (
-            <div>
-              <h2 className="text-white text-2xl font-semibold tracking-tight mb-1">Identidade visual da marca</h2>
-              <p className="text-slate-400 text-sm mb-8">
-                Opcional. Logo, cores, fonte e tema que o dashboard vai usar.
-              </p>
-
-              <BrandStep brand={brand} setBrand={setBrand} segmento={segmento} />
-
-              {error && (
-                <div className="mt-6 flex items-start gap-2.5 bg-red-900/30 border border-red-700/50 rounded-xl px-4 py-3">
-                  <span className="text-red-400 mt-0.5 shrink-0">⚠</span>
-                  <p className="text-red-300 text-sm">{error}</p>
-                </div>
-              )}
-
-              <div className="flex items-center justify-between mt-8">
-                <button
-                  type="button"
-                  onClick={() => setStep(2)}
-                  className="text-slate-400 hover:text-white text-sm transition-colors"
-                >
-                  ← Voltar
-                </button>
-                <button
-                  type="button"
                   onClick={handleSubmit}
                   className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-6 py-2.5 rounded-lg transition-colors"
                 >
-                  {brand.ativo ? 'Gerar dashboard com a marca' : 'Gerar dashboard'}
+                  Gerar dashboard
                 </button>
               </div>
             </div>

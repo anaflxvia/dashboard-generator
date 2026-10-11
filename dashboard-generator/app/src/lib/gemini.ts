@@ -1,4 +1,7 @@
 import type { DashboardData, UserAnswers } from '../types'
+import { CATALOGO_VISUAIS, REGRAS_VISUALIZACAO } from './dashboardGuide'
+import { playbookParaPrompt } from './segmentPlaybooks'
+import { normalizarDashboard } from './normalize'
 
 function getApiKey(): string {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY
@@ -21,70 +24,46 @@ export async function generateDashboard(answers: UserAnswers): Promise<Dashboard
 
   const prompt = `Gere dados de dashboard realistas e fictícios baseados no contexto abaixo.
 
+CONTEXTO DO USUÁRIO:
 Segmento: ${answers.segmento}
 Objetivo: ${answers.objetivo}
 Decisão estratégica: ${answers.decisao}
 Comparações desejadas: ${answers.comparacoes}
 Métricas importantes: ${answers.metricas}
 
-Retorne SOMENTE um JSON válido com esta estrutura exata (sem markdown, sem explicações):
+${playbookParaPrompt(answers.segmento)}
+
+${CATALOGO_VISUAIS}
+
+${REGRAS_VISUALIZACAO}
+
+FORMATO DE SAÍDA: retorne SOMENTE um JSON válido (sem markdown, sem explicações) com esta estrutura.
+Os valores abaixo mostram o formato de cada campo, não o conteúdo: escolha abas, KPIs e visuais pelo segmento e pelo objetivo.
 {
-  "title": "Título do Dashboard",
-  "segment": "Nome do Segmento",
-  "summary": "Resumo de 1-2 frases do dashboard",
+  "title": "Título do dashboard",
+  "segment": "${answers.segmento}",
+  "summary": "1 ou 2 frases com o principal insight",
   "tabs": [
     {
-      "name": "Nome da Aba",
+      "name": "Nome da aba",
+      "icon": "nome-do-icone",
       "kpis": [
-        { "label": "Nome do KPI", "value": "1.234", "change": "+12,3%", "trend": "up", "goodWhen": "up" },
-        { "label": "Nome do KPI", "value": "R$ 45.2K", "change": "-3,1%", "trend": "down", "goodWhen": "down" },
-        { "label": "Nome do KPI", "value": "98,5%", "change": "+0,5%", "trend": "up", "goodWhen": "up" },
-        { "label": "Nome do KPI", "value": "234", "change": "0,0%", "trend": "neutral", "goodWhen": "up" }
+        { "label": "Nome do KPI", "value": "R$ 3,78", "change": "-2,1%", "trend": "down", "goodWhen": "down", "icon": "nome-do-icone", "sparkline": [4.1, 4.0, 3.95, 3.9, 3.86, 3.8, 3.78] }
       ],
       "charts": [
-        {
-          "title": "Título do Gráfico",
-          "type": "bar",
-          "labels": ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"],
-          "datasets": [
-            { "label": "Série A", "data": [120, 145, 132, 167, 153, 189] },
-            { "label": "Série B", "data": [98, 112, 108, 134, 121, 145] }
-          ]
-        },
-        {
-          "title": "Título do Gráfico 2",
-          "type": "line",
-          "labels": ["Sem 1", "Sem 2", "Sem 3", "Sem 4"],
-          "datasets": [
-            { "label": "Métrica Principal", "data": [85, 92, 88, 96] }
-          ]
-        }
+        { "title": "Insight do gráfico", "subtitle": "O que está sendo medido", "type": "um tipo do catálogo", "unit": "R$", "labels": ["..."], "datasets": [{ "label": "...", "data": [0] }] }
       ],
       "tables": [
-        {
-          "title": "Título da Tabela",
-          "columns": ["Coluna 1", "Coluna 2", "Coluna 3", "Coluna 4", "Status"],
-          "rows": [
-            ["Valor A1", "Valor B1", "Valor C1", "Valor D1", "Ativo"],
-            ["Valor A2", "Valor B2", "Valor C2", "Valor D2", "Pendente"],
-            ["Valor A3", "Valor B3", "Valor C3", "Valor D3", "Ativo"],
-            ["Valor A4", "Valor B4", "Valor C4", "Valor D4", "Inativo"],
-            ["Valor A5", "Valor B5", "Valor C5", "Valor D5", "Ativo"],
-            ["Valor A6", "Valor B6", "Valor C6", "Valor D6", "Pendente"]
-          ]
-        }
+        { "title": "Título", "columns": ["Coluna 1", "Status"], "rows": [["Valor", "Ativo"]] }
       ]
     }
   ]
 }
 
-Crie exatamente 5 abas relevantes para o segmento "${answers.segmento}".
-Use dados brasileiros realistas (moeda em R$, datas em pt-BR, nomes brasileiros nas tabelas).
-Os valores devem ser plausíveis para um negócio real.
-trend deve ser "up", "down" ou "neutral" (direcao da mudanca).
-goodWhen indica o sentido favoravel do KPI: "up" quando maior e melhor (receita, conversao, OTIF), "down" quando menor e melhor (custo, tempo, atraso, churn, inadimplencia).
-type dos charts deve ser "bar", "line", "pie" ou "doughnut".
-Para pie/doughnut, use apenas 1 dataset com 5-7 itens.`
+Crie exatamente 5 abas relevantes para o segmento e o objetivo.
+Use dados brasileiros realistas (moeda em R$, números em pt-BR nos textos, nomes brasileiros nas tabelas).
+Nos arrays "data", "sparkline" e "value" das rotas use números puros (ponto decimal, sem R$ nem %).
+Status nas tabelas: Ativo, Concluído, Aprovado, Pago, Pendente, Em andamento, Em análise, Inativo, Cancelado, Reprovado ou Atrasado.`
 
   // gemini-2.5-* deixou de aceitar chaves novas; 3.6 Flash fica como reserva
   const models = ['gemini-3.8-flash', 'gemini-3.6-flash']
@@ -121,7 +100,8 @@ Para pie/doughnut, use apenas 1 dataset com 5-7 itens.`
     const result = await response.json() as {
       candidates?: Array<{ content?: { parts?: Array<{ text?: string; thought?: boolean }> } }>
     }
-    text = (result.candidates?.[0]?.content?.parts ?? []).filter(p => p.text && !p.thought).map(p => p.text).join('') || undefined
+    // junta todas as partes de texto, ignorando as partes de raciocinio
+    text = (result.candidates?.[0]?.content?.parts ?? []).filter((p) => p.text && !p.thought).map((p) => p.text).join('') || undefined
     break
   }
 
@@ -129,7 +109,8 @@ Para pie/doughnut, use apenas 1 dataset com 5-7 itens.`
 
   try {
     const cleaned = cleanJSON(text)
-    return JSON.parse(cleaned) as DashboardData
+    // garante campos e tipos que os componentes esperam (mapa sem UF valida vira ranking etc.)
+    return normalizarDashboard(JSON.parse(cleaned) as DashboardData)
   } catch {
     throw new Error('Não foi possível processar os dados gerados. Tente novamente.')
   }

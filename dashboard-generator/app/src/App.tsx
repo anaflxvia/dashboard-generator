@@ -1,24 +1,26 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import ChatInterface from './components/ChatInterface'
 import Dashboard from './components/Dashboard'
-import { generateDashboard } from './lib/anthropic'
+import BrandSettings from './components/BrandSettings'
+import { loadBrand, type Brand } from './lib/brand'
+import { generateDashboard } from './lib/gemini'
 import { gerarEmbedding, geminiConfigurado } from './services/embeddings'
 import { buscarSimilar, salvarDashboard } from './services/dashboardCache'
 import type { DashboardData, UserAnswers } from './types'
-import { carregarBrand, salvarBrand, type Brand } from './lib/brand'
+import { EXEMPLO_LOGISTICA } from './lib/exemplos'
 
-type AppState = 'chat' | 'dashboard'
+// ?demo=logistica abre direto um dashboard de exemplo com todos os tipos de visual
+const DEMO = new URLSearchParams(window.location.search).get('demo') === 'logistica' ? EXEMPLO_LOGISTICA : null
+
+type AppState = 'chat' | 'dashboard' | 'brand'
 
 export default function App() {
-  const [state, setState] = useState<AppState>('chat')
+  const [state, setState] = useState<AppState>(DEMO ? 'dashboard' : 'chat')
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(DEMO)
   const [fromCache, setFromCache] = useState(false)
-  const [brand, setBrand] = useState<Brand>(carregarBrand)
-
-  // a marca e so apresentacao: nao entra no prompt nem no cache, e fica salva no navegador
-  useEffect(() => { salvarBrand(brand) }, [brand])
+  const [brand, setBrand] = useState<Brand>(loadBrand)
 
   async function handleChatComplete(answers: UserAnswers) {
     setIsGenerating(true)
@@ -76,8 +78,26 @@ export default function App() {
     setState('chat')
   }
 
+  if (state === 'brand') {
+    return (
+      <BrandSettings
+        initial={brand}
+        onSaved={setBrand}
+        onBack={() => setState(dashboardData ? 'dashboard' : 'chat')}
+      />
+    )
+  }
+
   if (state === 'dashboard' && dashboardData) {
-    return <Dashboard data={dashboardData} onBack={handleBack} fromCache={fromCache} brand={brand} />
+    return (
+      <Dashboard
+        data={dashboardData}
+        brand={brand}
+        onBack={handleBack}
+        onOpenBrand={() => setState('brand')}
+        fromCache={fromCache}
+      />
+    )
   }
 
   return (
@@ -85,8 +105,7 @@ export default function App() {
       onComplete={handleChatComplete}
       isGenerating={isGenerating}
       error={error}
-      brand={brand}
-      setBrand={setBrand}
+      onOpenBrand={() => setState('brand')}
     />
   )
 }

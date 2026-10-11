@@ -2,7 +2,7 @@
 
 ## O que é este projeto
 
-Aplicação frontend que gera dashboards HTML completos e interativos usando IA (Gemini 2.5 Pro).
+Aplicação frontend que gera dashboards HTML completos e interativos usando IA (Gemini 3.8 Flash).
 O usuário responde um questionário de contexto, a aplicação monta um prompt estruturado e envia para a API do Gemini, que retorna um dashboard HTML funcional renderizado diretamente no navegador.
 
 ## Estrutura
@@ -10,18 +10,25 @@ O usuário responde um questionário de contexto, a aplicação monta um prompt 
 ```
 dashboard-generator/                 (raiz do repo)
 ├── CLAUDE.md
+├── docs/
+│   └── guia-visuais-dashboard.md    guia de visuais: qual grafico usar, quando e como (base de conhecimento dos prompts)
 ├── server.py                        servidor local que serve frontend/ injetando chaves do .env
 ├── frontend/
-│   └── app.html                     versao original em HTML unico (com identidade visual white-label)
+│   └── app.html                     versao original em HTML unico
 └── dashboard-generator/app/         app Vite + React + TS (versao deployada na Vercel)
     ├── vercel.json
     ├── .env                         VITE_GEMINI_API_KEY, VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY (nao versionado)
     └── src/
         ├── App.tsx
-        ├── components/              ChatInterface, Dashboard, BrandStep (etapa de identidade visual)
+        ├── components/              ChatInterface, Dashboard, BrandSettings
+        │   └── visuals/             VisualCard (escolhe o visual pelo type), ChartJsChart, BrazilMap, HtmlCharts, Icone
         ├── lib/gemini.ts            monta o prompt e chama o Gemini
-        ├── lib/brand.ts             tokens da marca, contraste, export Figma (mesma logica do app.html)
-        ├── lib/dadosExemplo.ts      dados ficticios da previa da marca
+        ├── lib/dashboardGuide.ts    catalogo de visuais e regras injetados no prompt (resumo do guia)
+        ├── lib/segmentPlaybooks.ts  playbook por segmento: abas, KPIs com icone e visuais assinatura
+        ├── lib/normalize.ts         valida o JSON da IA e converte o que nao da para desenhar; SCHEMA_VERSION
+        ├── lib/icons.ts             lista fechada de icones (lucide-react) e reserva por palavra-chave
+        ├── lib/brasil.ts            estados do Brasil (paths SVG, centroides, busca por sigla ou nome)
+        ├── lib/exemplos.ts          dashboard de exemplo de logistica (?demo=logistica)
         └── services/
             ├── embeddings.ts        embeddings do Gemini para as respostas do questionario
             └── dashboardCache.ts    cache semantico no Supabase (rpc match_dashboards)
@@ -33,7 +40,7 @@ Existem duas versoes do app: `frontend/app.html` (HTML unico) e o app React em `
 
 Fluxo em 3 telas:
 
-1. Questionário — usuário seleciona segmento, responde 5 perguntas em texto livre e, opcionalmente, configura a identidade visual da marca (etapa 6 no `frontend/app.html`, etapa 3 no app React)
+1. Questionário — usuário seleciona segmento e responde 5 perguntas em texto livre
 2. Prompt gerado — aplicação monta o prompt automaticamente com KPIs do segmento, usuário pode editar
 3. Dashboard — Gemini recebe o prompt e retorna HTML completo renderizado em iframe
 
@@ -84,37 +91,83 @@ O `vercel.json` fica dentro dessa pasta, porque a Vercel so le o arquivo a parti
 - Dashboard gerado em iframe isolado para evitar conflito de CSS/JS
 - Dados dos dashboards sao sempre ficticios e gerados pela IA
 
+## Identidade visual (white-label)
+
+No `frontend/app.html` a identidade fica na etapa 6 do questionario (bloco `IDENTIDADE VISUAL`, chave
+`localStorage['dashgen_brand']`), com temas claro e escuro, presets e export para o Figma. O app React usa a
+versao abaixo, mais simples, com chave propria (`dashboard_brand`).
+
+### App React
+
+- Tela `components/BrandSettings.tsx`, acessada pelo botao "Identidade visual" no questionario e na sidebar do dashboard
+- Configura nome, logo (PNG/SVG/JPG/WebP, ate 512 KB, de 32 a 2048 px) e 5 cores: primaria, secundaria, fundo, superficie, texto
+- `lib/brand.ts` deriva os demais tokens (texto sobre primaria, texto secundario, borda, hover) e expoe tudo como variaveis CSS `--brand-*`; o `Dashboard.tsx` usa so essas variaveis (`bg-(--brand-surface)` etc.)
+- Contraste WCAG 2.1 AA checado em tempo real. Texto < 4.5:1 bloqueia o salvamento; elementos graficos < 3:1 so geram aviso
+- Cores de status (sucesso/erro/alerta) trocam de tom conforme o fundo for claro ou escuro, para manter contraste
+- Graficos: series 1 e 2 usam primaria e secundaria; as demais usam uma paleta fixa
+- Salva em localStorage (`dashboard_brand`), por navegador. A marca nao entra no prompt: o Gemini devolve so dados, a aparencia e toda do app
+
 ## Prompt estrutura
 
-O prompt enviado ao Gemini tem 4 camadas, mais uma quando a marca esta ativa:
+O prompt enviado ao Gemini tem sempre 4 camadas:
 1. Contexto (respostas do usuario — objetivo, decisao, comparacoes)
 2. Abas especificas do segmento
 3. KPIs obrigatorios do segmento + extras do usuario
-4. Template fixo de requisitos tecnicos (dark mode, Chart.js, responsivo, cores, skeleton), montado por `montarTemplateFixo(paleta)`
-5. Identidade visual da marca (opcional): tokens dos temas claro e escuro, fonte, logo e regras de botoes; substitui cores, fonte e tema do template
+4. Template fixo de requisitos tecnicos (dark mode, Chart.js, responsivo, cores, skeleton)
 
-Sem a marca ativa, o template sai identico ao original (`PALETA_TEMPLATE_PADRAO`).
+## Conhecimento de visualizacao (guia de visuais)
 
-## Identidade visual (white-label)
+Fonte de verdade: `docs/guia-visuais-dashboard.md` — qual visual usar para cada pergunta
+(resumo, tendencia, comparacao, composicao, distribuicao, geoespacial) e as regras de ouro
+(data-ink, cores com proposito, layout em Z/F, interatividade).
 
-Opcional nas duas versoes: etapa 6 em `frontend/app.html` (bloco `IDENTIDADE VISUAL`) e etapa 3 no app React (`BrandStep.tsx` + `lib/brand.ts`). As duas usam a mesma chave `localStorage['dashgen_brand']`.
+O guia entra nos prompts em versao resumida, em dois lugares que precisam ficar sincronizados:
+- App React: `CATALOGO_VISUAIS` e `REGRAS_VISUALIZACAO` em `lib/dashboardGuide.ts`, limitados aos tipos que
+  `components/visuals` renderiza (ver "Visuais dinamicos" abaixo)
+- HTML unico: bloco "REGRAS DE VISUALIZACAO" no `TEMPLATE_FIXO` de `frontend/app.html`, que cobre o guia
+  quase todo (bullet chart, cascata, scatter, heatmap), porque ali o Gemini escreve o HTML inteiro
 
-- Entrada: nome da empresa, logo (PNG/JPG/SVG/WebP ate 2 MB; bitmaps reduzidos a 320px), 4 cores por tema (primaria, secundaria, fundo, superficie), fonte e tema inicial
-- Paletas de partida em `BRAND_PRESETS`
-- `derivarTokens(modo)` calcula texto, bordas, sidebar e texto sobre primaria/secundaria (branco ou grafite, o de maior contraste)
-- Cores semanticas (sucesso, erro, alerta, info) sao fixas e reservadas para status, nunca usadas como serie de grafico
-- Checagem WCAG no painel: 4,5:1 para texto, 3:1 para componentes e graficos (so alerta, nao bloqueia)
-- Prototipo ao vivo: `montarPrototipoHTML()` gera um dashboard local, sem IA, em iframe (sidebar, logo, 4 KPIs do segmento, barras, linha realizado vs meta, tabela e tela de design system). Dados deterministicos; filtros de periodo e regiao recalculam tudo; alteracoes chegam por `postMessage`
-- Logo fora do prompt: a IA usa o placeholder `__BRAND_LOGO__` e `injetarLogoMarca()` troca pelo arquivo na exibicao, inclusive no cache
-- Export: JSON no formato Tokens Studio (sets global, light, dark e $themes) para importar no Figma
-- Persistencia: `localStorage['dashgen_brand']`; se o logo exceder a cota, vale so na sessao
+Regras garantidas por codigo no app React (nao dependem da IA obedecer):
+- `horizontalBar` sempre ordenado do maior para o menor
+- Eixo de valor comeca em zero em barras e areas (linhas podem focar na variacao)
+- Data-ink: sem borda de eixo, grade so no eixo de valor, legenda escondida com 1 serie, linhas sem marcadores
+- Sparkline opcional nos KPIs (`kpi.sparkline`), linha limpa sem eixos
 
-No app React a marca e so apresentacao: o Gemini gera JSON de dados e o `Dashboard.tsx` aplica os tokens como CSS vars (`bg-[var(--surface)]` etc.). Por isso a marca nao entra no prompt nem no cache semantico, e trocar cores nao exige gerar de novo.
-- Previa: o proprio `Dashboard` com `embedded` e `modo` fixo, alimentado por `dadosExemplo(segmento)`
-- Botao de tema claro/escuro no topo do dashboard; tema inicial vem da marca (padrao escuro sem marca)
-- Grades de KPIs e graficos usam container queries (`@container`), para funcionar tanto na tela cheia quanto na previa
-- KPI tem `goodWhen` ('up' ou 'down'): a seta mostra a direcao e a cor mostra se a mudanca e favoravel. Dashboards antigos do cache sem o campo assumem 'up'
-- O filtro de periodo do topo continua demonstrativo (nao recalcula os dados gerados)
+Decisoes tomadas ao aplicar o guia:
+- Pizza/rosca limitada a 2-3 fatias (antes o prompt do React pedia 5-7)
+- Gauges trocados por bullet chart nos segmentos do `KPI_BASE`
+- Roscas com muitas categorias no `KPI_BASE` viraram barras horizontais ordenadas
+- No `TEMPLATE_FIXO`: rosca de alocacao virou 3 fatias com total no centro; volatilidade limitada a 4 linhas
+- Nao aplicado ainda: paleta "80% neutra" (graficos seguem primaria/secundaria da marca), small multiples,
+  rotulos diretos na ponta das linhas, scatter e treemap no app React
+- Dashboards antigos no cache do Supabase sao ignorados pelo `SCHEMA_VERSION` (ver abaixo)
+
+## Visuais dinamicos (app React)
+
+Problema que resolveu: o gerador entregava sempre barra, rosca e tabela, porque o app so sabia desenhar
+esses tipos e o prompt nao tinha nenhum conhecimento do segmento.
+
+- Tipos de `chart.type`: `bar`, `horizontalBar`, `stackedBar`, `line`, `area`, `pie`, `doughnut`, `waterfall`,
+  `bullet`, `funnel`, `heatmap`, `mapUF`, `routeMap`. Formato de cada um em `CATALOGO_VISUAIS`
+- Campos novos: `chart.subtitle`, `chart.unit` (formata tooltips, eixos e rankings), `chart.span` (2 = linha inteira),
+  `chart.routes` (routeMap), `chart.goodWhen` (cores da cascata), `kpi.icon`, `kpi.goodWhen`, `tab.icon`
+- Mapas: `@svg-maps/brazil` (CC BY 4.0, Victor Cazanave). Centroides calculados em `lib/brasil.ts` para ancorar rotas.
+  UF aceita sigla ou nome. O coropletico usa escala de uma cor so (neutro ate a primaria) e lista os 5 maiores ao lado;
+  o de rotas desenha arcos com espessura pelo volume e tracejado animado no sentido da rota (desliga com reduced-motion)
+- Icones: lista fechada em `lib/icons.ts` (nomes do lucide.dev, que o modelo conhece). Nome invalido ou ausente cai
+  na reserva por palavra-chave do rotulo (custo -> wallet, km -> fuel, frota -> truck...)
+- Cascata: 1o valor e o total inicial, os demais sao variacoes; o total final e calculado no app. Quando as variacoes
+  sao pequenas perto do total, o eixo nao parte do zero (unica excecao a regra), senao elas somem
+- Prompt: playbook do segmento (`lib/segmentPlaybooks.ts`) + catalogo + regras de variedade (no maximo 1 visual de
+  cada tipo por aba, pelo menos 6 tipos no dashboard, no maximo 4 barras somadas). O exemplo de JSON do prompt
+  deixou de ser um dashboard de barras, porque o modelo copiava o molde
+- `normalizarDashboard` roda na resposta da IA e no cache: mapa com menos de 3 UFs validas vira ranking,
+  pizza com mais de 3 fatias vira ranking, bullet sem meta vira ranking, rota sem UF valida e descartada,
+  `goodWhen` ausente e inferido pelo rotulo
+- `SCHEMA_VERSION` (hoje 2) vai junto no JSON salvo no Supabase. A busca pede os 5 mais parecidos e usa o
+  primeiro da versao atual, para nao devolver dashboards no formato antigo
+- `?demo=logistica` abre um dashboard de exemplo com todos os visuais, sem chamar o Gemini
+- Pendente: testar o prompt novo com o Gemini em todos os segmentos e ajustar playbooks pelo resultado
 
 ## Principios de desenvolvimento (baseado no metodo Akita)
 

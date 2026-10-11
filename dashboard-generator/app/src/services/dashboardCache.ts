@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import type { UserAnswers, DashboardData } from '../types'
+import { SCHEMA_VERSION, normalizarDashboard } from '../lib/normalize'
 
 function getClient() {
   const raw = import.meta.env.VITE_SUPABASE_URL as string | undefined
@@ -18,7 +19,7 @@ export async function buscarSimilar(embedding: number[]): Promise<DashboardData 
   const { data, error } = await supabase.rpc('match_dashboards', {
     query_embedding: embedding,
     match_threshold: 0.85,
-    match_count: 1,
+    match_count: 5, // os mais parecidos podem ser do formato antigo; usa o primeiro do formato atual
   })
 
   if (error) {
@@ -26,15 +27,17 @@ export async function buscarSimilar(embedding: number[]): Promise<DashboardData 
     return null
   }
 
-  const row = (data as Array<{ html_gerado: string }> | null)?.[0]
-  if (!row?.html_gerado) return null
-
-  try {
-    return JSON.parse(row.html_gerado) as DashboardData
-  } catch {
-    console.warn('[cache] Falha ao parsear dashboard cacheado')
-    return null
+  // resultados vem do mais para o menos similar
+  for (const row of (data as Array<{ html_gerado: string }> | null) ?? []) {
+    try {
+      const cached = JSON.parse(row.html_gerado) as DashboardData
+      // formato antigo (sem icones, mapas etc.): ignora, para nao devolver o dashboard engessado
+      if (cached.version === SCHEMA_VERSION) return normalizarDashboard(cached)
+    } catch {
+      console.warn('[cache] Falha ao parsear dashboard cacheado')
+    }
   }
+  return null
 }
 
 export async function salvarDashboard(

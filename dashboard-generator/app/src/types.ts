@@ -17,9 +17,10 @@ export interface KPI {
   label: string
   value: string
   change: string
-  trend: 'up' | 'down' | 'neutral'
-  /* sentido favoravel: 'down' para custo, tempo, atraso, churn... (dashboards antigos do cache nao tem) */
-  goodWhen?: 'up' | 'down'
+  trend: 'up' | 'down' | 'neutral' // direcao da mudanca
+  goodWhen?: 'up' | 'down' // sentido favoravel: custo, tempo e atraso sao 'down'
+  icon?: string // nome de icone da lista ICON_NAMES (lib/icons.ts)
+  sparkline?: number[] // historico recente; opcional (dashboards antigos do cache nao tem)
 }
 
 export interface ChartDataset {
@@ -27,11 +28,38 @@ export interface ChartDataset {
   data: number[]
 }
 
+export type ChartType =
+  | 'bar'
+  | 'horizontalBar'
+  | 'stackedBar'
+  | 'line'
+  | 'area'
+  | 'pie'
+  | 'doughnut'
+  | 'waterfall'
+  | 'bullet'
+  | 'funnel'
+  | 'heatmap'
+  | 'mapUF'
+  | 'routeMap'
+
+// trecho do mapa de rotas: origem e destino sao siglas de UF
+export interface RouteLink {
+  from: string
+  to: string
+  value: number
+}
+
 export interface ChartConfig {
   title: string
-  type: 'bar' | 'line' | 'pie' | 'doughnut'
+  subtitle?: string
+  type: ChartType
   labels: string[]
   datasets: ChartDataset[]
+  routes?: RouteLink[] // so no routeMap
+  unit?: string // "R$", "%", "km", "viagens"... usado em tooltips, legendas e rotulos
+  span?: 1 | 2 // 2 = ocupa a linha inteira da grade
+  goodWhen?: 'up' | 'down' // cascata: em custos, queda e ganho (verde)
 }
 
 export interface TableData {
@@ -42,12 +70,14 @@ export interface TableData {
 
 export interface DashboardTab {
   name: string
+  icon?: string
   kpis: KPI[]
   charts: ChartConfig[]
   tables: TableData[]
 }
 
 export interface DashboardData {
+  version?: number // versao do formato; o cache ignora dashboards de versoes antigas
   title: string
   segment: string
   summary: string

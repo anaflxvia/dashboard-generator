@@ -31,3 +31,15 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #64748b;
 }
+
+/* mapa de rotas: tracejado andando no sentido origem -> destino */
+.route-flow {
+  stroke-dasharray: 2 10;
+  animation: route-flow 1.4s linear infinite;
+}
+@keyframes route-flow {
+  to { stroke-dashoffset: -12; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .route-flow { animation: none; }
+}
