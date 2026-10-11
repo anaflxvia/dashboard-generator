@@ -73,5 +73,8 @@ function normalizarAba(t: DashboardTab): DashboardTab {
 }
 
 export function normalizarDashboard(d: DashboardData): DashboardData {
-  return { ...d, version: SCHEMA_VERSION, tabs: (d.tabs ?? []).map(normalizarAba) }
+  const filters = (Array.isArray(d.filters) ? d.filters : [])
+    .filter((f) => f && typeof f.label === 'string' && Array.isArray(f.options))
+    .map((f) => ({ label: f.label, options: f.options.map(String) }))
+  return { ...d, version: SCHEMA_VERSION, filters, tabs: (d.tabs ?? []).map(normalizarAba) }
 }

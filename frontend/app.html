@@ -708,8 +708,13 @@ const ICONES_PERMITIDOS = 'activity, alert-triangle, award, banknote, bar-chart,
 function montarTemplateFixo(c) { return `
 ESTRUTURA GERAL:
 ${c.linhaTema}
-- Layout: sidebar fixa a esquerda (240px) com logo no topo, icone + label em cada item, separadores de secao, avatar/usuario no rodape
-- Topbar: titulo da aba ativa, barra de filtros (periodo com presets: Hoje / 7d / 30d / 90d / Custom), filtro por regiao e departamento, botao exportar PDF (visual apenas)
+- Layout SEM sidebar: cabecalho fixo no topo (position:sticky; top:0) com duas linhas
+- Linha 1 do cabecalho: logo/nome a esquerda; ABAS no centro como botoes horizontais (icone lucide + nome, rolagem horizontal se nao couber); a direita botao de tema claro/escuro e botao "Exportar PDF" (window.print())
+- Abas: transition: background-color .2s, color .2s, transform .2s. Hover: fundo da primaria a 14% de opacidade, texto na cor primaria e icone com transform:scale(1.1). Aba selecionada: fundo da primaria solido, texto na cor sobre a primaria, peso 600 e aria-selected="true". cursor:pointer em todas
+- Linha 2 do cabecalho (barra de filtros, acima de todo o conteudo): icone de funil + "Filtros"; selects de Periodo (Ultimos 3 / 6 / 12 meses, Tudo), Regiao (Norte, Nordeste, Centro-Oeste, Sudeste, Sul) quando houver dado por UF ou regiao, e 1 ou 2 dimensoes do segmento (ex.: Canal, Area, Tipo de veiculo); select com filtro escolhido fica com borda e fundo suave da primaria. Botao "Limpar filtros" (volta todos para "todos"; desabilitado quando nada esta filtrado). A direita, texto "Atualizado em DD/MM/AAAA as HH:MM" com icone de relogio, preenchido com new Date() no carregamento
+- Filtros FUNCIONAIS: ao mudar um select, recorte os dados ja desenhados (series temporais ficam com os ultimos N pontos; graficos e tabelas por regiao ou dimensao mostram so a opcao escolhida) e chame chart.update(); visuais afetados mostram um selo "Filtrado"; sem dados, mostre "Sem dados para os filtros escolhidos". Guarde os dados originais de cada grafico para o "Limpar filtros" restaurar
+- Titulo de cada aba: no topo do conteudo da aba, H1 com o nome da aba (24px peso 600) e abaixo uma frase em cor secundaria dizendo o que a aba responde
+- Troca de aba com fade curto (opacity e translateY 6px, 200ms), desligado em prefers-reduced-motion
 - Tipografia: importar Inter via Google Fonts; hierarquia: 28px bold para numeros grandes, 13px medium para labels, 11px para subtextos
 
 DESIGN DOS KPI CARDS (OBRIGATORIO):
@@ -717,7 +722,7 @@ DESIGN DOS KPI CARDS (OBRIGATORIO):
 - Cada card: flex:1; min-width:150px; padding:20px; border-radius:14px; background do card; border:1px solid borda sutil
 - Conteudo de cada card:
   - Icone no canto superior direito: <span class="kpi-icon"><i data-lucide="NOME"></i></span>, onde NOME representa o KPI (ex.: custo por km = fuel, frota = truck, OTIF = package-check). O span tem 34x34px, border-radius:10px, fundo da cor primaria a 14% de opacidade e color da primaria; o svg dentro tem 18x18px. NAO desenhe o SVG do icone: o sistema troca o <i data-lucide> pelo icone.
-  - Use SOMENTE estes nomes de icone: ${ICONES_PERMITIDOS}. Os mesmos icones servem para os itens da sidebar (um por aba, coerente com o tema da aba)
+  - Use SOMENTE estes nomes de icone: ${ICONES_PERMITIDOS}. Os mesmos icones servem para as abas do cabecalho (um por aba, coerente com o tema da aba)
   - Label em cima (12px, cor texto secundario, uppercase, letter-spacing:0.05em)
   - Valor principal (28px, font-weight:700, cor texto primario)
   - Linha inferior: variacao percentual com seta ▲ ou ▼ (direcao da mudanca) + texto "vs mes anterior" em cinza. A cor mostra se a mudanca e favoravel: verde (${c.success}) quando bom, vermelho (${c.danger}) quando ruim. Custo, tempo, atraso, churn e inadimplencia caindo sao VERDES
@@ -726,7 +731,7 @@ DESIGN DOS KPI CARDS (OBRIGATORIO):
 REQUISITOS POR ABA (OBRIGATORIO):
 - 6 KPI cards na linha horizontal
 - 2 stat highlights isolados: numeros grandes (48px bold) com descricao e badge de status colorido
-- 4 visuais em grid 2x2 — cada um dentro de um card com header (titulo + subtitulo + badge de periodo). Podem ser graficos Chart.js ou os VISUAIS ESPECIAIS abaixo; no maximo 1 visual de cada tipo por aba
+- EXATAMENTE 4 visuais em grid 2x2 — cada um dentro de um card com header (titulo + subtitulo + badge de periodo). Podem ser graficos Chart.js ou os VISUAIS ESPECIAIS abaixo; no maximo 1 visual de cada tipo por aba. Nunca deixe uma celula da grade vazia: se um visual ocupar a linha inteira (grid-column:1/-1), a aba tem 3 visuais (1 largo + 2)
 
 DESIGN DOS CARDS DE GRAFICO:
 - Cada card de grafico: border-radius:16px; padding:24px; background do card; border:1px solid borda
@@ -806,7 +811,7 @@ TABELA DE DADOS EM PELO MENOS 1 ABA (OBRIGATORIO):
 REGRA DE ABAS INCOMPLETAS (OBRIGATORIO):
 - So gere abas que tenham conteudo COMPLETO: minimo 2 visuais funcionais (canvas Chart.js ou container com data-visual) e minimo 4 KPI cards
 - Se nao houver dados ou contexto suficiente para preencher uma aba completamente, OMITA essa aba do dashboard — nao gere aba vazia, com placeholder, com "em breve" ou com menos de 2 graficos
-- Cada item da sidebar que aponta para uma aba DEVE ter o atributo data-tab="[id-do-container-da-aba]" — ex: <li data-tab="aba-resumo" onclick="trocarAba('aba-resumo')">
+- Cada botao de aba do cabecalho DEVE ter o atributo data-tab="[id-do-container-da-aba]" — ex: <li data-tab="aba-resumo" onclick="trocarAba('aba-resumo')">
 - O id do container de cada aba DEVE seguir o padrao: id="aba-[nome]" — ex: id="aba-resumo", id="aba-alocacao"
 - Isso e obrigatorio para que o sistema de validacao automatica funcione corretamente
 
@@ -864,7 +869,7 @@ REQUISITOS TECNICOS DE INICIALIZACAO (CRITICO):
 REQUISITOS TECNICOS FINAIS:
 - CSS custom properties no :root para todas as cores — facil troca dark/light
 - Scrollbar customizada: width:6px, track transparente, thumb rgba(${c.primaryRgb},0.4)
-- Sidebar: item ativo com background accent-bg e borda esquerda 3px solid ${c.primary}
+- Abas do cabecalho: hover com fundo accent-bg e texto ${c.primary}; aba ativa com fundo ${c.primary} solido
 - Responsivo: funciona em 1440px e 1024px
 - TODOS os dados sao ficticios mas hiper-realistas — valores, nomes, regioes e datas coerentes com o segmento e contexto informado`;
 }
@@ -1592,14 +1597,14 @@ function montarBlocoMarca(b = brand) {
     .map(k => `--${k}: ${t[k]}`).join('; ');
   const nome = b.nome.trim() || 'Empresa Demo';
   const logo = b.logo
-    ? `- Logo: no topo da sidebar e no header use exatamente <img class="brand-logo" src="__BRAND_LOGO__" alt="${nome.replace(/"/g, '')}" style="max-height:32px;max-width:140px;object-fit:contain">. NAO altere o valor do src: o sistema substitui pelo arquivo real.`
+    ? `- Logo: no cabecalho, a esquerda das abas, use exatamente <img class="brand-logo" src="__BRAND_LOGO__" alt="${nome.replace(/"/g, '')}" style="max-height:32px;max-width:140px;object-fit:contain">. NAO altere o valor do src: o sistema substitui pelo arquivo real.`
     : `- Logo: a empresa nao enviou arquivo. Use um monograma com as iniciais "${siglaMarca(b)}" em um quadrado 32x32 com cantos de 8px, fundo var(--primary) e texto var(--on-primary).`;
   const cabecalho = b.doSegmento
     ? `TEMA VISUAL DO SEGMENTO (OBRIGATORIO; estilo "${b.estilo}" da skill ui-ux-pro-max; estas regras substituem qualquer cor, fonte ou tema citados acima):
-- Sem marca de empresa: use o titulo do dashboard no topo da sidebar, com um icone lucide do segmento em um quadrado 32x32 com cantos de 8px, fundo var(--primary) e cor var(--on-primary).
+- Sem marca de empresa: use o titulo do dashboard no cabecalho, a esquerda das abas, com um icone lucide do segmento em um quadrado 32x32 com cantos de 8px, fundo var(--primary) e cor var(--on-primary).
 `
     : `IDENTIDADE VISUAL DA MARCA (OBRIGATORIO; estas regras substituem qualquer cor, fonte, logo ou tema citados acima):
-- Empresa: ${nome}. Use o nome no topo da sidebar, ao lado do logo, e no <title> da pagina.
+- Empresa: ${nome}. Use o nome no cabecalho, ao lado do logo, e no <title> da pagina.
 ${logo}
 `;
   return cabecalho + `- Fonte: '${b.fonte}' via Google Fonts, fallback Arial, sans-serif, em todo o dashboard.
@@ -1609,7 +1614,7 @@ ${logo}
 - Use sempre var(--token) no CSS; nao escreva cores hexadecimais soltas fora dessas declaracoes.
 - Botoes: Primario (fundo var(--primary), texto var(--on-primary)); Secundario (fundo var(--secondary), texto var(--on-secondary)); Ghost (transparente, borda 1px var(--border), texto var(--text)). Raio 8px, altura 36px, foco visivel com outline 2px var(--primary).
 - Filtros e dropdowns: fundo var(--surface), borda var(--border), texto var(--text), rotulo 12px var(--muted).
-- Sidebar: fundo var(--sidebar); item ativo com fundo da primaria a 12% de opacidade e borda esquerda 3px var(--primary).
+- Cabecalho: fundo var(--surface) com borda inferior var(--border). Abas: hover com fundo da primaria a 14% de opacidade e texto var(--primary); aba ativa com fundo var(--primary) e texto var(--on-primary).
 - Tipografia: H1 28px peso 700; H2 18px peso 600; rotulos 12px peso 600 em maiusculas com letter-spacing 0.04em; texto 14px; texto de apoio 12px var(--muted). Valores de KPI 28px peso 700 var(--text).
 - Cores semanticas sao reservadas para status e nunca usadas como serie de grafico: sucesso var(--success), erro var(--danger), alerta var(--warning), informacao var(--info). Todo status leva icone e rotulo de texto, nunca so a cor.
 - Variacao dos KPIs: a seta mostra a direcao da mudanca; a cor mostra se ela e favoravel ao indicador. Ex.: custo ou tempo caindo = verde; custo ou atraso subindo = vermelho.

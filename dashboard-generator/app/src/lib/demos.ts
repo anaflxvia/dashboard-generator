@@ -18,11 +18,13 @@ export interface Demo {
 const FINANCEIRO: DashboardData = {
   version: 2,
   title: 'Resultado e Caixa',
+  filters: [{ label: 'Unidade', options: ['Digital', 'Varejo', 'Atacado', 'Serviços'] }, { label: 'Natureza', options: ['Pessoal', 'Tecnologia', 'Marketing', 'Administrativo'] }],
   segment: 'Financeiro',
   summary: 'Receita cresce 6,4% no trimestre, mas despesas operacionais sobem acima da meta e comprimem a margem líquida em 0,6 p.p.',
   tabs: [
     {
       name: 'Resultado',
+      description: 'Da receita bruta ao lucro: onde a margem está sendo consumida.',
       icon: 'piggy-bank',
       kpis: [
         { label: 'Receita líquida', value: 'R$ 48,2 mi', change: '+6,4%', trend: 'up', goodWhen: 'up', icon: 'dollar-sign', sparkline: [41.2, 42.0, 43.5, 44.1, 45.0, 46.3, 47.1, 48.2] },
@@ -68,6 +70,7 @@ const FINANCEIRO: DashboardData = {
     },
     {
       name: 'Caixa e Recebíveis',
+      description: 'Saldo projetado, crescimento por UF e o que está vencido há mais tempo.',
       icon: 'landmark',
       kpis: [
         { label: 'Saldo de caixa', value: 'R$ 18,7 mi', change: '+4,8%', trend: 'up', goodWhen: 'up', icon: 'landmark', sparkline: [15.2, 15.9, 16.4, 16.1, 17.0, 17.5, 17.8, 18.7] },
@@ -142,11 +145,13 @@ const FINANCEIRO: DashboardData = {
 const VENDAS: DashboardData = {
   version: 2,
   title: 'Pipeline Comercial',
+  filters: [{ label: 'Canal', options: ['Inbound', 'Outbound', 'Indicação', 'Parceiros', 'Eventos'] }],
   segment: 'CRM / Vendas',
   summary: 'Receita fechada 12% acima do trimestre anterior; o gargalo está entre proposta e negociação, onde 46% das oportunidades param.',
   tabs: [
     {
       name: 'Pipeline',
+      description: 'Conversão por etapa, evolução da receita e desempenho do time contra a meta.',
       icon: 'target',
       kpis: [
         { label: 'Receita fechada', value: 'R$ 3,42 mi', change: '+12,0%', trend: 'up', goodWhen: 'up', icon: 'dollar-sign', sparkline: [2.6, 2.7, 2.9, 2.8, 3.0, 3.1, 3.3, 3.42] },
@@ -199,6 +204,7 @@ const VENDAS: DashboardData = {
     },
     {
       name: 'Regiões e Canais',
+      description: 'De onde vêm os negócios: crescimento por UF e resultado por canal.',
       icon: 'map-pin',
       kpis: [
         { label: 'Novos clientes', value: '125', change: '+14,7%', trend: 'up', goodWhen: 'up', icon: 'user-plus', sparkline: [92, 98, 101, 104, 109, 112, 118, 125] },
@@ -273,11 +279,13 @@ const VENDAS: DashboardData = {
 const RH: DashboardData = {
   version: 2,
   title: 'People Analytics',
+  filters: [{ label: 'Área', options: ['Comercial', 'Financeiro', 'Pessoas', 'Operações', 'Tecnologia'] }],
   segment: 'Recursos Humanos',
   summary: 'Turnover voluntário caiu pelo terceiro mês seguido; Tecnologia segue como a área com pior clima e maior tempo para preencher vagas.',
   tabs: [
     {
       name: 'Pessoas',
+      description: 'Quem entra, quem sai e quanto tempo leva para contratar.',
       icon: 'users',
       kpis: [
         { label: 'Headcount', value: '2.184', change: '+1,8%', trend: 'up', goodWhen: 'up', icon: 'users', sparkline: [2098, 2110, 2121, 2135, 2142, 2158, 2170, 2184] },
@@ -334,6 +342,7 @@ const RH: DashboardData = {
     },
     {
       name: 'Clima e Desenvolvimento',
+      description: 'Favorabilidade do clima, turnover por UF e investimento em treinamento.',
       icon: 'smile',
       kpis: [
         { label: 'Participação na pesquisa', value: '87%', change: '+5 p.p.', trend: 'up', goodWhen: 'up', icon: 'check-circle', sparkline: [76, 78, 80, 82, 82, 84, 85, 87] },

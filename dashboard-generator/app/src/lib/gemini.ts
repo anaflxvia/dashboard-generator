@@ -43,9 +43,11 @@ Os valores abaixo mostram o formato de cada campo, não o conteúdo: escolha aba
   "title": "Título do dashboard",
   "segment": "${answers.segmento}",
   "summary": "1 ou 2 frases com o principal insight",
+  "filters": [{ "label": "Canal", "options": ["Inbound", "Outbound", "Parceiros"] }],
   "tabs": [
     {
       "name": "Nome da aba",
+      "description": "Uma frase dizendo o que esta aba responde",
       "icon": "nome-do-icone",
       "kpis": [
         { "label": "Nome do KPI", "value": "R$ 3,78", "change": "-2,1%", "trend": "down", "goodWhen": "down", "icon": "nome-do-icone", "sparkline": [4.1, 4.0, 3.95, 3.9, 3.86, 3.8, 3.78] }
@@ -124,7 +126,7 @@ Status nas tabelas: Ativo, Concluído, Aprovado, Pago, Pendente, Em andamento, E
   try {
     const cleaned = cleanJSON(text)
     // garante campos e tipos que os componentes esperam (mapa sem UF valida vira ranking etc.)
-    return normalizarDashboard(JSON.parse(cleaned) as DashboardData)
+    return normalizarDashboard({ ...(JSON.parse(cleaned) as DashboardData), generatedAt: new Date().toISOString() })
   } catch {
     throw new Error('Não foi possível processar os dados gerados. Tente novamente.')
   }
