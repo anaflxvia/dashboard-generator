@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, type CSSProperties } from 'react'
+import { useState, useMemo } from 'react'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,7 +14,7 @@ import {
 } from 'chart.js'
 import { Bar, Line, Pie, Doughnut } from 'react-chartjs-2'
 import type { DashboardData, DashboardTab, ChartConfig } from '../types'
-import { type Brand, type Modo, type Tokens, derivarTokens, cssVars, carregarFonte, siglaMarca } from '../lib/brand'
+import { brandStyle, deriveTokens, type Brand, type BrandTokens } from '../lib/brand'
 
 ChartJS.register(
   CategoryScale,
@@ -28,6 +28,30 @@ ChartJS.register(
   Legend,
   Filler
 )
+
+// as duas primeiras series usam primaria e secundaria da marca
+const EXTRA_CHART_COLORS = ['#f59e0b', '#ef4444', '#3b82f6', '#8b5cf6', '#06b6d4', '#f97316', '#84cc16', '#ec4899']
+
+function chartColors(t: BrandTokens): string[] {
+  return [t.primary, t.secondary, ...EXTRA_CHART_COLORS]
+}
+
+// tons 400 so passam contraste em fundo escuro; em fundo claro usa os 700
+const STATUS_DARK = {
+  success: 'bg-emerald-900/40 text-emerald-400 border-emerald-800/50',
+  error: 'bg-red-900/40 text-red-400 border-red-800/50',
+  warning: 'bg-amber-900/40 text-amber-400 border-amber-800/50',
+  successText: 'text-emerald-400',
+  errorText: 'text-red-400',
+}
+const STATUS_LIGHT = {
+  success: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  error: 'bg-red-50 text-red-700 border-red-200',
+  warning: 'bg-amber-50 text-amber-800 border-amber-200',
+  successText: 'text-emerald-700',
+  errorText: 'text-red-700',
+}
+type StatusClasses = typeof STATUS_DARK
 
 const SIDEBAR_ICONS = [
   // BarChart
@@ -55,200 +79,201 @@ const SIDEBAR_ICONS = [
 
 const DATE_FILTERS = ['Últimos 7 dias', 'Últimos 30 dias', 'Últimos 90 dias', 'Este ano', 'Personalizado']
 
-/* cores dos graficos vem dos tokens da marca; textos usam tokens de texto, nunca a cor da serie */
-function getChartOptions(type: string, t: Tokens, fonte: string) {
-  const isArc = type === 'pie' || type === 'doughnut'
-  const font = { family: `'${fonte}', Arial, sans-serif`, size: 11 }
+const isArcType = (type: ChartConfig['type']) => type === 'pie' || type === 'doughnut'
+
+// barras horizontais sao rankings: sempre ordenadas do maior para o menor (pelo 1o dataset)
+function normalizeChart(chart: ChartConfig): ChartConfig {
+  if (chart.type !== 'horizontalBar' || !chart.datasets[0]) return chart
+  const order = chart.labels
+    .map((_, i) => i)
+    .sort((x, y) => (chart.datasets[0].data[y] ?? 0) - (chart.datasets[0].data[x] ?? 0))
+  return {
+    ...chart,
+    labels: order.map((i) => chart.labels[i]),
+    datasets: chart.datasets.map((ds) => ({ ...ds, data: order.map((i) => ds.data[i]) })),
+  }
+}
+
+function getChartOptions(chart: ChartConfig, t: BrandTokens) {
+  const isArc = isArcType(chart.type)
+  const horizontal = chart.type === 'horizontalBar'
+  // data-ink: sem bordas de eixo, grade so no eixo de valor e bem discreta
+  const valueAxis = {
+    // zero obrigatorio em barras e areas (cortar o eixo distorce); linhas podem focar na variacao
+    beginAtZero: chart.type !== 'line',
+    ticks: { color: t.textMuted, font: { size: 11 } },
+    grid: { color: t.surfaceHover },
+    border: { display: false },
+  }
+  const categoryAxis = {
+    ticks: { color: t.textMuted, font: { size: 11 } },
+    grid: { display: false },
+    border: { display: false },
+  }
   return {
     responsive: true,
     maintainAspectRatio: false,
-    ...(type === 'line' && { interaction: { mode: 'index' as const, intersect: false } }),
+    ...(horizontal && { indexAxis: 'y' as const }),
+    ...(chart.type === 'doughnut' && { cutout: '65%' }),
     plugins: {
       legend: {
-        display: true,
+        // com uma serie so, o titulo do grafico ja diz o que e — legenda vira tinta extra
+        display: isArc || chart.datasets.length > 1,
         position: 'bottom' as const,
-        labels: { color: t['text-2'], font: { ...font, size: 12 }, padding: 16, boxWidth: 8, boxHeight: 8, usePointStyle: true },
+        labels: { color: t.textMuted, font: { size: 12 }, padding: 16, boxWidth: 12 },
       },
       tooltip: {
         backgroundColor: t.surface,
-        borderColor: t['border-strong'],
+        borderColor: t.border,
         borderWidth: 1,
         titleColor: t.text,
-        bodyColor: t['text-2'],
-        padding: 10,
-        cornerRadius: 8,
-        boxPadding: 4,
-        titleFont: font,
-        bodyFont: font,
+        bodyColor: t.textMuted,
       },
     },
     ...(!isArc && {
-      scales: {
-        x: {
-          ticks: { color: t.muted, font },
-          grid: { display: false },
-          border: { color: t['border-strong'] },
-        },
-        y: {
-          ticks: { color: t.muted, font },
-          grid: { color: t.grid },
-          border: { display: false },
-        },
-      },
+      scales: horizontal ? { x: valueAxis, y: categoryAxis } : { x: categoryAxis, y: valueAxis },
     }),
   }
 }
 
-function buildChartData(chart: ChartConfig, t: Tokens) {
-  const isArc = chart.type === 'pie' || chart.type === 'doughnut'
-  const cor = (i: number) => t.series[i % t.series.length]
+function buildChartData(chart: ChartConfig, t: BrandTokens) {
+  const CHART_COLORS = chartColors(t)
 
-  if (isArc) {
+  if (isArcType(chart.type)) {
     return {
       labels: chart.labels,
       datasets: chart.datasets.map((ds) => ({
         label: ds.label,
         data: ds.data,
-        backgroundColor: ds.data.map((_, i) => cor(i)),
+        backgroundColor: CHART_COLORS.slice(0, ds.data.length).map((c) => c + 'cc'),
         borderColor: t.surface,
         borderWidth: 2,
-        hoverOffset: 6,
       })),
     }
   }
 
+  const isBar = chart.type === 'bar' || chart.type === 'horizontalBar'
   return {
     labels: chart.labels,
-    datasets: chart.datasets.map((ds, idx) => ({
-      label: ds.label,
-      data: ds.data,
-      backgroundColor: chart.type === 'bar' ? cor(idx) : cor(idx) + '22',
-      borderColor: cor(idx),
-      borderWidth: 2,
-      pointRadius: 0,
-      pointHoverRadius: chart.type === 'line' ? 5 : 0,
-      pointBackgroundColor: cor(idx),
-      pointHoverBorderColor: t.surface,
-      pointHoverBorderWidth: 2,
-      tension: 0.3,
-      fill: chart.type === 'line' && chart.datasets.length === 1,
-      // so a ponta da barra e arredondada: a base fica reta no eixo (borderSkipped padrao)
-      borderRadius: chart.type === 'bar' ? 4 : 0,
-      maxBarThickness: 40,
-    })),
+    datasets: chart.datasets.map((ds, idx) => {
+      const color = CHART_COLORS[idx % CHART_COLORS.length]
+      return {
+        label: ds.label,
+        data: ds.data,
+        backgroundColor: isBar ? color + 'cc' : color + '33',
+        borderColor: color,
+        borderWidth: isBar ? 0 : 2,
+        pointRadius: 0,
+        pointHoverRadius: isBar ? 0 : 4,
+        pointBackgroundColor: color,
+        tension: 0.35,
+        fill: chart.type === 'area',
+        borderRadius: isBar ? 4 : 0,
+      }
+    }),
   }
 }
 
-function ChartRenderer({ chart, tokens, fonte }: { chart: ChartConfig; tokens: Tokens; fonte: string }) {
-  const data = useMemo(() => buildChartData(chart, tokens), [chart, tokens])
-  const options = useMemo(() => getChartOptions(chart.type, tokens, fonte), [chart.type, tokens, fonte])
+function ChartRenderer({ chart, tokens }: { chart: ChartConfig; tokens: BrandTokens }) {
+  const normalized = useMemo(() => normalizeChart(chart), [chart])
+  const data = useMemo(() => buildChartData(normalized, tokens), [normalized, tokens])
+  const options = useMemo(() => getChartOptions(normalized, tokens), [normalized, tokens])
 
   return (
     <div className="h-56">
-      {chart.type === 'bar' && <Bar data={data} options={options} />}
-      {chart.type === 'line' && <Line data={data} options={options} />}
+      {(chart.type === 'bar' || chart.type === 'horizontalBar') && <Bar data={data} options={options} />}
+      {(chart.type === 'line' || chart.type === 'area') && <Line data={data} options={options} />}
       {chart.type === 'pie' && <Pie data={data} options={options} />}
       {chart.type === 'doughnut' && <Doughnut data={data} options={options} />}
     </div>
   )
 }
 
-/* a seta mostra a direcao da mudanca; a cor mostra se ela e favoravel ao indicador */
-function KPICard({ kpi }: { kpi: DashboardTab['kpis'][0] }) {
+// linha limpa, sem eixos nem marcadores — so o contexto historico do KPI
+function Sparkline({ values }: { values: number[] }) {
+  if (values.length < 2) return null
+  const min = Math.min(...values)
+  const range = Math.max(...values) - min || 1
+  const points = values
+    .map((v, i) => `${(i / (values.length - 1)) * 100},${26 - ((v - min) / range) * 24}`)
+    .join(' ')
+  return (
+    <svg viewBox="0 0 100 28" preserveAspectRatio="none" className="w-full h-7 mt-3" aria-hidden="true">
+      <polyline
+        points={points}
+        fill="none"
+        stroke="var(--brand-primary)"
+        strokeWidth={1.5}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        vectorEffect="non-scaling-stroke"
+      />
+    </svg>
+  )
+}
+
+function KPICard({ kpi, status }: { kpi: DashboardTab['kpis'][0]; status: StatusClasses }) {
   const isUp = kpi.trend === 'up'
   const isDown = kpi.trend === 'down'
-  const goodWhen = kpi.goodWhen ?? 'up'
-  const favoravel = (isUp && goodWhen === 'up') || (isDown && goodWhen === 'down')
-  const cor = kpi.trend === 'neutral' ? 'text-[var(--muted)]' : favoravel ? 'text-[var(--success)]' : 'text-[var(--danger)]'
 
   return (
-    <div className="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 hover:border-[var(--border-strong)] transition-colors">
-      <p className="text-[var(--muted)] text-xs font-semibold uppercase tracking-wide">{kpi.label}</p>
-      <p className="text-[28px] leading-tight font-bold text-[var(--text)] mt-2 mb-3 tabular-nums">{kpi.value}</p>
-      <div className={`flex flex-wrap items-center gap-x-1 gap-y-0.5 text-xs font-semibold ${cor}`}>
+    <div className="bg-(--brand-surface) border border-(--brand-border) rounded-xl p-5 hover:border-(--brand-muted) transition-colors">
+      <p className="text-(--brand-muted) text-xs font-medium uppercase tracking-wide">{kpi.label}</p>
+      <p className="text-2xl font-bold text-(--brand-text) mt-2 mb-3">{kpi.value}</p>
+      <div className={`flex items-center gap-1 text-xs font-medium ${isUp ? status.successText : isDown ? status.errorText : 'text-(--brand-muted)'}`}>
         {isUp && (
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden>
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" />
           </svg>
         )}
         {isDown && (
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden>
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
           </svg>
         )}
-        <span className="whitespace-nowrap">{kpi.change}</span>
-        <span className="text-[var(--muted)] font-normal whitespace-nowrap">vs período anterior</span>
+        <span>{kpi.change} vs período anterior</span>
       </div>
+      {kpi.sparkline && <Sparkline values={kpi.sparkline} />}
     </div>
-  )
-}
-
-const STATUS_BADGE: { valores: string[]; cor: string; icone: string }[] = [
-  { valores: ['Ativo', 'Concluído', 'Aprovado', 'Pago', 'No prazo'], cor: 'success', icone: '✓' },
-  { valores: ['Inativo', 'Cancelado', 'Reprovado', 'Atrasado', 'Crítico'], cor: 'danger', icone: '✕' },
-  { valores: ['Pendente', 'Em andamento', 'Em análise', 'Em risco', 'Atenção'], cor: 'warning', icone: '!' },
-]
-
-function Celula({ valor }: { valor: string }) {
-  const s = STATUS_BADGE.find((b) => b.valores.includes(valor))
-  if (!s) return <>{valor}</>
-  return (
-    <span
-      className="inline-flex items-center gap-1.5 pl-1.5 pr-2.5 py-0.5 rounded-full text-xs font-semibold"
-      style={{ background: `color-mix(in srgb, var(--${s.cor}) 14%, transparent)`, color: `var(--${s.cor})` }}
-    >
-      <span className="w-3.5 h-3.5 rounded-full inline-flex items-center justify-center text-[9px]" style={{ background: `var(--${s.cor})`, color: 'var(--surface)' }}>{s.icone}</span>
-      {valor}
-    </span>
   )
 }
 
 interface Props {
   data: DashboardData
-  onBack: () => void
-  fromCache?: boolean
   brand: Brand
-  /* modo previa: altura fixa e tema controlado de fora */
-  embedded?: boolean
-  modo?: Modo
+  onBack: () => void
+  onOpenBrand: () => void
+  fromCache?: boolean
 }
 
-export default function Dashboard({ data, onBack, fromCache = false, brand, embedded = false, modo }: Props) {
+export default function Dashboard({ data, brand, onBack, onOpenBrand, fromCache = false }: Props) {
+  const tokens = useMemo(() => deriveTokens(brand), [brand])
+  const status = tokens.dark ? STATUS_DARK : STATUS_LIGHT
   const [activeTab, setActiveTab] = useState(0)
   const [dateFilter, setDateFilter] = useState('Últimos 30 dias')
   const [sidebarOpen, setSidebarOpen] = useState(true)
-  const [modoLocal, setModoLocal] = useState<Modo>(brand.ativo ? brand.tema : 'dark')
-  const modoAtual = modo ?? modoLocal
-
-  const fonte = brand.ativo ? brand.fonte : 'Inter'
-  useEffect(() => { carregarFonte(fonte) }, [fonte])
-
-  const tokens = useMemo(() => derivarTokens(brand, modoAtual), [brand, modoAtual])
-  const estilo = useMemo(() => ({ ...cssVars(tokens, fonte), fontFamily: 'var(--font)', colorScheme: modoAtual }) as CSSProperties, [tokens, fonte, modoAtual])
 
   const tab = data.tabs[activeTab] ?? data.tabs[0]
-  const nomeMarca = brand.ativo && brand.nome.trim() ? brand.nome.trim() : data.title
-  const logo = brand.ativo ? brand.logo : ''
 
   return (
-    <div
-      data-theme={modoAtual}
-      style={estilo}
-      className={`flex ${embedded ? 'h-[720px] rounded-xl border border-[var(--border-strong)]' : 'h-screen'} bg-[var(--bg)] text-[var(--text)] overflow-hidden transition-colors`}
-    >
+    <div style={brandStyle(tokens)} className="flex h-screen bg-(--brand-bg) text-(--brand-text) overflow-hidden">
       {/* Sidebar */}
-      <aside className={`${sidebarOpen ? 'w-60' : 'w-16'} bg-[var(--sidebar)] border-r border-[var(--border)] flex flex-col transition-all duration-200 shrink-0`}>
+      <aside className={`${sidebarOpen ? 'w-60' : 'w-16'} bg-(--brand-surface) border-r border-(--brand-border) flex flex-col transition-all duration-200 shrink-0`}>
         {/* Logo */}
-        <div className="flex items-center gap-3 px-4 py-4 border-b border-[var(--border)] min-h-[65px]">
-          {logo ? (
-            <img src={logo} alt={nomeMarca} className={`${sidebarOpen ? 'max-w-[120px]' : 'max-w-8'} max-h-8 object-contain shrink-0`} />
+        <div className="flex items-center gap-3 px-4 py-4 border-b border-(--brand-border)">
+          {brand.logo ? (
+            <img
+              src={brand.logo}
+              alt={brand.name || 'Logo'}
+              className={`h-8 object-contain shrink-0 ${sidebarOpen ? 'max-w-[140px]' : 'w-8'}`}
+            />
           ) : (
-            <div className="w-8 h-8 rounded-lg bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center text-xs font-bold shrink-0">
-              {brand.ativo ? siglaMarca(nomeMarca) : 'AI'}
+            <div className="w-8 h-8 rounded-lg bg-(--brand-primary) flex items-center justify-center text-(--brand-on-primary) text-xs font-bold shrink-0">
+              AI
             </div>
           )}
-          {sidebarOpen && !(logo && brand.nome.trim()) && (
-            <span className="font-semibold text-sm truncate">{nomeMarca}</span>
+          {sidebarOpen && !brand.logo && (
+            <span className="text-(--brand-text) font-semibold text-sm truncate">{brand.name || data.title}</span>
           )}
         </div>
 
@@ -259,10 +284,10 @@ export default function Dashboard({ data, onBack, fromCache = false, brand, embe
               key={i}
               onClick={() => setActiveTab(i)}
               title={t.name}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors border-l-[3px] ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                 i === activeTab
-                  ? 'bg-[var(--primary-soft)] text-[var(--text)] font-semibold border-[var(--primary)]'
-                  : 'text-[var(--text-2)] border-transparent hover:text-[var(--text)] hover:bg-[var(--hover)]'
+                  ? 'bg-(--brand-primary) text-(--brand-on-primary)'
+                  : 'text-(--brand-muted) hover:text-(--brand-text) hover:bg-(--brand-surface-hover)'
               }`}
             >
               <span className="shrink-0">{SIDEBAR_ICONS[i % SIDEBAR_ICONS.length]}</span>
@@ -272,28 +297,35 @@ export default function Dashboard({ data, onBack, fromCache = false, brand, embe
         </nav>
 
         {/* Back button */}
-        <div className="p-2 border-t border-[var(--border)]">
+        <div className="p-2 border-t border-(--brand-border) space-y-1">
+          <button
+            onClick={onOpenBrand}
+            title="Identidade visual"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-(--brand-muted) hover:text-(--brand-text) hover:bg-(--brand-surface-hover) transition-colors"
+          >
+            <span className="shrink-0">{SIDEBAR_ICONS[4]}</span>
+            {sidebarOpen && <span>Identidade visual</span>}
+          </button>
           <button
             onClick={onBack}
             title="Novo dashboard"
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[var(--text-2)] hover:text-[var(--text)] hover:bg-[var(--hover)] transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-(--brand-muted) hover:text-(--brand-text) hover:bg-(--brand-surface-hover) transition-colors"
           >
             <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
             </svg>
-            {sidebarOpen && <span>{embedded ? 'Voltar' : 'Novo dashboard'}</span>}
+            {sidebarOpen && <span>Novo dashboard</span>}
           </button>
         </div>
       </aside>
 
       {/* Main */}
-      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+      <div className="flex-1 flex flex-col overflow-hidden">
         {/* Topbar */}
-        <header className="h-14 bg-[var(--surface)] border-b border-[var(--border)] flex items-center gap-4 px-4 shrink-0">
+        <header className="h-14 bg-(--brand-surface) border-b border-(--brand-border) flex items-center gap-4 px-4 shrink-0">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            aria-label="Recolher menu"
-            className="text-[var(--text-2)] hover:text-[var(--text)] transition-colors p-1 rounded"
+            className="text-(--brand-muted) hover:text-(--brand-text) transition-colors p-1 rounded"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
@@ -301,22 +333,19 @@ export default function Dashboard({ data, onBack, fromCache = false, brand, embe
           </button>
 
           <div className="flex items-center gap-2 min-w-0">
-            <span className="text-[var(--muted)] text-sm hidden sm:block">{data.segment}</span>
-            <span className="text-[var(--muted)] hidden sm:block">/</span>
-            <h2 className="font-semibold text-sm truncate">{tab.name}</h2>
+            <span className="text-(--brand-muted) text-sm hidden sm:block">{data.segment}</span>
+            <span className="text-(--brand-muted) hidden sm:block">/</span>
+            <h2 className="text-(--brand-text) font-medium text-sm truncate">{tab.name}</h2>
           </div>
 
           <div className="ml-auto flex items-center gap-2">
             {/* Cache badge */}
             {fromCache && (
-              <span
-                className="hidden md:flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full"
-                style={{ color: 'var(--success)', background: 'color-mix(in srgb, var(--success) 14%, transparent)' }}
-              >
+              <span className={`flex items-center gap-1.5 text-xs font-medium border px-2.5 py-1 rounded-full ${status.success}`}>
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
                 </svg>
-                Recuperado do cache
+                Dashboard recuperado do cache
               </span>
             )}
 
@@ -324,32 +353,22 @@ export default function Dashboard({ data, onBack, fromCache = false, brand, embe
             <select
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
-              title="Filtro demonstrativo: os dados gerados nao sao recalculados"
-              className="bg-[var(--surface)] border border-[var(--border-strong)] text-[var(--text)] text-xs rounded-lg px-3 py-1.5 outline-none focus:border-[var(--primary)] transition-colors cursor-pointer"
+              className="bg-(--brand-surface) border border-(--brand-border) text-(--brand-text) text-xs rounded-lg px-3 py-1.5 outline-none focus:border-(--brand-primary) transition-colors cursor-pointer"
             >
               {DATE_FILTERS.map((f) => (
                 <option key={f} value={f}>{f}</option>
               ))}
             </select>
 
-            {/* Tema claro/escuro */}
-            {!modo && (
-              <button
-                onClick={() => setModoLocal(modoAtual === 'dark' ? 'light' : 'dark')}
-                aria-label={modoAtual === 'dark' ? 'Usar tema claro' : 'Usar tema escuro'}
-                title={modoAtual === 'dark' ? 'Tema claro' : 'Tema escuro'}
-                className="p-1.5 text-[var(--text-2)] hover:text-[var(--text)] hover:bg-[var(--hover)] border border-[var(--border-strong)] rounded-lg transition-colors"
-              >
-                {modoAtual === 'dark' ? (
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><circle cx="12" cy="12" r="4" /><path strokeLinecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" /></svg>
-                ) : (
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>
-                )}
-              </button>
-            )}
+            {/* Refresh */}
+            <button className="p-1.5 text-(--brand-muted) hover:text-(--brand-text) hover:bg-(--brand-surface-hover) rounded-lg transition-colors">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+              </svg>
+            </button>
 
             {/* Export */}
-            <button className="flex items-center gap-1.5 bg-[var(--primary)] text-[var(--on-primary)] hover:brightness-110 text-xs font-semibold px-3 py-1.5 rounded-lg transition">
+            <button className="flex items-center gap-1.5 bg-(--brand-primary) hover:opacity-90 text-(--brand-on-primary) text-xs px-3 py-1.5 rounded-lg transition-colors">
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
               </svg>
@@ -359,27 +378,27 @@ export default function Dashboard({ data, onBack, fromCache = false, brand, embe
         </header>
 
         {/* Content */}
-        <main className="@container flex-1 overflow-y-auto p-6 space-y-6">
+        <main className="flex-1 overflow-y-auto bg-(--brand-bg) p-6 space-y-6">
           {/* Summary banner */}
-          <div className="bg-[var(--surface)] border border-[var(--border)] rounded-xl px-5 py-3 flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-[var(--primary)] shrink-0" />
-            <p className="text-[var(--text-2)] text-sm">{data.summary}</p>
+          <div className="bg-(--brand-surface) border border-(--brand-border) rounded-xl px-5 py-3 flex items-center gap-3">
+            <div className="w-2 h-2 rounded-full bg-(--brand-primary) shrink-0" />
+            <p className="text-(--brand-muted) text-sm">{data.summary}</p>
           </div>
 
           {/* KPI Cards */}
-          <div className="grid grid-cols-1 @md:grid-cols-2 @4xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {tab.kpis.map((kpi, i) => (
-              <KPICard key={i} kpi={kpi} />
+              <KPICard key={i} kpi={kpi} status={status} />
             ))}
           </div>
 
           {/* Charts */}
           {tab.charts.length > 0 && (
-            <div className="grid grid-cols-1 @3xl:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {tab.charts.map((chart, i) => (
-                <div key={i} className="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5">
-                  <h3 className="font-semibold text-sm mb-4">{chart.title}</h3>
-                  <ChartRenderer chart={chart} tokens={tokens} fonte={fonte} />
+                <div key={i} className="bg-(--brand-surface) border border-(--brand-border) rounded-xl p-5">
+                  <h3 className="text-(--brand-text) font-medium text-sm mb-4">{chart.title}</h3>
+                  <ChartRenderer chart={chart} tokens={tokens} />
                 </div>
               ))}
             </div>
@@ -387,19 +406,19 @@ export default function Dashboard({ data, onBack, fromCache = false, brand, embe
 
           {/* Tables */}
           {tab.tables.map((table, i) => (
-            <div key={i} className="bg-[var(--surface)] border border-[var(--border)] rounded-xl overflow-hidden">
-              <div className="px-5 py-4 border-b border-[var(--border)] flex items-center justify-between">
-                <h3 className="font-semibold text-sm">{table.title}</h3>
-                <span className="text-[var(--muted)] text-xs">{table.rows.length} registros</span>
+            <div key={i} className="bg-(--brand-surface) border border-(--brand-border) rounded-xl overflow-hidden">
+              <div className="px-5 py-4 border-b border-(--brand-border) flex items-center justify-between">
+                <h3 className="text-(--brand-text) font-medium text-sm">{table.title}</h3>
+                <span className="text-(--brand-muted) text-xs">{table.rows.length} registros</span>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full tabular-nums">
+                <table className="w-full">
                   <thead>
-                    <tr className="border-b border-[var(--border-strong)]">
+                    <tr className="border-b border-(--brand-border)">
                       {table.columns.map((col, j) => (
                         <th
                           key={j}
-                          className="text-left px-5 py-3 text-[var(--muted)] text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
+                          className="text-left px-5 py-3 text-(--brand-muted) text-xs font-medium uppercase tracking-wide whitespace-nowrap"
                         >
                           {col}
                         </th>
@@ -408,10 +427,28 @@ export default function Dashboard({ data, onBack, fromCache = false, brand, embe
                   </thead>
                   <tbody>
                     {table.rows.map((row, ri) => (
-                      <tr key={ri} className="border-b border-[var(--border)] hover:bg-[var(--hover)] transition-colors">
+                      <tr
+                        key={ri}
+                        className="border-b border-(--brand-border) hover:bg-(--brand-surface-hover) transition-colors"
+                      >
                         {row.map((cell, ci) => (
-                          <td key={ci} className="px-5 py-3 text-[var(--text-2)] text-sm whitespace-nowrap">
-                            <Celula valor={cell} />
+                          <td key={ci} className="px-5 py-3 text-(--brand-text) text-sm whitespace-nowrap">
+                            {/* Color-code common status values */}
+                            {['Ativo', 'Concluído', 'Aprovado', 'Pago'].includes(cell) ? (
+                              <span className={`inline-flex px-2 py-0.5 rounded-full text-xs border ${status.success}`}>
+                                {cell}
+                              </span>
+                            ) : ['Inativo', 'Cancelado', 'Reprovado', 'Atrasado'].includes(cell) ? (
+                              <span className={`inline-flex px-2 py-0.5 rounded-full text-xs border ${status.error}`}>
+                                {cell}
+                              </span>
+                            ) : ['Pendente', 'Em andamento', 'Em análise'].includes(cell) ? (
+                              <span className={`inline-flex px-2 py-0.5 rounded-full text-xs border ${status.warning}`}>
+                                {cell}
+                              </span>
+                            ) : (
+                              cell
+                            )}
                           </td>
                         ))}
                       </tr>

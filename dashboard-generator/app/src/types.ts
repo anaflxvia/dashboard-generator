@@ -18,8 +18,7 @@ export interface KPI {
   value: string
   change: string
   trend: 'up' | 'down' | 'neutral'
-  /* sentido favoravel: 'down' para custo, tempo, atraso, churn... (dashboards antigos do cache nao tem) */
-  goodWhen?: 'up' | 'down'
+  sparkline?: number[] // historico recente; opcional (dashboards antigos do cache nao tem)
 }
 
 export interface ChartDataset {
@@ -29,7 +28,7 @@ export interface ChartDataset {
 
 export interface ChartConfig {
   title: string
-  type: 'bar' | 'line' | 'pie' | 'doughnut'
+  type: 'bar' | 'horizontalBar' | 'line' | 'area' | 'pie' | 'doughnut'
   labels: string[]
   datasets: ChartDataset[]
 }
