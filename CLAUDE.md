@@ -58,6 +58,9 @@ Cada segmento tem abas, KPIs e tipos de graficos pre-definidos no dicionario `KP
 
 - Provedor: Google Gemini
 - Modelo: gemini-3.8-flash, com reserva gemini-3.6-flash (nos dois apps). Troca automatica quando o primeiro responde 404, 429, 503 ou "modelo indisponivel"
+- Alta demanda (503) e limite (429): ate 3 rodadas pelos dois modelos, esperando 3 s e 8 s entre elas; modelo que
+  responde 404 sai da lista na hora. Se todas falharem, a mensagem pede para aguardar um ou dois minutos.
+  Motivo: o erro "This model is currently experiencing high demand" aparecia na primeira tentativa (out/2026)
 - Historico: gemini-2.5-pro deixou de aceitar chaves novas em out/2026 (erro "no longer available to new users"), por isso a troca
 - generationConfig: `thinkingConfig: { thinkingLevel: 'low' }` e temperatura padrao (1.0). Nos modelos 3.x o `thinkingBudget` virou legado e nao pode ser enviado junto com `thinkingLevel` (erro 400); temperatura abaixo de 1.0 pode causar loop
 - O raciocinio consome tokens de saida: o app HTML usa 65536 e o React 16384 para nao cortar a resposta

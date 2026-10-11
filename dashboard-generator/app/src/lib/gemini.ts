@@ -83,28 +83,42 @@ Status nas tabelas: Ativo, Concluído, Aprovado, Pago, Pendente, Em andamento, E
   let text: string | undefined
   let lastError = ''
 
-  for (const model of models) {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body }
-    )
+  // 503 (alta demanda) e 429 (limite) costumam passar em segundos: tenta os dois modelos em ate 3 rodadas,
+  // esperando entre elas. Modelo que nao existe mais (404) sai da lista na hora.
+  const ESPERAS_MS = [0, 3000, 8000]
+  let disponiveis = [...models]
+  let sobrecarga = false
+  for (const espera of ESPERAS_MS) {
+    if (text || disponiveis.length === 0) break
+    if (espera) await new Promise((r) => setTimeout(r, espera))
+    sobrecarga = false
+    for (const model of [...disponiveis]) {
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+        { method: 'POST', headers: { 'Content-Type': 'application/json' }, body }
+      )
 
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}) as Record<string, unknown>) as { error?: { message?: string } }
-      lastError = err.error?.message ?? `Gemini: HTTP ${response.status}`
-      const modeloIndisponivel = response.status === 404 || /not found|no longer available|not supported/i.test(lastError)
-      if (response.status === 503 || response.status === 429 || modeloIndisponivel) continue
-      throw new Error(lastError)
-    }
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}) as Record<string, unknown>) as { error?: { message?: string } }
+        lastError = err.error?.message ?? `Gemini: HTTP ${response.status}`
+        const modeloIndisponivel = response.status === 404 || /not found|no longer available|not supported/i.test(lastError)
+        if (modeloIndisponivel) { disponiveis = disponiveis.filter((m) => m !== model); continue }
+        if (response.status === 503 || response.status === 429) { sobrecarga = true; continue }
+        throw new Error(lastError)
+      }
 
-    const result = await response.json() as {
-      candidates?: Array<{ content?: { parts?: Array<{ text?: string; thought?: boolean }> } }>
+      const result = await response.json() as {
+        candidates?: Array<{ content?: { parts?: Array<{ text?: string; thought?: boolean }> } }>
+      }
+      // junta todas as partes de texto, ignorando as partes de raciocinio
+      text = (result.candidates?.[0]?.content?.parts ?? []).filter((p) => p.text && !p.thought).map((p) => p.text).join('') || undefined
+      break
     }
-    // junta todas as partes de texto, ignorando as partes de raciocinio
-    text = (result.candidates?.[0]?.content?.parts ?? []).filter((p) => p.text && !p.thought).map((p) => p.text).join('') || undefined
-    break
   }
 
+  if (!text && sobrecarga) {
+    throw new Error('O Gemini está com alta demanda agora. Tentamos 3 vezes em cada modelo; aguarde um ou dois minutos e gere de novo.')
+  }
   if (!text) throw new Error(lastError || 'Resposta inválida do Gemini')
 
   try {
