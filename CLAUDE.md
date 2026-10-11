@@ -2,17 +2,33 @@
 
 ## O que é este projeto
 
-Aplicação frontend que gera dashboards HTML completos e interativos usando IA (Gemini 1.5 Pro).
+Aplicação frontend que gera dashboards HTML completos e interativos usando IA (Gemini 2.5 Pro).
 O usuário responde um questionário de contexto, a aplicação monta um prompt estruturado e envia para a API do Gemini, que retorna um dashboard HTML funcional renderizado diretamente no navegador.
 
 ## Estrutura
 
 ```
-dashboard-generator/
+dashboard-generator/                 (raiz do repo)
 ├── CLAUDE.md
-└── frontend/
-    └── app.html
+├── docs/
+│   └── guia-visuais-dashboard.md    guia de visuais: qual grafico usar, quando e como (base de conhecimento dos prompts)
+├── server.py                        servidor local que serve frontend/ injetando chaves do .env
+├── frontend/
+│   └── app.html                     versao original em HTML unico
+└── dashboard-generator/app/         app Vite + React + TS (versao deployada na Vercel)
+    ├── vercel.json
+    ├── .env                         VITE_GEMINI_API_KEY, VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY (nao versionado)
+    └── src/
+        ├── App.tsx
+        ├── components/              ChatInterface, Dashboard
+        ├── lib/gemini.ts            monta o prompt e chama o Gemini
+        ├── lib/dashboardGuide.ts    regras de visualizacao injetadas no prompt (resumo do guia)
+        └── services/
+            ├── embeddings.ts        embeddings do Gemini para as respostas do questionario
+            └── dashboardCache.ts    cache semantico no Supabase (rpc match_dashboards)
 ```
+
+Existem duas versoes do app: `frontend/app.html` (HTML unico) e o app React em `dashboard-generator/app/`.
 
 ## Como funciona
 
@@ -31,24 +47,48 @@ Cada segmento tem abas, KPIs e tipos de graficos pre-definidos no dicionario `KP
 ## API
 
 - Provedor: Google Gemini
-- Modelo: gemini-1.5-pro
-- Endpoint: `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent`
-- Autenticacao: API Key colada pelo usuario na barra do topo (salva em localStorage)
+- Modelo: gemini-2.5-pro (app React cai para gemini-2.5-flash se falhar)
+- Endpoint: `https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent`
+- Embeddings (app React): text-embedding-004, com fallback para embedding-001
+- Autenticacao:
+  - `frontend/app.html`: API Key colada na barra do topo (salva em localStorage) ou injetada pelo `server.py`
+  - App React: `VITE_GEMINI_API_KEY` no `.env`
+- ATENCAO: variaveis `VITE_*` sao embutidas no JS do navegador. No deploy da Vercel a chave do Gemini fica publica. Pendente: mover as chamadas para uma funcao serverless.
 - Chave obtida em: aistudio.google.com/apikey
 
 ## Como rodar
 
-Abrir o arquivo `frontend/app.html` diretamente no navegador (clique duplo).
-Nao precisa de servidor, build, npm ou dependencias instaladas.
-Opcionalmente usar Live Server no VS Code para hot reload.
+HTML unico: abrir `frontend/app.html` no navegador (clique duplo), ou rodar `python server.py`
+(porta 3000) para injetar as chaves do `dashboard-generator/app/.env` automaticamente.
+
+App React:
+```
+cd dashboard-generator/app
+npm install
+npm run dev
+```
+
+Deploy: Vercel com Root Directory = `dashboard-generator/app` (configurado no painel).
+O `vercel.json` fica dentro dessa pasta, porque a Vercel so le o arquivo a partir do Root Directory.
 
 ## Decisoes tecnicas
 
-- Aplicacao 100% frontend, arquivo HTML unico sem dependencias externas
+- Aplicacao 100% frontend (sem backend proprio); o `server.py` e so conveniencia local
+- O SDK da Anthropic foi removido do app React: nunca foi usado, toda chamada de IA vai para o Gemini via `fetch`
 - Chart.js carregado via CDN (cdn.jsdelivr.net) para os graficos gerados
 - API Key armazenada em localStorage para nao precisar colar a cada uso
 - Dashboard gerado em iframe isolado para evitar conflito de CSS/JS
 - Dados dos dashboards sao sempre ficticios e gerados pela IA
+
+## Identidade visual (white-label, app React)
+
+- Tela `components/BrandSettings.tsx`, acessada pelo botao "Identidade visual" no questionario e na sidebar do dashboard
+- Configura nome, logo (PNG/SVG/JPG/WebP, ate 512 KB, de 32 a 2048 px) e 5 cores: primaria, secundaria, fundo, superficie, texto
+- `lib/brand.ts` deriva os demais tokens (texto sobre primaria, texto secundario, borda, hover) e expoe tudo como variaveis CSS `--brand-*`; o `Dashboard.tsx` usa so essas variaveis (`bg-(--brand-surface)` etc.)
+- Contraste WCAG 2.1 AA checado em tempo real. Texto < 4.5:1 bloqueia o salvamento; elementos graficos < 3:1 so geram aviso
+- Cores de status (sucesso/erro/alerta) trocam de tom conforme o fundo for claro ou escuro, para manter contraste
+- Graficos: series 1 e 2 usam primaria e secundaria; as demais usam uma paleta fixa
+- Salva em localStorage (`dashboard_brand`), por navegador. A marca nao entra no prompt: o Gemini devolve so dados, a aparencia e toda do app
 
 ## Prompt estrutura
 
@@ -57,6 +97,33 @@ O prompt enviado ao Gemini tem sempre 4 camadas:
 2. Abas especificas do segmento
 3. KPIs obrigatorios do segmento + extras do usuario
 4. Template fixo de requisitos tecnicos (dark mode, Chart.js, responsivo, cores, skeleton)
+
+## Conhecimento de visualizacao (guia de visuais)
+
+Fonte de verdade: `docs/guia-visuais-dashboard.md` — qual visual usar para cada pergunta
+(resumo, tendencia, comparacao, composicao, distribuicao, geoespacial) e as regras de ouro
+(data-ink, cores com proposito, layout em Z/F, interatividade).
+
+O guia entra nos prompts em versao resumida, em dois lugares que precisam ficar sincronizados:
+- App React: `REGRAS_VISUALIZACAO` em `lib/dashboardGuide.ts`, limitada aos tipos que o `Dashboard.tsx`
+  renderiza: `bar`, `horizontalBar`, `line`, `area`, `pie`, `doughnut`
+- HTML unico: bloco "REGRAS DE VISUALIZACAO" no `TEMPLATE_FIXO` de `frontend/app.html`, que cobre o guia
+  quase todo (bullet chart, cascata, scatter, heatmap), porque ali o Gemini escreve o HTML inteiro
+
+Regras garantidas por codigo no app React (nao dependem da IA obedecer):
+- `horizontalBar` sempre ordenado do maior para o menor
+- Eixo de valor comeca em zero em barras e areas (linhas podem focar na variacao)
+- Data-ink: sem borda de eixo, grade so no eixo de valor, legenda escondida com 1 serie, linhas sem marcadores
+- Sparkline opcional nos KPIs (`kpi.sparkline`), linha limpa sem eixos
+
+Decisoes tomadas ao aplicar o guia:
+- Pizza/rosca limitada a 2-3 fatias (antes o prompt do React pedia 5-7)
+- Gauges trocados por bullet chart nos segmentos do `KPI_BASE`
+- Roscas com muitas categorias no `KPI_BASE` viraram barras horizontais ordenadas
+- No `TEMPLATE_FIXO`: rosca de alocacao virou 3 fatias com total no centro; volatilidade limitada a 4 linhas
+- Nao aplicado ainda: paleta "80% neutra" (graficos seguem primaria/secundaria da marca), small multiples,
+  rotulos diretos na ponta das linhas e tooltips ricos no app React
+- Dashboards antigos no cache do Supabase foram gerados com as regras anteriores e podem voltar por similaridade
 
 ## Principios de desenvolvimento (baseado no metodo Akita)
 

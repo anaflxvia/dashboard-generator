@@ -52,13 +52,61 @@ const SEGMENTS = [
   { val: 'Outro',             icon: '＋' },
 ]
 
+/* ── Step indicator ── */
+function StepDots({ current }: { current: number }) {
+  const steps = [
+    { n: 1, label: 'Segmento' },
+    { n: 2, label: 'Contexto' },
+    { n: 3, label: 'Dashboard' },
+  ]
+  return (
+    <div className="flex items-center gap-2 mb-10">
+      {steps.map((s, i) => (
+        <div key={s.n} className="flex items-center gap-2">
+          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
+            current > s.n
+              ? 'bg-emerald-900/60 border border-emerald-600 text-emerald-400'
+              : current === s.n
+              ? 'bg-indigo-600 text-white'
+              : 'border border-slate-700 text-slate-500'
+          }`}>
+            {current > s.n ? '✓' : s.n}
+          </div>
+          {i < steps.length - 1 && (
+            <div className={`h-px w-12 transition-colors ${current > s.n + 0.5 ? 'bg-emerald-700' : 'bg-slate-800'}`} />
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/* ── Chips de exemplo ── */
+function Chips({ examples, onPick }: { examples: string[]; onPick: (v: string) => void }) {
+  return (
+    <div className="flex flex-wrap gap-1.5 mt-2">
+      {examples.map((ex) => (
+        <button
+          key={ex}
+          type="button"
+          onClick={() => onPick(ex)}
+          className="px-2.5 py-1 bg-slate-800 border border-slate-700 hover:border-slate-500 hover:text-slate-200 text-slate-400 text-xs rounded-md transition-colors"
+        >
+          {ex}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 interface Props {
   onComplete: (answers: UserAnswers) => void
   isGenerating: boolean
   error: string | null
+  onOpenBrand: () => void
 }
 
-export default function ChatInterface({ onComplete, isGenerating, error }: Props) {
+export default function ChatInterface({ onComplete, isGenerating, error, onOpenBrand }: Props) {
   const [step, setStep] = useState<1 | 2>(1)
   const [segmento, setSegmento] = useState('')
   const [objetivo, setObjetivo] = useState('')
@@ -77,54 +125,6 @@ export default function ChatInterface({ onComplete, isGenerating, error }: Props
     onComplete({ segmento, objetivo, decisao, comparacoes, metricas })
   }
 
-  /* ── Step indicator ── */
-  function StepDots() {
-    const steps = [
-      { n: 1, label: 'Segmento' },
-      { n: 2, label: 'Contexto' },
-      { n: 3, label: 'Dashboard' },
-    ]
-    const current = isGenerating ? 3 : step
-    return (
-      <div className="flex items-center gap-2 mb-10">
-        {steps.map((s, i) => (
-          <div key={s.n} className="flex items-center gap-2">
-            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
-              current > s.n
-                ? 'bg-emerald-900/60 border border-emerald-600 text-emerald-400'
-                : current === s.n
-                ? 'bg-indigo-600 text-white'
-                : 'border border-slate-700 text-slate-500'
-            }`}>
-              {current > s.n ? '✓' : s.n}
-            </div>
-            {i < steps.length - 1 && (
-              <div className={`h-px w-12 transition-colors ${current > s.n + 0.5 ? 'bg-emerald-700' : 'bg-slate-800'}`} />
-            )}
-          </div>
-        ))}
-      </div>
-    )
-  }
-
-  /* ── Chips de exemplo ── */
-  function Chips({ examples, onPick }: { examples: string[]; onPick: (v: string) => void }) {
-    return (
-      <div className="flex flex-wrap gap-1.5 mt-2">
-        {examples.map((ex) => (
-          <button
-            key={ex}
-            type="button"
-            onClick={() => onPick(ex)}
-            className="px-2.5 py-1 bg-slate-800 border border-slate-700 hover:border-slate-500 hover:text-slate-200 text-slate-400 text-xs rounded-md transition-colors"
-          >
-            {ex}
-          </button>
-        ))}
-      </div>
-    )
-  }
-
   function appendEx(setter: Dispatch<SetStateAction<string>>, val: string) {
     setter((prev) => (prev ? (prev.endsWith('\n') ? prev + val : prev + '\n' + val) : val))
   }
@@ -134,7 +134,7 @@ export default function ChatInterface({ onComplete, isGenerating, error }: Props
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
         <div className="w-full max-w-lg px-6 text-center">
-          <StepDots />
+          <StepDots current={isGenerating ? 3 : step} />
           <div className="w-12 h-12 border-2 border-slate-700 border-t-indigo-500 rounded-full animate-spin mx-auto mb-6" />
           <h2 className="text-white font-semibold text-lg mb-2">Gerando seu dashboard...</h2>
           <p className="text-slate-400 text-sm">A IA está montando os KPIs e gráficos</p>
@@ -150,14 +150,20 @@ export default function ChatInterface({ onComplete, isGenerating, error }: Props
         <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white text-xs font-bold">AI</div>
         <div>
           <h1 className="text-white font-semibold text-sm">Dashboard Generator</h1>
-          <p className="text-slate-500 text-xs">Powered by Claude</p>
+          <p className="text-slate-500 text-xs">Powered by Ana Flavia Consultoria</p>
         </div>
+        <button
+          onClick={onOpenBrand}
+          className="ml-auto px-3 py-1.5 rounded-lg text-xs text-slate-300 bg-slate-800 border border-slate-700 hover:border-slate-500 transition-colors"
+        >
+          Identidade visual
+        </button>
       </header>
 
       {/* Content */}
       <main className="flex-1 flex justify-center px-4 py-10">
         <div className="w-full max-w-2xl">
-          <StepDots />
+          <StepDots current={isGenerating ? 3 : step} />
 
           {/* ── STEP 1: Segmento ── */}
           {step === 1 && (

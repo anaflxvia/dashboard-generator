@@ -241,7 +241,7 @@ const KPI_BASE = {
   "Financeiro": {
     abas: ["Resumo","Receitas e Despesas","Fluxo de Caixa","Variacao","Predicao","Contas a Pagar/Receber"],
     kpis: ["Receita liquida","EBITDA","Margem liquida","Despesa operacional","DSO","Aging de contas","Forecast de caixa 30/60/90 dias","Inadimplencia (%)"],
-    graficos: "line chart de receita mensal, bar chart de composicao de custos, area chart de fluxo de caixa, gauge de margem EBITDA, waterfall chart de DRE"
+    graficos: "line chart de receita mensal, bar chart de composicao de custos, area chart de fluxo de caixa, bullet chart de margem EBITDA vs meta, waterfall chart de DRE"
   },
   "CRM / Vendas": {
     abas: ["Resumo","Pipeline de Leads","Taxas de Conversao","Atividades","Carteira por Representante","Variacao"],
@@ -251,17 +251,17 @@ const KPI_BASE = {
   "Recursos Humanos": {
     abas: ["Resumo","Headcount","Turnover e Retencao","Recrutamento","Clima e Engajamento","Variacao Mensal"],
     kpis: ["Headcount ativo","Taxa de turnover voluntario","Taxa de turnover involuntario","Tempo de preenchimento de vaga","Indice eNPS","Horas de treinamento per capita","Custo por contratacao","Absenteismo (%)"],
-    graficos: "bar chart de headcount por departamento, line chart de turnover mensal, funnel de recrutamento, gauge de eNPS, heatmap de clima organizacional por departamento"
+    graficos: "bar chart de headcount por departamento, line chart de turnover mensal, funnel de recrutamento, bullet chart de eNPS vs meta, heatmap de clima organizacional por departamento"
   },
   "Advocacia": {
     abas: ["Resumo","Casos Ativos","Distribuicao por Tipo","Horas e Honorarios","Prazos e Riscos","Variacao"],
     kpis: ["Casos em andamento","Taxa de sucesso","Horas lancadas vs contratadas","Valor de honorarios pendentes","Prazos criticos proximos","Custo medio por caso","Casos encerrados no mes","Receita por advogado"],
-    graficos: "donut chart de casos por tipo, bar chart de horas lancadas, timeline de prazos criticos, line chart de honorarios mensais, risk matrix"
+    graficos: "barras horizontais ordenadas de casos por tipo, bar chart de horas lancadas, timeline de prazos criticos, line chart de honorarios mensais, risk matrix"
   },
   "Observabilidade TI": {
     abas: ["Resumo","Uptime e Disponibilidade","Incidentes e Alertas","Performance de APIs","Logs e Erros","Variacao de SLA"],
     kpis: ["Uptime (%)","MTTR","MTBF","Nr de incidentes por severidade","Latencia p95","Volume de erros 4xx/5xx","Taxa de deployment","Cobertura de alertas (%)"],
-    graficos: "gauge de uptime, area chart de latencia, bar chart de incidentes por severidade, line chart de taxa de erros, heatmap de disponibilidade por servico"
+    graficos: "bullet chart de uptime vs meta de SLA, area chart de latencia, bar chart de incidentes por severidade, line chart de taxa de erros, heatmap de disponibilidade por servico"
   },
   "FinOps": {
     abas: ["Resumo","Custos por Servico","Orcamento vs Realizado","Tags e Rateio","Variacao","Predicao de Custos"],
@@ -276,27 +276,27 @@ const KPI_BASE = {
   "Juridico": {
     abas: ["Resumo","Contratos","Litigios e Processos","Compliance e Riscos","Despesas Juridicas","Variacao Mensal"],
     kpis: ["Contratos pendentes de assinatura","Processos ativos por esfera","Multas e penalidades","Valor provisionado vs pago","Contratos vencendo em 30 dias","Indice de compliance (%)","Despesa juridica total","Processos encerrados no mes"],
-    graficos: "donut de contratos por status, bar chart de processos por esfera, line chart de despesas juridicas, risk heatmap, timeline de vencimentos"
+    graficos: "donut de contratos por status (3 fatias: vigentes / a vencer / vencidos), bar chart de processos por esfera, line chart de despesas juridicas, risk heatmap, timeline de vencimentos"
   },
   "Educacao": {
     abas: ["Resumo","Matriculas e Evasao","Desempenho Academico","Financeiro Escolar","Presenca e Participacao","Variacao Semestral"],
     kpis: ["Total de alunos","Taxa de evasao","Media de notas por turma","Inadimplencia (% e R$)","Frequencia media","NPS dos alunos","Novos matriculados","Taxa de aprovacao (%)"],
-    graficos: "line chart de matriculas vs evasao, bar chart de notas por turma, area chart de inadimplencia, heatmap de frequencia, donut de distribuicao por curso"
+    graficos: "line chart de matriculas vs evasao, bar chart de notas por turma, area chart de inadimplencia, heatmap de frequencia, barras horizontais ordenadas de alunos por curso"
   },
   "Logistica": {
     abas: ["Resumo","Entregas e Prazos","Estoque e Armazenagem","Frota e Custos","Variacao","Predicao de Demanda"],
     kpis: ["OTIF (On-Time In-Full)","Lead time medio","Giro de estoque","Custo por km","Acuracia de inventario","Forecast de volume","Entregas no prazo (%)","Custo de armazenagem/unidade"],
-    graficos: "gauge de OTIF, bar chart de entregas por regiao, line chart de giro de estoque, area chart de custo por km, heatmap de volume por rota"
+    graficos: "bullet chart de OTIF vs meta, bar chart de entregas por regiao, line chart de giro de estoque, area chart de custo por km, heatmap de volume por rota"
   },
   "SLA / Suporte": {
     abas: ["Resumo","SLA por Cliente","Tickets e Chamados","Tempo de Resolucao","Penalidades e Creditos","Variacao Mensal"],
     kpis: ["% SLA cumprido","Tempo medio de resposta","Tempo medio de resolucao","Chamados por prioridade","Backlog","Valor de multas","First Contact Resolution","CSAT medio"],
-    graficos: "gauge de SLA cumprido, bar chart de tickets por prioridade, line chart de tempo de resolucao, area chart de backlog, donut de distribuicao por categoria"
+    graficos: "bullet chart de SLA cumprido vs meta, bar chart de tickets por prioridade, line chart de tempo de resolucao, area chart de backlog, barras horizontais ordenadas de tickets por categoria"
   },
   "Outro": {
     abas: ["Resumo","Analise Principal","Comparativos","Tendencias","Variacao","Detalhamento"],
     kpis: ["KPI principal","Variacao percentual","Meta vs realizado","Ranking por categoria","Tendencia mensal","Volume total","Eficiencia operacional (%)","Indice de qualidade"],
-    graficos: "bar chart, line chart, donut chart, gauge, heatmap"
+    graficos: "bar chart, line chart, barras horizontais ordenadas, bullet chart, heatmap"
   }
 };
 
@@ -359,11 +359,38 @@ DESIGN DOS CARDS DE GRAFICO:
 - Subtitulo abaixo do titulo (12px, cor secundaria)
 - Container do canvas: position:relative; height:260px; margin-top:16px
 
+REGRAS DE VISUALIZACAO (OBRIGATORIO — base: docs/guia-visuais-dashboard.md):
+Layout em Z/F:
+- Topo: KPI cards (o KPI mais critico primeiro, no canto superior esquerdo). Centro: graficos de tendencia e comparacao. Base: tabelas e analises secundarias.
+KPIs:
+- Nunca um numero sem contexto: todo KPI mostra a comparacao (vs mes anterior ou vs meta).
+- Para realizado vs meta, use bullet chart (barra horizontal com a meta como linha vertical e faixas ruim/regular/bom em tons de cinza). NUNCA use gauge/velocimetro.
+Escolha do grafico pela pergunta:
+- Tempo continuo → line, no maximo 4 datasets. Mais que isso → small multiples.
+- Volume ao longo do tempo → area com transparencia (alpha 0.15–0.25); area empilhada so com dados a partir de zero.
+- Periodos discretos (trimestre, ano) → colunas com espaco entre elas.
+- Ate 5 categorias com nomes curtos → colunas verticais com eixo Y comecando em zero (beginAtZero:true).
+- Mais de 5 categorias ou nomes longos → barras horizontais (indexAxis:'y') SEMPRE ordenadas do maior para o menor.
+- Valor inicial afetado por ganhos e perdas (ex.: Lucro Bruto → Impostos → Custos → Lucro Liquido) → cascata com barras flutuantes ([inicio, fim]): verde ganhos, vermelho perdas, cinza/azul totais.
+- Parte-todo → pizza/rosca SOMENTE com 2 ou 3 fatias que somam 100%; na rosca, escreva o total no centro (plugin afterDraw local). Com mais partes → barras empilhadas 100% (no maximo 4 fatias + "Outros") ou barras horizontais ordenadas.
+- Correlacao entre duas variaveis continuas → scatter com linha de tendencia; bubble quando houver 3a variavel (tamanho).
+- Cruzamento de duas categorias com intensidade (ex.: dia da semana x hora) → heatmap em grid HTML com paleta sequencial (claro → escuro).
+- Nunca use pizza/rosca para series temporais ou ranking.
+Desenho (data-ink):
+- Sem bordas de eixo (border:{display:false}); grade apenas no eixo de valor e bem discreta; eixo de categorias sem grade.
+- Legenda so quando ha mais de 1 dataset; em linhas, prefira rotulo direto na ponta da linha.
+- Line charts sem marcadores fixos (pointRadius:0, pointHoverRadius:5).
+Cores com proposito:
+- ~80% do dashboard em tons neutros; a cor de destaque (accent) marca o dado que importa.
+- Semanticas: verde = acima da meta/ganho, vermelho = abaixo da meta/perda, cinza = contexto. Sequenciais para intensidade.
+Interatividade:
+- Filtros globais apenas na topbar; tooltips com contexto (valor + variacao vs periodo anterior), nao so o numero.
+
 REQUISITOS DE GRAFICOS (OBRIGATORIO):
 - Grid 2x2: display:grid; grid-template-columns:1fr 1fr; gap:20px
-- Todos os graficos: options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ color:'#9090a8', font:{ size:11 } } } }, scales:{ x:{ grid:{ color:'rgba(255,255,255,0.05)' }, ticks:{ color:'#9090a8' } }, y:{ grid:{ color:'rgba(255,255,255,0.05)' }, ticks:{ color:'#9090a8' } } } }
+- Todos os graficos: options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ color:'#9090a8', font:{ size:11 } } } }, scales:{ x:{ grid:{ display:false }, border:{ display:false }, ticks:{ color:'#9090a8' } }, y:{ grid:{ color:'rgba(255,255,255,0.05)' }, border:{ display:false }, ticks:{ color:'#9090a8' } } } } (em barras horizontais inverta: grade so no eixo x)
 - Paleta de datasets: ['#6366f1','#22d3a5','#f59e0b','#f87171','#818cf8','#34d399']
-- Line charts: tension:0.4, borderWidth:2, pointRadius:3, pointHoverRadius:6
+- Line charts: tension:0.4, borderWidth:2, pointRadius:0, pointHoverRadius:5
 - Bar charts: borderRadius:6, borderSkipped:false
 - Doughnut/pie: cutout:'65%' (rosca), hoverOffset:8
 
@@ -396,8 +423,8 @@ REGRA CRITICA DE IDS DE CANVAS (OBRIGATORIO):
 - NUNCA copie o bloco de criacao de um grafico para outra aba apenas trocando o titulo — cada aba exige tipo de grafico, dados e estrutura completamente diferentes
 
 ABA ALOCACAO DE RECURSOS — conteudo obrigatorio e especifico:
-- Grafico 1 (chart-alocacao-1): bar chart HORIZONTAL (indexAxis:'y') de horas trabalhadas por pessoa/equipe no mes — cada barra e uma pessoa com nome real ficticio
-- Grafico 2 (chart-alocacao-2): doughnut chart de distribuicao percentual de horas por projeto — minimo 5 projetos com nomes ficticios reais
+- Grafico 1 (chart-alocacao-1): bar chart HORIZONTAL (indexAxis:'y') de horas trabalhadas por pessoa/equipe no mes, ordenado do maior para o menor — cada barra e uma pessoa com nome real ficticio
+- Grafico 2 (chart-alocacao-2): doughnut chart de distribuicao de horas em 3 fatias (Faturaveis / Nao faturaveis / Internas), com o total de horas escrito no centro
 - Grafico 3 (chart-alocacao-3): bar chart agrupado de capacidade planejada vs utilizada por departamento (3 departamentos, 2 datasets)
 - Grafico 4 (chart-alocacao-4): line chart de evolucao da taxa de ocupacao (%) nos ultimos 6 meses
 - Tabela de alocacao logo abaixo dos graficos: colunas Colaborador | Projeto | Horas Planejadas | Horas Realizadas | % Execucao (barra inline) | Status (badge)
@@ -407,7 +434,7 @@ ABA VARIACAO DE KPI — conteudo obrigatorio e especifico:
 - Grafico 1 (chart-variacao-1): line chart com 2 datasets — mes atual (linha solida #6366f1) vs mes anterior (linha tracejada #9090a8) para o KPI principal do segmento; eixo X = semanas do mes
 - Grafico 2 (chart-variacao-2): bar chart de variacao absoluta por KPI (pode ser negativo) — barras verdes para positivo (#22d3a5), vermelhas para negativo (#f87171); use backgroundColor como array de cores condicionais
 - Grafico 3 (chart-variacao-3): radar chart comparando performance atual vs meta em 6 dimensoes diferentes e especificas do segmento
-- Grafico 4 (chart-variacao-4): line chart de volatilidade dos KPIs nos ultimos 3 meses (multiplos datasets, um por KPI)
+- Grafico 4 (chart-variacao-4): line chart de volatilidade dos KPIs nos ultimos 3 meses (no maximo 4 datasets: os 4 KPIs mais volateis)
 - Tabela de variacao: colunas KPI | Valor Atual | Valor Anterior | Variacao (%) com seta ▲▼ colorida | Tendencia (icone de linha) | Meta
 - KPIs especificos: Variacao Media, KPIs Acima da Meta, KPIs Abaixo da Meta, Maior Alta, Maior Queda, Estabilidade Geral
 
@@ -415,7 +442,7 @@ ABA PREDICAO DE ENTREGAS — conteudo obrigatorio e especifico:
 - Grafico 1 (chart-predicao-1): line chart com historico (6 meses, linha solida #6366f1, fill com gradiente) + forecast (3 meses, linha tracejada #fbbf24) de entregas no prazo — datasets se conectam no ultimo mes historico
 - Grafico 2 (chart-predicao-2): bar chart de entregas por status (No Prazo / Atrasado / Em Risco) agrupado por mes — 6 meses de historico
 - Grafico 3 (chart-predicao-3): scatter chart de prazo previsto vs prazo real por projeto (eixo X = planejado em dias, eixo Y = realizado em dias) — linha diagonal de referencia desenhada via plugin afterDraw
-- Grafico 4 (chart-predicao-4): bar chart horizontal de dias de atraso acumulado por projeto — top 8 projetos com mais atraso
+- Grafico 4 (chart-predicao-4): bar chart horizontal de dias de atraso acumulado por projeto — top 8 projetos com mais atraso, ordenado do maior para o menor
 - Cards de projetos abaixo: grid de cards mostrando nome do projeto, % concluido (barra de progresso), data prevista e badge de risco — VERDE se no prazo, AMARELO se atencao, VERMELHO se critico — minimo 6 projetos
 
 LOADING STATE OBRIGATORIO (CRITICO):

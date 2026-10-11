@@ -1,4 +1,5 @@
 import type { DashboardData, UserAnswers } from '../types'
+import { REGRAS_VISUALIZACAO } from './dashboardGuide'
 
 function getApiKey(): string {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY
@@ -36,10 +37,10 @@ Retorne SOMENTE um JSON válido com esta estrutura exata (sem markdown, sem expl
     {
       "name": "Nome da Aba",
       "kpis": [
-        { "label": "Nome do KPI", "value": "1.234", "change": "+12,3%", "trend": "up" },
-        { "label": "Nome do KPI", "value": "R$ 45.2K", "change": "-3,1%", "trend": "down" },
-        { "label": "Nome do KPI", "value": "98,5%", "change": "+0,5%", "trend": "up" },
-        { "label": "Nome do KPI", "value": "234", "change": "0,0%", "trend": "neutral" }
+        { "label": "Nome do KPI", "value": "1.234", "change": "+12,3%", "trend": "up", "sparkline": [980, 1010, 1050, 1032, 1120, 1180, 1234] },
+        { "label": "Nome do KPI", "value": "R$ 45.2K", "change": "-3,1%", "trend": "down", "sparkline": [48.1, 47.6, 47.9, 46.8, 46.2, 45.9, 45.2] },
+        { "label": "Nome do KPI", "value": "98,5%", "change": "+0,5%", "trend": "up", "sparkline": [97.6, 97.9, 98.0, 97.8, 98.1, 98.3, 98.5] },
+        { "label": "Nome do KPI", "value": "234", "change": "0,0%", "trend": "neutral", "sparkline": [231, 236, 233, 235, 232, 236, 234] }
       ],
       "charts": [
         {
@@ -53,10 +54,10 @@ Retorne SOMENTE um JSON válido com esta estrutura exata (sem markdown, sem expl
         },
         {
           "title": "Título do Gráfico 2",
-          "type": "line",
-          "labels": ["Sem 1", "Sem 2", "Sem 3", "Sem 4"],
+          "type": "horizontalBar",
+          "labels": ["Categoria A", "Categoria B", "Categoria C", "Categoria D", "Categoria E", "Categoria F"],
           "datasets": [
-            { "label": "Métrica Principal", "data": [85, 92, 88, 96] }
+            { "label": "Métrica Principal", "data": [312, 268, 241, 197, 154, 98] }
           ]
         }
       ],
@@ -82,8 +83,10 @@ Crie exatamente 5 abas relevantes para o segmento "${answers.segmento}".
 Use dados brasileiros realistas (moeda em R$, datas em pt-BR, nomes brasileiros nas tabelas).
 Os valores devem ser plausíveis para um negócio real.
 trend deve ser "up", "down" ou "neutral".
-type dos charts deve ser "bar", "line", "pie" ou "doughnut".
-Para pie/doughnut, use apenas 1 dataset com 5-7 itens.`
+type dos charts deve ser "bar", "horizontalBar", "line", "area", "pie" ou "doughnut".
+Para pie/doughnut, use apenas 1 dataset com 2 ou 3 itens.
+
+${REGRAS_VISUALIZACAO}`
 
   const models = ['gemini-2.5-pro', 'gemini-2.5-flash']
   const body = JSON.stringify({
