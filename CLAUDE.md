@@ -11,7 +11,8 @@ O usuário responde um questionário de contexto, a aplicação monta um prompt 
 dashboard-generator/                 (raiz do repo)
 ├── CLAUDE.md
 ├── docs/
-│   └── guia-visuais-dashboard.md    guia de visuais: qual grafico usar, quando e como (base de conhecimento dos prompts)
+│   ├── guia-visuais-dashboard.md    guia de visuais: qual grafico usar, quando e como (base de conhecimento dos prompts)
+│   └── design-systems-segmentos.md  temas por segmento gerados com a skill ui-ux-pro-max
 ├── server.py                        servidor local que serve frontend/ injetando chaves do .env
 ├── frontend/
 │   └── app.html                     versao original em HTML unico
@@ -29,7 +30,9 @@ dashboard-generator/                 (raiz do repo)
         ├── lib/icons.ts             lista fechada de icones (lucide-react) e reserva por palavra-chave
         ├── lib/brasil.ts            estados do Brasil (paths SVG, centroides, busca por sigla ou nome)
         ├── lib/exemplos.ts          dashboard de exemplo de logistica
-        ├── lib/demos.ts             demos por ?demo= (logistica, financeiro, vendas, rh), com marca propria
+        ├── lib/demos.ts             demos por ?demo= (logistica, financeiro, vendas, rh), com o tema do segmento
+        ├── lib/segmentThemes.ts     tema padrao por segmento (skill ui-ux-pro-max)
+        ├── lib/fonts.ts             fontes dos temas, carregamento do Google Fonts e monograma
         └── services/
             ├── embeddings.ts        embeddings do Gemini para as respostas do questionario
             └── dashboardCache.ts    cache semantico no Supabase (rpc match_dashboards)
@@ -167,10 +170,13 @@ esses tipos e o prompt nao tinha nenhum conhecimento do segmento.
   `goodWhen` ausente e inferido pelo rotulo
 - `SCHEMA_VERSION` (hoje 2) vai junto no JSON salvo no Supabase. A busca pede os 5 mais parecidos e usa o
   primeiro da versao atual, para nao devolver dashboards no formato antigo
-- `?demo=logistica|financeiro|vendas|rh` abre um dashboard de exemplo sem chamar o Gemini. As tres ultimas trazem
-  marca propria (cores e fonte) gerada com a skill ui-ux-pro-max; a marca da demo vale so enquanto ela esta aberta.
-  Detalhes e ajustes em `docs/design-systems-demos.md`
-- Marca aceita `font` (familia do Google Fonts, carregada pelo `Dashboard`); ainda nao tem campo na tela de marca
+- Tema por segmento (`lib/segmentThemes.ts`): sem marca salva, o dashboard usa o design system do seu segmento,
+  gerado com a skill ui-ux-pro-max (estilo, cores e fonte). Marca salva vale para todos os segmentos; "Usar tema do
+  segmento" na tela de marca apaga a marca salva. Os temas tambem aparecem como "Tema de partida" na tela de marca.
+  Origem e ajustes em `docs/design-systems-segmentos.md`
+- `?demo=logistica|financeiro|vendas|rh` abre um dashboard de exemplo sem chamar o Gemini, com o tema do segmento e um
+  nome ficticio de empresa; vale ate o usuario salvar outra marca
+- Marca aceita `font` (familia do Google Fonts, `lib/fonts.ts`), escolhida na tela de marca entre as fontes dos temas
 - Paleta das series: depois de primaria e secundaria, cores extras que nao se parecem com a marca; vermelho e verde
   por ultimo, porque sao cores de status
 - Sem logo, o monograma usa as iniciais do nome da marca
@@ -192,7 +198,10 @@ No HTML unico o Gemini escreve o dashboard inteiro, entao a mesma ideia entra de
   (pelo menos 6 tipos e 2 visuais especiais no dashboard, no maximo 4 barras e 1 rosca). As abas fixas
   (Alocacao, Variacao, Predicao) so valem quando o dashboard tem essa aba
 - Abas validas: `validarAbas` aceita `canvas` ou container com `data-visual`, para nao remover aba so com mapa
-- Ao mudar `lib/icons.ts`, `lib/brasil.ts` ou `segmentPlaybooks.ts` no React, atualize o equivalente aqui
+- Tema por segmento: com a identidade visual desativada, `marcaEfetiva()` usa `TEMAS_SEGMENTO` (mesmos temas do React,
+  em versao clara e escura) e o prompt recebe o bloco "TEMA VISUAL DO SEGMENTO" com tokens e fonte, sem nome de empresa.
+  Antes, sem marca, todo dashboard saia no mesmo tema escuro indigo (`PALETA_TEMPLATE_PADRAO`, hoje sem uso no prompt)
+- Ao mudar `lib/icons.ts`, `lib/brasil.ts`, `segmentPlaybooks.ts` ou `segmentThemes.ts` no React, atualize o equivalente aqui
 
 ## Principios de desenvolvimento (baseado no metodo Akita)
 

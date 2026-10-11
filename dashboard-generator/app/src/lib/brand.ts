@@ -35,6 +35,25 @@ export function loadBrand(): Brand {
   }
 }
 
+// marca salva pelo usuario, ou null quando ele nunca salvou (vale o tema do segmento)
+export function loadSavedBrand(): Brand | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    return raw ? { ...DEFAULT_BRAND, ...(JSON.parse(raw) as Partial<Brand>) } : null
+  } catch {
+    return null
+  }
+}
+
+// volta a usar o tema do segmento
+export function clearBrand(): void {
+  try {
+    localStorage.removeItem(STORAGE_KEY)
+  } catch {
+    // armazenamento bloqueado: nada salvo para apagar
+  }
+}
+
 // lanca erro se o localStorage estiver cheio/bloqueado — a tela mostra o estado de erro
 export function saveBrand(brand: Brand): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(brand))

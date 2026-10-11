@@ -1,6 +1,5 @@
 import { useMemo, useState, type ChangeEvent } from 'react'
 import {
-  DEFAULT_BRAND,
   brandStyle,
   checkContrast,
   deriveTokens,
@@ -8,6 +7,8 @@ import {
   saveBrand,
   type Brand,
 } from '../lib/brand'
+import { TEMAS_SEGMENTO, temaDoSegmento } from '../lib/segmentThemes'
+import { FONTES, fontFamily, siglaMarca, useGoogleFont } from '../lib/fonts'
 
 const LOGO_TYPES = ['image/png', 'image/svg+xml', 'image/jpeg', 'image/webp']
 const LOGO_MAX_BYTES = 512 * 1024
@@ -64,11 +65,12 @@ function readLogo(file: File): Promise<string> {
 /* ── Preview ao vivo: miniatura do dashboard com as cores da marca ── */
 function LivePreview({ brand }: { brand: Brand }) {
   const tokens = deriveTokens(brand)
+  useGoogleFont(brand.font)
   const bars = [55, 72, 48, 86, 64, 92]
 
   return (
     <div
-      style={brandStyle(tokens)}
+      style={{ ...brandStyle(tokens), fontFamily: fontFamily(brand.font) }}
       className="rounded-xl overflow-hidden border border-(--brand-border) bg-(--brand-bg) flex h-80 text-(--brand-text)"
       aria-label="Preview do dashboard com a marca"
     >
@@ -77,7 +79,7 @@ function LivePreview({ brand }: { brand: Brand }) {
           {brand.logo ? (
             <img src={brand.logo} alt="" className="h-6 max-w-full object-contain" />
           ) : (
-            <div className="w-6 h-6 rounded-md bg-(--brand-primary) text-(--brand-on-primary) text-[9px] font-bold flex items-center justify-center">AI</div>
+            <div className="w-6 h-6 rounded-md bg-(--brand-primary) text-(--brand-on-primary) text-[9px] font-bold flex items-center justify-center">{siglaMarca(brand.name || 'Sua marca')}</div>
           )}
           {!brand.logo && <span className="text-[11px] font-semibold truncate">{brand.name || 'Sua marca'}</span>}
         </div>
@@ -122,11 +124,15 @@ function LivePreview({ brand }: { brand: Brand }) {
 
 interface Props {
   initial: Brand
+  segmento?: string // segmento do dashboard atual, para o tema padrao
+  usandoTemaDoSegmento: boolean // true quando nao ha marca salva
   onSaved: (brand: Brand) => void
+  onUsarTemaDoSegmento: () => void
   onBack: () => void
 }
 
-export default function BrandSettings({ initial, onSaved, onBack }: Props) {
+export default function BrandSettings({ initial, segmento, usandoTemaDoSegmento, onSaved, onUsarTemaDoSegmento, onBack }: Props) {
+  const temaAtual = temaDoSegmento(segmento)
   const [brand, setBrand] = useState<Brand>(initial)
   // valor digitado no campo hex, que pode estar incompleto enquanto a pessoa digita
   const [hexDraft, setHexDraft] = useState<Partial<Record<keyof Brand, string>>>({})
@@ -178,8 +184,17 @@ export default function BrandSettings({ initial, onSaved, onBack }: Props) {
     })
   }
 
+  // aplica cores e fonte de um tema de segmento, mantendo nome e logo
+  function aplicarTema(chave: string) {
+    const t = TEMAS_SEGMENTO[chave].brand
+    update({ primary: t.primary, secondary: t.secondary, background: t.background, surface: t.surface, text: t.text, font: t.font })
+    setHexDraft({})
+  }
+
+  // apaga a marca salva: os dashboards voltam a usar o tema de cada segmento
   function handleReset() {
-    setBrand(DEFAULT_BRAND)
+    onUsarTemaDoSegmento()
+    setBrand({ ...temaAtual.brand })
     setHexDraft({})
     setLogoError(null)
     setStatus('idle')
@@ -239,6 +254,51 @@ export default function BrandSettings({ initial, onSaved, onBack }: Props) {
               </div>
               <p className="text-xs text-slate-500 mt-2">PNG, SVG, JPG ou WebP · até 512 KB · de 32 a 2048 px por lado. Prefira logo horizontal com fundo transparente.</p>
               {logoError && <p role="alert" className="text-xs text-red-400 mt-2">{logoError}</p>}
+            </section>
+
+            <section>
+              <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">Tema de partida</h2>
+              <p className="text-xs text-slate-500 mb-3">
+                {usandoTemaDoSegmento
+                  ? `Sem marca salva: cada dashboard usa o tema do seu segmento${segmento ? ` (agora: ${segmento}, estilo ${temaAtual.estilo})` : ''}.`
+                  : 'Marca salva: vale para todos os segmentos.'}{' '}
+                Os temas vêm da skill ui-ux-pro-max. Escolha um como base e ajuste as cores abaixo.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(TEMAS_SEGMENTO).map(([chave, t]) => (
+                  <button
+                    key={chave}
+                    type="button"
+                    onClick={() => aplicarTema(chave)}
+                    title={`${t.estilo} · ${t.brand.font}`}
+                    className="inline-flex items-center gap-2 pl-1.5 pr-2.5 py-1 rounded-full border border-slate-700 bg-slate-900 text-xs text-slate-300 hover:border-slate-500 cursor-pointer transition-colors focus-visible:outline-2 focus-visible:outline-indigo-500"
+                  >
+                    <span className="flex" aria-hidden="true">
+                      {[t.brand.background, t.brand.primary, t.brand.secondary].map((c, i) => (
+                        <span key={i} className="w-3.5 h-3.5 rounded-full border border-slate-600 -ml-1 first:ml-0" style={{ background: c }} />
+                      ))}
+                    </span>
+                    {chave}
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">Fonte</h2>
+              <label className="sr-only" htmlFor="brand-font">Fonte</label>
+              <select
+                id="brand-font"
+                value={brand.font ?? ''}
+                onChange={(e) => update({ font: e.target.value || undefined })}
+                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-indigo-500 cursor-pointer"
+              >
+                <option value="">Padrão do app</option>
+                {FONTES.map((f) => (
+                  <option key={f} value={f}>{f}</option>
+                ))}
+              </select>
+              <p className="text-xs text-slate-500 mt-2">Carregada do Google Fonts nos dashboards.</p>
             </section>
 
             <section>
@@ -314,7 +374,7 @@ export default function BrandSettings({ initial, onSaved, onBack }: Props) {
                 {status === 'saving' ? 'Salvando...' : 'Salvar marca'}
               </button>
               <button onClick={handleReset} className="px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white">
-                Restaurar padrão
+                Usar tema do segmento
               </button>
               <span role="status" className="text-xs ml-auto">
                 {status === 'saved' && <span className="text-emerald-400">Marca salva</span>}

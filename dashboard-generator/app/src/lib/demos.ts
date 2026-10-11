@@ -1,11 +1,13 @@
 import type { DashboardData } from '../types'
 import type { Brand } from './brand'
 import { EXEMPLO_LOGISTICA } from './exemplos'
+import { TEMAS_SEGMENTO } from './segmentThemes'
 
-// Demos abertas por ?demo=<chave>. Cada uma pode trazer a propria marca, aplicada so
-// enquanto a demo esta aberta (nao sobrescreve a identidade visual salva).
-// As marcas de financeiro, vendas e rh vieram da skill ui-ux-pro-max
-// (search.py --design-system, densidade 8), com os ajustes anotados em cada uma.
+// marca da demo = tema do segmento (skill ui-ux-pro-max) com um nome ficticio de empresa
+const marca = (segmento: string, name: string): Brand => ({ ...TEMAS_SEGMENTO[segmento].brand, name })
+
+// Demos abertas por ?demo=<chave>. Cada uma usa o tema do seu segmento (lib/segmentThemes.ts),
+// aplicado so enquanto a demo esta aberta (nao sobrescreve a identidade visual salva).
 export interface Demo {
   data: DashboardData
   brand?: Brand
@@ -133,16 +135,6 @@ const FINANCEIRO: DashboardData = {
   ],
 }
 
-const MARCA_FINANCEIRO: Brand = {
-  name: 'Atlas Capital',
-  logo: null,
-  primary: '#F59E0B',
-  secondary: '#A78BFA', // roxo da paleta Fintech (#8B5CF6) clareado para passar 3:1 no fundo escuro
-  background: '#020617',
-  surface: '#0E1223',
-  text: '#F8FAFC',
-  font: 'Fira Sans',
-}
 
 /* ── CRM / Vendas: estilo "Flat Design" claro + azul profissional + Plus Jakarta Sans ──
    Ajuste: a secundaria da skill (#3B82F6) era quase igual a primaria e o verde de negocio e reservado
@@ -275,16 +267,6 @@ const VENDAS: DashboardData = {
   ],
 }
 
-const MARCA_VENDAS: Brand = {
-  name: 'Vértice Vendas',
-  logo: null,
-  primary: '#2563EB',
-  secondary: '#0891B2',
-  background: '#F8FAFC',
-  surface: '#FFFFFF',
-  text: '#0F172A',
-  font: 'Plus Jakarta Sans',
-}
 
 /* ── RH: estilo "Data-Dense Dashboard" + azul-marinho com ambar + Inter ──
    Ajuste: texto um tom mais escuro que o sugerido, para o texto secundario passar no contraste. */
@@ -408,20 +390,10 @@ const RH: DashboardData = {
   ],
 }
 
-const MARCA_RH: Brand = {
-  name: 'Pessoas & Cia',
-  logo: null,
-  primary: '#1E40AF',
-  secondary: '#D97706',
-  background: '#F8FAFC',
-  surface: '#FFFFFF',
-  text: '#172554', // skill sugeriu #1E3A8A; um tom mais escuro faz o texto secundario passar 4,5:1
-  font: 'Inter',
-}
 
 export const DEMOS: Record<string, Demo> = {
-  logistica: { data: EXEMPLO_LOGISTICA },
-  financeiro: { data: FINANCEIRO, brand: MARCA_FINANCEIRO },
-  vendas: { data: VENDAS, brand: MARCA_VENDAS },
-  rh: { data: RH, brand: MARCA_RH },
+  logistica: { data: EXEMPLO_LOGISTICA, brand: marca('Logística', 'TransLog Brasil') },
+  financeiro: { data: FINANCEIRO, brand: marca('Financeiro', 'Atlas Capital') },
+  vendas: { data: VENDAS, brand: marca('CRM / Vendas', 'Vértice Vendas') },
+  rh: { data: RH, brand: marca('Recursos Humanos', 'Pessoas & Cia') },
 }
