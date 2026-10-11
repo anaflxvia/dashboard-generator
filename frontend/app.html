@@ -708,12 +708,15 @@ const ICONES_PERMITIDOS = 'activity, alert-triangle, award, banknote, bar-chart,
 function montarTemplateFixo(c) { return `
 ESTRUTURA GERAL:
 ${c.linhaTema}
-- Layout SEM sidebar: cabecalho fixo no topo (position:sticky; top:0) com duas linhas
-- Linha 1 do cabecalho: logo/nome a esquerda; ABAS no centro como botoes horizontais (icone lucide + nome, rolagem horizontal se nao couber); a direita botao de tema claro/escuro e botao "Exportar PDF" (window.print())
+- Layout SEM sidebar, nesta ordem de cima para baixo:
+  1. Cabecalho (64px, fundo da superficie, borda inferior): SOMENTE o logo e o nome da empresa, a esquerda. Nada mais nele
+  2. Titulo do dashboard: H1 de 24px peso 600 com "Segmento · Titulo do dashboard" em uma unica linha; a direita do titulo, botao de tema claro/escuro e botao "Exportar PDF" (window.print())
+  3. Barra de filtros (detalhada abaixo), logo abaixo do titulo
+  4. ABAS como botoes horizontais (icone lucide + nome, rolagem horizontal se nao couber), presas no topo ao rolar (position:sticky; top:0)
+  5. Conteudo da aba (resumo, KPIs, visuais, tabelas). NAO repita o nome da aba como titulo nem escreva frase de descricao da aba
 - Abas: transition: background-color .2s, color .2s, transform .2s. Hover: fundo da primaria a 14% de opacidade, texto na cor primaria e icone com transform:scale(1.1). Aba selecionada: fundo da primaria solido, texto na cor sobre a primaria, peso 600 e aria-selected="true". cursor:pointer em todas
-- Linha 2 do cabecalho (barra de filtros, acima de todo o conteudo): icone de funil + "Filtros"; selects de Periodo (Ultimos 3 / 6 / 12 meses, Tudo), Regiao (Norte, Nordeste, Centro-Oeste, Sudeste, Sul) quando houver dado por UF ou regiao, e 1 ou 2 dimensoes do segmento (ex.: Canal, Area, Tipo de veiculo); select com filtro escolhido fica com borda e fundo suave da primaria. Botao "Limpar filtros" (volta todos para "todos"; desabilitado quando nada esta filtrado). A direita, texto "Atualizado em DD/MM/AAAA as HH:MM" com icone de relogio, preenchido com new Date() no carregamento
+- Barra de filtros (abaixo do titulo): icone de funil + "Filtros"; selects de Periodo (Ultimos 3 / 6 / 12 meses, Tudo), Regiao (Norte, Nordeste, Centro-Oeste, Sudeste, Sul) quando houver dado por UF ou regiao, e 1 ou 2 dimensoes do segmento (ex.: Canal, Area, Tipo de veiculo); select com filtro escolhido fica com borda e fundo suave da primaria. Botao "Limpar filtros" (volta todos para "todos"; desabilitado quando nada esta filtrado). A direita, texto "Atualizado em DD/MM/AAAA as HH:MM" com icone de relogio, preenchido com new Date() no carregamento
 - Filtros FUNCIONAIS: ao mudar um select, recorte os dados ja desenhados (series temporais ficam com os ultimos N pontos; graficos e tabelas por regiao ou dimensao mostram so a opcao escolhida) e chame chart.update(); visuais afetados mostram um selo "Filtrado"; sem dados, mostre "Sem dados para os filtros escolhidos". Guarde os dados originais de cada grafico para o "Limpar filtros" restaurar
-- Titulo de cada aba: no topo do conteudo da aba, H1 com o nome da aba (24px peso 600) e abaixo uma frase em cor secundaria dizendo o que a aba responde
 - Troca de aba com fade curto (opacity e translateY 6px, 200ms), desligado em prefers-reduced-motion
 - Tipografia: importar Inter via Google Fonts; hierarquia: 28px bold para numeros grandes, 13px medium para labels, 11px para subtextos
 
@@ -1597,11 +1600,11 @@ function montarBlocoMarca(b = brand) {
     .map(k => `--${k}: ${t[k]}`).join('; ');
   const nome = b.nome.trim() || 'Empresa Demo';
   const logo = b.logo
-    ? `- Logo: no cabecalho, a esquerda das abas, use exatamente <img class="brand-logo" src="__BRAND_LOGO__" alt="${nome.replace(/"/g, '')}" style="max-height:32px;max-width:140px;object-fit:contain">. NAO altere o valor do src: o sistema substitui pelo arquivo real.`
+    ? `- Logo: no cabecalho, a esquerda, use exatamente <img class="brand-logo" src="__BRAND_LOGO__" alt="${nome.replace(/"/g, '')}" style="max-height:32px;max-width:140px;object-fit:contain">. NAO altere o valor do src: o sistema substitui pelo arquivo real.`
     : `- Logo: a empresa nao enviou arquivo. Use um monograma com as iniciais "${siglaMarca(b)}" em um quadrado 32x32 com cantos de 8px, fundo var(--primary) e texto var(--on-primary).`;
   const cabecalho = b.doSegmento
     ? `TEMA VISUAL DO SEGMENTO (OBRIGATORIO; estilo "${b.estilo}" da skill ui-ux-pro-max; estas regras substituem qualquer cor, fonte ou tema citados acima):
-- Sem marca de empresa: use o titulo do dashboard no cabecalho, a esquerda das abas, com um icone lucide do segmento em um quadrado 32x32 com cantos de 8px, fundo var(--primary) e cor var(--on-primary).
+- Sem marca de empresa: use o titulo do dashboard no cabecalho, a esquerda, com um icone lucide do segmento em um quadrado 32x32 com cantos de 8px, fundo var(--primary) e cor var(--on-primary).
 `
     : `IDENTIDADE VISUAL DA MARCA (OBRIGATORIO; estas regras substituem qualquer cor, fonte, logo ou tema citados acima):
 - Empresa: ${nome}. Use o nome no cabecalho, ao lado do logo, e no <title> da pagina.

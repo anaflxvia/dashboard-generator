@@ -211,9 +211,8 @@ export default function Dashboard({ data, brand, onBack, onOpenBrand, fromCache 
 
   return (
     <div style={estilo} className="flex flex-col h-screen bg-(--brand-bg) text-(--brand-text) overflow-hidden">
-      <header className="bg-(--brand-surface) border-b border-(--brand-border) shrink-0">
-        {/* Linha 1: marca, abas e acoes */}
-        <div className="h-16 flex items-center gap-4 px-4">
+      {/* Cabecalho: so logo e nome da empresa */}
+      <header className="h-16 bg-(--brand-surface) border-b border-(--brand-border) shrink-0 flex items-center px-4 sm:px-6">
           <div className="flex items-center gap-3 shrink-0">
             {brand.logo ? (
               <img src={brand.logo} alt={brand.name || 'Logo'} className="h-8 max-w-[140px] object-contain" />
@@ -223,34 +222,17 @@ export default function Dashboard({ data, brand, onBack, onOpenBrand, fromCache 
               </div>
             )}
             {!brand.logo && (
-              <span className="hidden md:block text-(--brand-text) font-semibold text-sm max-w-[180px] truncate">{brand.name || data.title}</span>
+              <span className="text-(--brand-text) font-semibold text-sm truncate">{brand.name || data.title}</span>
             )}
           </div>
+      </header>
 
-          <nav role="tablist" aria-label="Abas do dashboard" className="flex-1 min-w-0 flex items-center gap-1 overflow-x-auto">
-            {data.tabs.map((t, i) => {
-              const ativa = i === activeTab
-              return (
-                <button
-                  key={i}
-                  role="tab"
-                  aria-selected={ativa}
-                  onClick={() => setActiveTab(i)}
-                  className={`group shrink-0 flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm cursor-pointer transition-all duration-200 ease-out focus-visible:outline-2 focus-visible:outline-(--brand-primary) ${
-                    ativa
-                      ? 'bg-(--brand-primary) text-(--brand-on-primary) font-medium shadow-sm'
-                      : 'text-(--brand-muted) hover:text-(--brand-primary) hover:bg-(--tab-hover)'
-                  }`}
-                >
-                  <span className={`transition-transform duration-200 ${ativa ? '' : 'group-hover:scale-110'}`}>
-                    <Icone name={t.icon} label={t.name} className="w-4 h-4" />
-                  </span>
-                  <span className="whitespace-nowrap">{t.name}</span>
-                </button>
-              )
-            })}
-          </nav>
-
+      <main className="flex-1 overflow-y-auto bg-(--brand-bg)">
+        {/* Titulo do dashboard e acoes */}
+        <div className="px-4 sm:px-6 pt-6 flex flex-wrap items-center gap-3">
+          <h1 className="flex-1 min-w-0 text-xl sm:text-2xl font-semibold text-(--brand-text) tracking-tight">
+            {data.segment} · {data.title}
+          </h1>
           <div className="flex items-center gap-1 shrink-0">
             {fromCache && (
               <span className={`hidden lg:flex items-center gap-1.5 text-xs font-medium border px-2.5 py-1 rounded-full mr-1 ${status.success}`}>
@@ -277,8 +259,8 @@ export default function Dashboard({ data, brand, onBack, onOpenBrand, fromCache 
           </div>
         </div>
 
-        {/* Linha 2: filtros e atualizacao */}
-        <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 border-t border-(--brand-border)">
+        {/* Filtros e atualizacao */}
+        <div className="px-4 sm:px-6 pt-4 flex flex-wrap items-center gap-2">
           <span className="flex items-center gap-1.5 text-xs font-medium text-(--brand-muted) mr-1">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
@@ -337,17 +319,35 @@ export default function Dashboard({ data, brand, onBack, onOpenBrand, fromCache 
             Atualizado em {atualizadoTexto}
           </span>
         </div>
-      </header>
 
-      <main className="flex-1 overflow-y-auto bg-(--brand-bg) p-4 sm:p-6">
-        <div key={activeTab} className="space-y-6 animate-entrada">
-          {/* Titulo da aba */}
-          <div>
-            <p className="text-xs text-(--brand-muted) mb-1">{data.segment} · {data.title}</p>
-            <h1 className="text-2xl font-semibold text-(--brand-text) tracking-tight">{tab.name}</h1>
-            {tab.description && <p className="text-sm text-(--brand-muted) mt-1">{tab.description}</p>}
-          </div>
+        {/* Abas: ficam presas no topo ao rolar */}
+        <div className="sticky top-0 z-10 bg-(--brand-bg) border-b border-(--brand-border) px-4 sm:px-6 py-2.5 mt-4">
+          <nav role="tablist" aria-label="Abas do dashboard" className="flex items-center gap-1 overflow-x-auto">
+            {data.tabs.map((t, i) => {
+              const ativa = i === activeTab
+              return (
+                <button
+                  key={i}
+                  role="tab"
+                  aria-selected={ativa}
+                  onClick={() => setActiveTab(i)}
+                  className={`group shrink-0 flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm cursor-pointer transition-all duration-200 ease-out focus-visible:outline-2 focus-visible:outline-(--brand-primary) ${
+                    ativa
+                      ? 'bg-(--brand-primary) text-(--brand-on-primary) font-medium shadow-sm'
+                      : 'text-(--brand-muted) hover:text-(--brand-primary) hover:bg-(--tab-hover)'
+                  }`}
+                >
+                  <span className={`transition-transform duration-200 ${ativa ? '' : 'group-hover:scale-110'}`}>
+                    <Icone name={t.icon} label={t.name} className="w-4 h-4" />
+                  </span>
+                  <span className="whitespace-nowrap">{t.name}</span>
+                </button>
+              )
+            })}
+          </nav>
+        </div>
 
+        <div key={activeTab} className="space-y-6 animate-entrada p-4 sm:p-6">
           <div className="bg-(--brand-surface) border border-(--brand-border) rounded-xl px-5 py-3 flex items-center gap-3">
             <div className="w-2 h-2 rounded-full bg-(--brand-primary) shrink-0" />
             <p className="text-(--brand-muted) text-sm">{data.summary}</p>
