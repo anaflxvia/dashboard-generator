@@ -182,7 +182,8 @@ esses tipos e o prompt nao tinha nenhum conhecimento do segmento.
 - Marca aceita `font` (familia do Google Fonts, `lib/fonts.ts`), escolhida na tela de marca entre as fontes dos temas
 - Paleta das series: depois de primaria e secundaria, cores extras que nao se parecem com a marca; vermelho e verde
   por ultimo, porque sao cores de status
-- Sem logo, o monograma usa as iniciais do nome da marca
+- Sem logo, o monograma usa as iniciais do nome da marca. Com ou sem logo, o nome da empresa aparece sempre ao lado
+  (antes sumia quando havia logo; mesmo ajuste no prototipo e no prompt do `app.html`)
 - Pendente: testar o prompt novo com o Gemini em todos os segmentos e ajustar playbooks pelo resultado
 
 ## Cabecalho, filtros e grade (app React)
