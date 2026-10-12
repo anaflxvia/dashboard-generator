@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ana Flávia · Consultoria em Dados e BI</title>
+<title>AFK VIEW · Consultoria em Dados e BI</title>
 <meta name="description" content="Consultoria em dados e BI em São Paulo. Transformo planilhas de Excel, sistemas e bases soltas em painéis que o time usa para decidir.">
-<meta property="og:title" content="Ana Flávia · Consultoria em Dados e BI">
+<meta property="og:title" content="AFK VIEW · Consultoria em Dados e BI">
 <meta property="og:description" content="Da planilha de Excel à engenharia de dados na nuvem. Painéis que o time usa para decidir.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://afkview.com/home">
@@ -105,6 +105,16 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #160C
 @media (prefers-reduced-motion: reduce){.ki-shots{overflow-x:auto}.ki-shots .ki-track[aria-hidden]{display:none}}
 
 [hidden]{display:none !important}
+
+header nav{gap:12px !important}
+@media (max-width:640px){
+  header nav{display:grid !important;grid-template-columns:1fr 1fr;width:100%;flex:none !important}
+  header nav .ki-btn{padding-left:12px !important;padding-right:12px !important;display:flex !important;align-items:center;justify-content:center;font-size:14px !important}
+  header nav .ki-btn{height:50px;padding-top:0 !important;padding-bottom:0 !important}
+  header nav .ki-btn:nth-child(n+3){grid-column:1/-1}
+  .ki-faq-n{width:40px !important}
+  .ki-faq-r{padding-left:80px !important}
+}
 </style>
 </head>
 <body>
@@ -112,12 +122,10 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #160C
 
   <header style="border-bottom: 2px solid #160C33">
     <div style="max-width: 1320px; margin: 0 auto; padding: 18px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 32px">
-      <a href="#ki-topo" style="font-family: 'Syncopate', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .06em; color: #160C33; text-decoration: none">ANA FLÁVIA</a>
-      <span style="font-size: 13px">Dados e BI · SP</span>
+      <a href="#ki-topo" style="font-family: 'Syncopate', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .06em; color: #160C33; text-decoration: none">AFK VIEW</a>
       <nav aria-label="Principal" style="display: flex; flex-wrap: wrap; gap: 4px 24px; flex: 1 1 auto; justify-content: flex-end; align-items: center; font-size: 14px; font-weight: 700">
-        <a href="#ki-telas" style="color: #160C33; padding: 10px 0">Protótipos</a>
-        <a href="#ki-faq" style="color: #160C33; padding: 10px 0">Dúvidas</a>
-        <a href="/dashboard-generator/" class="ki-btn" style="background: transparent; color: #160C33; border: 2px solid #160C33; padding: 14px 24px; font: inherit; font-size: 15px; font-weight: 700; line-height: 1.2; text-decoration: none; display: inline-block; text-align: center; cursor: pointer">Gerador de dashboards</a>
+        <a href="#ki-telas" class="ki-btn" style="background: transparent; color: #160C33; border: 2px solid #160C33; padding: 14px 24px; font: inherit; font-size: 15px; font-weight: 700; line-height: 1.2; text-decoration: none; display: inline-block; text-align: center; cursor: pointer">Protótipos</a>
+        <a href="#ki-faq" class="ki-btn" style="background: transparent; color: #160C33; border: 2px solid #160C33; padding: 14px 24px; font: inherit; font-size: 15px; font-weight: 700; line-height: 1.2; text-decoration: none; display: inline-block; text-align: center; cursor: pointer">Dúvidas</a>
         <a href="#ki-form" class="ki-btn" style="background: #160C33; color: #F4F2FF; border: 2px solid #160C33; padding: 14px 24px; font: inherit; font-size: 15px; font-weight: 700; line-height: 1.2; text-decoration: none; display: inline-block; text-align: center; cursor: pointer">Agendar →</a>
       </nav>
     </div>
@@ -202,31 +210,35 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #160C
     <ul style="margin: 0; padding: 0; list-style: none; border-top: 2px solid #160C33">
       <li style="border-bottom: 2px solid #160C33">
         <button type="button" class="ki-row ki-faq-btn" id="faq-b0" aria-expanded="true" aria-controls="faq-r0" style="font: inherit; color: #160C33; cursor: pointer; width: 100%; text-align: left; border: none; padding: 26px 24px; display: flex; align-items: center; gap: 16px; background: #B9A6FF">
+          <span aria-hidden="true" class="ki-faq-n" style="font-weight: 700; width: 64px; flex: none">(01)</span>
           <span style="flex: 1 1 auto; font-family: 'Syncopate', sans-serif; font-weight: 700; text-transform: uppercase; font-size: clamp(17px, 2.1vw, 27px); line-height: 1.15">Preciso ter Power BI para começar?</span>
           <span class="ki-arrow ki-sign" aria-hidden="true" style="font-size: 29px">−</span>
         </button>
-        <div id="faq-r0" role="region" aria-labelledby="faq-b0" style="padding: 0 24px 28px 24px"><p style="margin: 0; max-width: 760px; font-size: 17px">Não. Começo pelo que você já usa, inclusive planilhas, e indico a licença certa só se fizer sentido.</p></div>
+        <div id="faq-r0" role="region" aria-labelledby="faq-b0" class="ki-faq-r" style="padding: 0 24px 28px 104px"><p style="margin: 0; max-width: 760px; font-size: 17px">Não. Começo pelo que você já usa, inclusive planilhas, e indico a licença certa só se fizer sentido.</p></div>
       </li>
       <li style="border-bottom: 2px solid #160C33">
         <button type="button" class="ki-row ki-faq-btn" id="faq-b1" aria-expanded="false" aria-controls="faq-r1" style="font: inherit; color: #160C33; cursor: pointer; width: 100%; text-align: left; border: none; padding: 26px 24px; display: flex; align-items: center; gap: 16px; background: transparent">
+          <span aria-hidden="true" class="ki-faq-n" style="font-weight: 700; width: 64px; flex: none">(02)</span>
           <span style="flex: 1 1 auto; font-family: 'Syncopate', sans-serif; font-weight: 700; text-transform: uppercase; font-size: clamp(17px, 2.1vw, 27px); line-height: 1.15">Meus dados estão bagunçados no Excel. Dá para usar?</span>
           <span class="ki-arrow ki-sign" aria-hidden="true" style="font-size: 29px">+</span>
         </button>
-        <div id="faq-r1" role="region" aria-labelledby="faq-b1" hidden style="padding: 0 24px 28px 24px"><p style="margin: 0; max-width: 760px; font-size: 17px">Sim. Parte do trabalho é reorganizar as abas em formato de tabela para o painel ler sem erro.</p></div>
+        <div id="faq-r1" role="region" aria-labelledby="faq-b1" hidden class="ki-faq-r" style="padding: 0 24px 28px 104px"><p style="margin: 0; max-width: 760px; font-size: 17px">Sim. Parte do trabalho é reorganizar as abas em formato de tabela para o painel ler sem erro.</p></div>
       </li>
       <li style="border-bottom: 2px solid #160C33">
         <button type="button" class="ki-row ki-faq-btn" id="faq-b2" aria-expanded="false" aria-controls="faq-r2" style="font: inherit; color: #160C33; cursor: pointer; width: 100%; text-align: left; border: none; padding: 26px 24px; display: flex; align-items: center; gap: 16px; background: transparent">
+          <span aria-hidden="true" class="ki-faq-n" style="font-weight: 700; width: 64px; flex: none">(03)</span>
           <span style="flex: 1 1 auto; font-family: 'Syncopate', sans-serif; font-weight: 700; text-transform: uppercase; font-size: clamp(17px, 2.1vw, 27px); line-height: 1.15">Quanto tempo leva um primeiro painel?</span>
           <span class="ki-arrow ki-sign" aria-hidden="true" style="font-size: 29px">+</span>
         </button>
-        <div id="faq-r2" role="region" aria-labelledby="faq-b2" hidden style="padding: 0 24px 28px 24px"><p style="margin: 0; max-width: 760px; font-size: 17px">Depende das fontes. O prazo é definido no diagnóstico, antes de qualquer compromisso.</p></div>
+        <div id="faq-r2" role="region" aria-labelledby="faq-b2" hidden class="ki-faq-r" style="padding: 0 24px 28px 104px"><p style="margin: 0; max-width: 760px; font-size: 17px">Depende das fontes. O prazo é definido no diagnóstico, antes de qualquer compromisso.</p></div>
       </li>
       <li style="border-bottom: 2px solid #160C33">
         <button type="button" class="ki-row ki-faq-btn" id="faq-b3" aria-expanded="false" aria-controls="faq-r3" style="font: inherit; color: #160C33; cursor: pointer; width: 100%; text-align: left; border: none; padding: 26px 24px; display: flex; align-items: center; gap: 16px; background: transparent">
+          <span aria-hidden="true" class="ki-faq-n" style="font-weight: 700; width: 64px; flex: none">(04)</span>
           <span style="flex: 1 1 auto; font-family: 'Syncopate', sans-serif; font-weight: 700; text-transform: uppercase; font-size: clamp(17px, 2.1vw, 27px); line-height: 1.15">Meu time consegue manter depois?</span>
           <span class="ki-arrow ki-sign" aria-hidden="true" style="font-size: 29px">+</span>
         </button>
-        <div id="faq-r3" role="region" aria-labelledby="faq-b3" hidden style="padding: 0 24px 28px 24px"><p style="margin: 0; max-width: 760px; font-size: 17px">Sim. Cada projeto termina com documentação e passagem de conhecimento.</p></div>
+        <div id="faq-r3" role="region" aria-labelledby="faq-b3" hidden class="ki-faq-r" style="padding: 0 24px 28px 104px"><p style="margin: 0; max-width: 760px; font-size: 17px">Sim. Cada projeto termina com documentação e passagem de conhecimento.</p></div>
       </li>
     </ul>
   </section>
