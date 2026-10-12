@@ -18,6 +18,7 @@ dashboard-generator/                 (raiz do repo)
 │   └── app.html                     versao original em HTML unico
 └── dashboard-generator/app/         app Vite + React + TS (versao deployada na Vercel)
     ├── vercel.json
+    ├── landing/                     landing page da consultoria (HTML estatico), publicada em /home
     ├── .env                         VITE_GEMINI_API_KEY, VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY (nao versionado)
     └── src/
         ├── App.tsx
@@ -88,6 +89,21 @@ npm run dev
 
 Deploy: Vercel com Root Directory = `dashboard-generator/app` (configurado no painel).
 O `vercel.json` fica dentro dessa pasta, porque a Vercel so le o arquivo a partir do Root Directory.
+
+### Dominio afkview.com (um projeto na Vercel, duas rotas)
+
+- `afkview.com/home`: landing page da consultoria. Fonte em `dashboard-generator/app/landing/` (HTML unico com as
+  imagens das demos em `landing/img/`). O plugin `landing-home` do `vite.config.ts` copia a pasta para `dist/home` no
+  build e a serve no `npm run dev` (`localhost:5173/home`)
+- `afkview.com/dashboard-generator`: este app React. `base: '/dashboard-generator/'` e `outDir: dist/dashboard-generator`
+  no `vite.config.ts`. Demos: `/dashboard-generator/?demo=vendas|financeiro|rh|logistica`
+- `afkview.com/` redireciona (307) para `/home`. `vercel.json` tem o redirect e os rewrites de `/home` e
+  `/dashboard-generator` sem barra final
+- Contato da landing: constante `CONTACT` no fim de `landing/index.html` (e-mail e WhatsApp). Vazios, os botoes ficam
+  escondidos e o formulario manda para o LinkedIn. Preencher um deles ativa mailto ou wa.me com a mensagem pronta
+- A landing foi desenhada no canvas do Claude Design (versao 4.5, Aurora cinetica, skill ui-ux-pro-max). As capturas
+  das demos foram tiradas com o app local em 1440x900
+- O dominio precisa estar adicionado em Settings > Domains do projeto na Vercel, com o DNS apontando para a Vercel
 
 ## Decisoes tecnicas
 
