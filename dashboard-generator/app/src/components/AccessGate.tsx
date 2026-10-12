@@ -25,8 +25,8 @@ export default function AccessGate({ onGranted, aviso }: Props) {
       } else {
         setErro('Código inválido.')
       }
-    } catch {
-      setErro('Não consegui falar com o servidor. Tente de novo em instantes.')
+    } catch (e) {
+      setErro(e instanceof Error && e.message.startsWith('Acesso ainda') ? e.message : 'Não consegui falar com o servidor. Tente de novo em instantes.')
     } finally {
       setVerificando(false)
     }

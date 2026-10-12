@@ -42,6 +42,7 @@ export async function chamarServidor(pedido: Pedido, codigo = codigoSalvo()): Pr
 export async function validarCodigo(codigo: string): Promise<boolean> {
   try {
     const r = await chamarServidor({ kind: 'check' }, codigo)
+    if (r.status === 503) throw new Error('Acesso ainda não configurado no servidor (faltam GEMINI_API_KEY e ACCESS_CODES na Vercel).')
     return r.ok
   } catch (e) {
     if (e instanceof ErroAcesso) return false
