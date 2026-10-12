@@ -5,7 +5,9 @@ import BrandSettings from './components/BrandSettings'
 import { clearBrand, loadSavedBrand, type Brand } from './lib/brand'
 import { temaDoSegmento } from './lib/segmentThemes'
 import { generateDashboard } from './lib/gemini'
-import { gerarEmbedding, geminiConfigurado } from './services/embeddings'
+import { gerarEmbedding } from './services/embeddings'
+import AccessGate from './components/AccessGate'
+import { codigoSalvo, ErroAcesso } from './services/acesso'
 import { buscarSimilar, salvarDashboard } from './services/dashboardCache'
 import type { DashboardData, UserAnswers } from './types'
 import { DEMOS } from './lib/demos'
@@ -15,12 +17,17 @@ const DEMO = DEMOS[new URLSearchParams(window.location.search).get('demo') ?? ''
 
 type AppState = 'chat' | 'dashboard' | 'brand'
 
+// o gerador inteiro (inclusive as demos) e de uso restrito: exige o codigo de acesso
+const PRECISA_CODIGO = true
+
 export default function App() {
   const [state, setState] = useState<AppState>(DEMO ? 'dashboard' : 'chat')
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(DEMO?.data ?? null)
   const [fromCache, setFromCache] = useState(false)
+  const [liberado, setLiberado] = useState(() => !PRECISA_CODIGO || !!codigoSalvo())
+  const [avisoAcesso, setAvisoAcesso] = useState<string | null>(null)
   // marca salva pelo usuario; sem ela, vale o tema do segmento (skill ui-ux-pro-max)
   const [savedBrand, setSavedBrand] = useState<Brand | null>(loadSavedBrand)
   const [segmento, setSegmento] = useState<string | undefined>(DEMO?.data.segment)
@@ -38,40 +45,42 @@ export default function App() {
     try {
       let data: DashboardData
 
-      if (geminiConfigurado()) {
-        try {
-          // 1. gera embedding das respostas
-          const embedding = await gerarEmbedding(answers)
+      try {
+        // 1. gera embedding das respostas
+        const embedding = await gerarEmbedding(answers)
 
-          // 2. busca no cache por dashboard similar (threshold 0.85)
-          const cached = await buscarSimilar(embedding)
-          if (cached) {
-            setDashboardData(cached)
-            setFromCache(true)
-            setState('dashboard')
-            return
-          }
-
-          // 3. cache miss — gera via Gemini
-          data = await generateDashboard(answers)
-
-          // 4. salva no cache em segundo plano (nao bloqueia o fluxo)
-          salvarDashboard(answers, embedding, data).catch((err: unknown) =>
-            console.warn('[cache] Falha ao salvar:', err)
-          )
-        } catch (embErr) {
-          // embedding indisponível para esta chave — gera sem cache
-          console.warn('[cache] Embedding indisponível, gerando sem cache:', embErr)
-          data = await generateDashboard(answers)
+        // 2. busca no cache por dashboard similar (threshold 0.85)
+        const cached = await buscarSimilar(embedding)
+        if (cached) {
+          setDashboardData(cached)
+          setFromCache(true)
+          setState('dashboard')
+          return
         }
-      } else {
-        // sem Gemini configurado — gera direto sem cache
+
+        // 3. cache miss — gera via Gemini
+        data = await generateDashboard(answers)
+
+        // 4. salva no cache em segundo plano (nao bloqueia o fluxo)
+        salvarDashboard(answers, embedding, data).catch((err: unknown) =>
+          console.warn('[cache] Falha ao salvar:', err)
+        )
+      } catch (embErr) {
+        if (embErr instanceof ErroAcesso) throw embErr
+        // embedding ou cache indisponivel — gera sem cache
+        console.warn('[cache] Embedding indisponível, gerando sem cache:', embErr)
         data = await generateDashboard(answers)
       }
 
       setDashboardData(data)
       setState('dashboard')
     } catch (err) {
+      if (err instanceof ErroAcesso) {
+        // codigo trocado ou revogado: volta para a tela de codigo
+        setAvisoAcesso('Seu código de acesso não vale mais. Digite de novo.')
+        setLiberado(false)
+        return
+      }
       const message = err instanceof Error ? err.message : 'Erro inesperado. Tente novamente.'
       setError(message)
     } finally {
@@ -84,6 +93,10 @@ export default function App() {
     setError(null)
     setFromCache(false)
     setState('chat')
+  }
+
+  if (!liberado) {
+    return <AccessGate aviso={avisoAcesso} onGranted={() => { setAvisoAcesso(null); setLiberado(true) }} />
   }
 
   if (state === 'brand') {

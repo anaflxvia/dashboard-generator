@@ -2,14 +2,7 @@ import type { DashboardData, UserAnswers } from '../types'
 import { CATALOGO_VISUAIS, REGRAS_VISUALIZACAO } from './dashboardGuide'
 import { playbookParaPrompt } from './segmentPlaybooks'
 import { normalizarDashboard } from './normalize'
-
-function getApiKey(): string {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY
-  if (!apiKey) {
-    throw new Error('VITE_GEMINI_API_KEY não configurada no .env')
-  }
-  return apiKey
-}
+import { chamarServidor } from '../services/acesso'
 
 function cleanJSON(text: string): string {
   return text
@@ -20,8 +13,6 @@ function cleanJSON(text: string): string {
 }
 
 export async function generateDashboard(answers: UserAnswers): Promise<DashboardData> {
-  const apiKey = getApiKey()
-
   const prompt = `Gere dados de dashboard realistas e fictícios baseados no contexto abaixo.
 
 CONTEXTO DO USUÁRIO:
@@ -69,7 +60,7 @@ Status nas tabelas: Ativo, Concluído, Aprovado, Pago, Pendente, Em andamento, E
 
   // gemini-2.5-* deixou de aceitar chaves novas; 3.6 Flash fica como reserva
   const models = ['gemini-3.8-flash', 'gemini-3.6-flash']
-  const body = JSON.stringify({
+  const payload = {
     systemInstruction: {
       parts: [{ text: 'Você é um especialista em business intelligence. Gere dados fictícios realistas para dashboards brasileiros. Retorne APENAS JSON válido, sem markdown, sem código, sem explicações.' }],
     },
@@ -80,7 +71,7 @@ Status nas tabelas: Ativo, Concluído, Aprovado, Pago, Pendente, Em andamento, E
       responseMimeType: 'application/json',
       thinkingConfig: { thinkingLevel: 'low' },
     },
-  })
+  }
 
   let text: string | undefined
   let lastError = ''
@@ -95,10 +86,8 @@ Status nas tabelas: Ativo, Concluído, Aprovado, Pago, Pendente, Em andamento, E
     if (espera) await new Promise((r) => setTimeout(r, espera))
     sobrecarga = false
     for (const model of [...disponiveis]) {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-        { method: 'POST', headers: { 'Content-Type': 'application/json' }, body }
-      )
+      // a chave do Gemini fica no servidor (api/gemini.ts), que tambem confere o codigo de acesso
+      const response = await chamarServidor({ kind: 'generate', model, payload })
 
       if (!response.ok) {
         const err = await response.json().catch(() => ({}) as Record<string, unknown>) as { error?: { message?: string } }

@@ -18,8 +18,9 @@ dashboard-generator/                 (raiz do repo)
 │   └── app.html                     versao original em HTML unico
 └── dashboard-generator/app/         app Vite + React + TS (versao deployada na Vercel)
     ├── vercel.json
+    ├── api/gemini.ts                funcao serverless da Vercel: guarda a chave do Gemini e confere o codigo de acesso
     ├── landing/                     landing page da consultoria (HTML estatico), publicada em /home
-    ├── .env                         VITE_GEMINI_API_KEY, VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY (nao versionado)
+    ├── .env                         GEMINI_API_KEY, ACCESS_CODES, (VITE_GEMINI_API_KEY so para o server.py local) VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY (nao versionado)
     └── src/
         ├── App.tsx
         ├── components/              ChatInterface, Dashboard, BrandSettings
@@ -71,8 +72,16 @@ Cada segmento tem abas, KPIs e tipos de graficos pre-definidos no dicionario `KP
   - Pendente: verificar se text-embedding-004 ainda responde; o substituto atual e gemini-embedding-001/gemini-embedding-2 (3072 dimensoes por padrao, usar outputDimensionality para casar com a coluna do pgvector)
 - Autenticacao:
   - `frontend/app.html`: API Key colada na barra do topo (salva em localStorage) ou injetada pelo `server.py`
-  - App React: `VITE_GEMINI_API_KEY` no `.env`
-- ATENCAO: variaveis `VITE_*` sao embutidas no JS do navegador. No deploy da Vercel a chave do Gemini fica publica. Pendente: mover as chamadas para uma funcao serverless.
+  - App React: a chave NAO vai mais para o navegador. `api/gemini.ts` (funcao da Vercel) guarda `GEMINI_API_KEY` e so
+    atende com um codigo de acesso valido (`ACCESS_CODES`, separados por virgula). O navegador manda o codigo no
+    cabecalho `x-codigo-acesso`; `services/acesso.ts` faz as chamadas e `components/AccessGate.tsx` e a tela de codigo
+    (codigo salvo em `localStorage['dashboard_codigo_acesso']`; 401 apaga o codigo e volta para a tela).
+    A funcao e um proxy fino: aceita so os modelos da lista (geracao e embeddings), repassa status e corpo do Gemini e o
+    app continua tratando 404/429/503 como antes. O app inteiro, demos incluidas, pede o codigo (uso so da dona; a landing nao linka o gerador). Erro de codigo demora 1,5 s para dificultar tentativa e erro; nao ha bloqueio por IP, entao use codigo longo.
+    No `npm run dev` o plugin `api-local` do `vite.config.ts` atende `/api/gemini` com o mesmo arquivo, lendo o `.env`
+    (`.env.example` lista as variaveis). Na Vercel: Settings > Environment Variables (sem prefixo VITE_)
+  - Pendente: sem limite de uso por codigo. Se um codigo vazar, trocar em `ACCESS_CODES` e redeploy
+- Supabase (cache semantico) continua no navegador com a chave anon, que e publica por desenho; proteger com RLS
 - Chave obtida em: aistudio.google.com/apikey
 
 ## Como rodar
@@ -107,7 +116,7 @@ O `vercel.json` fica dentro dessa pasta, porque a Vercel so le o arquivo a parti
 
 ## Decisoes tecnicas
 
-- Aplicacao 100% frontend (sem backend proprio); o `server.py` e so conveniencia local
+- App React: frontend + uma funcao serverless (`api/gemini.ts`) que guarda a chave do Gemini; `frontend/app.html` segue 100% frontend; o `server.py` e so conveniencia local
 - O SDK da Anthropic foi removido do app React: nunca foi usado, toda chamada de IA vai para o Gemini via `fetch`
 - Chart.js carregado via CDN (cdn.jsdelivr.net) para os graficos gerados
 - API Key armazenada em localStorage para nao precisar colar a cada uso
