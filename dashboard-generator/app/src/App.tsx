@@ -17,8 +17,8 @@ const DEMO = DEMOS[new URLSearchParams(window.location.search).get('demo') ?? ''
 
 type AppState = 'chat' | 'dashboard' | 'brand'
 
-// demos (?demo=) ficam abertas; gerar com a IA exige o codigo de acesso
-const PRECISA_CODIGO = !DEMO
+// o gerador inteiro (inclusive as demos) e de uso restrito: exige o codigo de acesso
+const PRECISA_CODIGO = true
 
 export default function App() {
   const [state, setState] = useState<AppState>(DEMO ? 'dashboard' : 'chat')

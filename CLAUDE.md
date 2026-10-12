@@ -77,7 +77,7 @@ Cada segmento tem abas, KPIs e tipos de graficos pre-definidos no dicionario `KP
     cabecalho `x-codigo-acesso`; `services/acesso.ts` faz as chamadas e `components/AccessGate.tsx` e a tela de codigo
     (codigo salvo em `localStorage['dashboard_codigo_acesso']`; 401 apaga o codigo e volta para a tela).
     A funcao e um proxy fino: aceita so os modelos da lista (geracao e embeddings), repassa status e corpo do Gemini e o
-    app continua tratando 404/429/503 como antes. `?demo=` fica aberto, sem codigo.
+    app continua tratando 404/429/503 como antes. O app inteiro, demos incluidas, pede o codigo (uso so da dona; a landing nao linka o gerador). Erro de codigo demora 1,5 s para dificultar tentativa e erro; nao ha bloqueio por IP, entao use codigo longo.
     No `npm run dev` o plugin `api-local` do `vite.config.ts` atende `/api/gemini` com o mesmo arquivo, lendo o `.env`
     (`.env.example` lista as variaveis). Na Vercel: Settings > Environment Variables (sem prefixo VITE_)
   - Pendente: sem limite de uso por codigo. Se um codigo vazar, trocar em `ACCESS_CODES` e redeploy

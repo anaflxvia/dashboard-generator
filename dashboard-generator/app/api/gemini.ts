@@ -35,6 +35,8 @@ export async function POST(request: Request): Promise<Response> {
 
   const enviado = (request.headers.get('x-codigo-acesso') ?? '').trim()
   if (!enviado || !codigoValido(enviado, aceitos)) {
+    // atrasa cada erro: um codigo curto fica caro de adivinhar por tentativa e erro
+    await new Promise((r) => setTimeout(r, 1500))
     return json({ error: { message: 'Código de acesso inválido.' } }, 401)
   }
 
