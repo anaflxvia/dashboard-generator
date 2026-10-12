@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ana Flávia · Consultoria em Dados e BI</title>
+<meta name="description" content="Consultoria em dados e BI em São Paulo. Transformo planilhas de Excel, sistemas e bases soltas em painéis que o time usa para decidir.">
+<meta property="og:title" content="Ana Flávia · Consultoria em Dados e BI">
+<meta property="og:description" content="Da planilha de Excel à engenharia de dados na nuvem. Painéis que o time usa para decidir.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://afkview.com/home">
+<link rel="canonical" href="https://afkview.com/home">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23160C33'/%3E%3Ctext x='16' y='22' font-family='Arial' font-weight='700' font-size='15' text-anchor='middle' fill='%23B9A6FF'%3EAF%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=DM+Sans:opsz,wght@9..40,400;9..40,700&family=Space+Mono:wght@700&display=swap">
+<style>
+body{margin:0;background:#F4F2FF}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #160C33;outline-offset:3px}
+.ki-marq{display:flex;overflow:hidden;white-space:nowrap}
+.ki-track{display:flex;flex:none;gap:48px;padding-right:48px;animation:ki-go 22s linear infinite}
+.ki-rev .ki-track{animation-direction:reverse;animation-duration:28s}
+@keyframes ki-go{to{transform:translateX(-100%)}}
+.ki-marq:hover .ki-track{animation-play-state:paused}
+.ki-type{font-family:'Space Mono', monospace;display:inline-block;overflow:hidden;white-space:nowrap;border-right:3px solid #160C33;width:27ch;animation:ki-ty 7s steps(27) infinite,ki-caret .8s step-end infinite}
+@keyframes ki-ty{0%{width:0}45%,85%{width:27ch}100%{width:0}}
+@keyframes ki-caret{50%{border-color:transparent}}
+.ki-word{display:inline-block;transition:transform .35s cubic-bezier(.2,.8,.2,1),color .2s ease}
+.ki-h1:hover .ki-word{transform:translateY(-6px) skewX(-8deg)}
+.ki-h1:hover .ki-word:nth-child(2){transform:translateY(6px) skewX(8deg)}
+.ki-row{transition:background-color .2s ease,padding-left .3s ease}
+.ki-row:hover{background:#B9A6FF !important;padding-left:36px !important}
+.ki-row:hover .ki-arrow{transform:translateX(8px) rotate(-45deg)}
+.ki-arrow{transition:transform .3s ease;display:inline-block}
+.ki-btn{transition:background-color .2s ease,color .2s ease,transform .2s ease,box-shadow .2s ease}
+.ki-btn:hover{background:#B9A6FF !important;color:#160C33 !important;transform:translate(-3px,-3px);box-shadow:6px 6px 0 #160C33}
+.ki-out{color:transparent;-webkit-text-stroke:2px #160C33}
+.ki-q{transition:background-color .2s ease}
+.ki-q:hover{background:#E7E2FB}
+@media (prefers-reduced-motion: reduce){.ki-track,.ki-type{animation:none}.ki-type{width:auto;border:none}.ki-word,.ki-row,.ki-arrow,.ki-btn,.ki-q{transition:none}.ki-h1:hover .ki-word,.ki-btn:hover{transform:none}}
+
+.mk{--mk-r:14px;position:relative;width:100%;max-width:var(--mk-w,760px);margin:0 auto;font-size:12px;line-height:1.3;color:var(--mk-text);font-family:inherit}
+.mk-win{background:var(--mk-bg);border:1px solid var(--mk-line);border-radius:var(--mk-r);overflow:hidden;box-shadow:var(--mk-shadow,0 30px 80px rgba(0,0,0,.35))}
+.mk-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--mk-line)}
+.mk-dot{width:9px;height:9px;border-radius:50%;background:var(--mk-line)}
+.mk-name{margin-left:8px;color:var(--mk-muted)}
+.mk-st{margin-left:auto;display:grid}
+.mk-st>span{grid-area:1/1;padding:3px 10px;border-radius:999px;font-weight:700;white-space:nowrap}
+.mk-busy{color:var(--mk-muted);border:1px solid var(--mk-line);animation:mk-busy 10s infinite}
+.mk-done{background:var(--mk-a);color:var(--mk-on);animation:mk-done 10s infinite}
+.mk-body{display:flex;min-height:330px;position:relative}
+.mk-side{width:110px;flex:none;border-right:1px solid var(--mk-line);padding:14px 12px;display:flex;flex-direction:column;gap:10px;animation:mk-in 10s infinite}
+.mk-side i{display:block;height:8px;border-radius:4px;background:var(--mk-line)}
+.mk-side i:first-child{background:var(--mk-a);width:70%}
+.mk-main{flex:1;min-width:0;padding:14px;display:flex;flex-direction:column;gap:12px}
+.mk-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.mk-kpi{background:var(--mk-surf);border:1px solid var(--mk-line);border-radius:calc(var(--mk-r) - 4px);padding:10px 12px;display:flex;flex-direction:column;gap:4px;animation:mk-kpi 10s infinite}
+.mk-kpi:nth-child(2){animation-delay:.25s}.mk-kpi:nth-child(3){animation-delay:.5s}
+.mk-kpi small{color:var(--mk-muted);font-size:11px}
+.mk-kpi b{font-size:20px;color:var(--mk-strong)}
+.mk-kpi em{font-style:normal;font-size:11px;color:var(--mk-a)}
+.mk-row{display:grid;grid-template-columns:1.6fr 1fr;gap:10px;flex:1}
+.mk-panel{background:var(--mk-surf);border:1px solid var(--mk-line);border-radius:calc(var(--mk-r) - 4px);padding:10px 12px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.mk-panel small{color:var(--mk-muted);font-size:11px}
+.mk-bars{flex:1;display:flex;align-items:flex-end;gap:8px;min-height:90px}
+.mk-bars span{flex:1;background:var(--mk-a);border-radius:4px 4px 0 0;transform-origin:bottom;animation:mk-grow 10s infinite}
+.mk-bars span:nth-child(even){background:var(--mk-b)}
+.mk-bars span:nth-child(2){animation-delay:.12s}.mk-bars span:nth-child(3){animation-delay:.24s}.mk-bars span:nth-child(4){animation-delay:.36s}.mk-bars span:nth-child(5){animation-delay:.48s}.mk-bars span:nth-child(6){animation-delay:.6s}
+.mk-donut{display:flex;align-items:center;justify-content:center;flex:1}
+.mk-donut .mk-arc{animation:mk-donut 10s infinite}
+.mk-donut .mk-arc2{animation-delay:.3s}
+.mk-line svg{display:block;width:100%;height:70px}
+.mk-line .mk-path{animation:mk-draw 10s infinite}
+.mk-line .mk-area{animation:mk-area 10s infinite}
+.mk-file{position:absolute;left:-28px;top:120px;display:flex;align-items:center;gap:8px;background:var(--mk-file,#107C41);color:#FFFFFF;font-weight:700;padding:10px 14px;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.35);animation:mk-file 10s infinite;z-index:2}
+.mk-file svg{flex:none}
+.mk-cur{position:absolute;width:18px;height:18px;z-index:3;animation:mk-cur 10s infinite;pointer-events:none}
+@keyframes mk-file{0%{opacity:0;transform:translateX(-30px)}5%,13%{opacity:1;transform:none}20%,100%{opacity:0;transform:translateX(260px) scale(.4)}}
+@keyframes mk-in{0%,12%{opacity:0;transform:translateX(-10px)}18%,90%{opacity:1;transform:none}97%,100%{opacity:0}}
+@keyframes mk-kpi{0%,20%{opacity:0;transform:translateY(10px) scale(.96)}26%,90%{opacity:1;transform:none}97%,100%{opacity:0}}
+@keyframes mk-grow{0%,30%{transform:scaleY(0)}40%,90%{transform:scaleY(1)}97%,100%{transform:scaleY(0)}}
+@keyframes mk-donut{0%,40%{stroke-dashoffset:100}52%,90%{stroke-dashoffset:var(--mk-off,0)}97%,100%{stroke-dashoffset:100}}
+@keyframes mk-draw{0%,52%{stroke-dashoffset:100}66%,90%{stroke-dashoffset:0}97%,100%{stroke-dashoffset:100}}
+@keyframes mk-area{0%,60%{opacity:0}70%,90%{opacity:1}97%,100%{opacity:0}}
+@keyframes mk-busy{0%,68%{opacity:1}72%,100%{opacity:0}}
+@keyframes mk-done{0%,68%{opacity:0;transform:scale(.8)}72%,92%{opacity:1;transform:none}97%,100%{opacity:0}}
+@keyframes mk-cur{0%,20%{opacity:0;left:10%;top:70%}26%{opacity:1;left:30%;top:22%}40%{left:40%;top:52%}52%{left:82%;top:50%}66%{left:60%;top:86%}80%{opacity:1;left:88%;top:6%}90%,100%{opacity:0;left:88%;top:6%}}
+@media (prefers-reduced-motion: reduce){.mk *{animation:none !important}.mk-busy,.mk-file,.mk-cur{display:none}}
+
+.ki-mkw .mk-win{border:1px solid rgba(22,12,51,.18);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+
+.au-wrap{position:relative}
+.au-wrap>*{position:relative;z-index:1}
+.au-bg{position:absolute !important;inset:0 -400px;z-index:0;pointer-events:none;overflow:hidden}
+.au-blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.6}
+.au-b1{width:560px;height:560px;background:#A78BFA;top:-140px;left:-80px;animation:au-m1 12s ease-in-out infinite alternate}
+.au-b2{width:520px;height:520px;background:#67E8F9;top:60px;right:-120px;animation:au-m2 10s ease-in-out infinite alternate}
+.au-b3{width:440px;height:440px;background:#F9A8D4;bottom:-180px;left:35%;animation:au-m3 14s ease-in-out infinite alternate}
+@keyframes au-m1{to{transform:translate(160px,110px) scale(1.15)}}
+@keyframes au-m2{to{transform:translate(-150px,120px) scale(.9)}}
+@keyframes au-m3{to{transform:translate(-120px,-110px) scale(1.2)}}
+.au-glass{background:rgba(255,255,255,.55) !important;backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%)}
+@media (prefers-reduced-motion: reduce){.au-b1,.au-b2,.au-b3{animation:none}}
+.ki-shots{overflow:hidden}
+@media (prefers-reduced-motion: reduce){.ki-shots{overflow-x:auto}.ki-shots .ki-track[aria-hidden]{display:none}}
+</style>
+</head>
+<body>
+<div style="font-family: 'DM Sans', sans-serif; color: #160C33; background: #F4F2FF; font-size: 16px; line-height: 1.65; overflow: clip">
+
+  <header style="border-bottom: 2px solid #160C33">
+    <div style="max-width: 1320px; margin: 0 auto; padding: 18px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 32px">
+      <a href="#ki-topo" style="font-family: 'Syncopate', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .06em; color: #160C33; text-decoration: none">ANA FLÁVIA</a>
+      <span style="font-size: 13px">Dados e BI · SP</span>
+      <nav aria-label="Principal" style="display: flex; flex-wrap: wrap; gap: 4px 24px; flex: 1 1 auto; justify-content: flex-end; align-items: center; font-size: 14px; font-weight: 700">
+        <a href="#ki-telas" style="color: #160C33; padding: 10px 0">Protótipos</a>
+        <a href="#ki-faq" style="color: #160C33; padding: 10px 0">Dúvidas</a>
+        <a href="/dashboard-generator/" class="ki-btn" style="border: 2px solid #160C33; color: #160C33; padding: 10px 18px; text-decoration: none">Gerador de dashboards</a>
+        <a href="#ki-form" class="ki-btn" style="background: #160C33; color: #F4F2FF; padding: 12px 20px; text-decoration: none">Agendar →</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+  <!-- Hero tipografico -->
+  <section id="ki-topo" class="au-wrap" style="max-width: 1320px; margin: 0 auto; padding: 64px 24px 40px; display: flex; flex-direction: column; gap: 28px">
+    <div class="au-bg" aria-hidden="true"><div class="au-blob au-b1"></div><div class="au-blob au-b2"></div><div class="au-blob au-b3"></div></div>
+        <p style="margin: 0; font-size: 18px; font-weight: 700"><span class="ki-type">Planilha &gt; painel &gt; decisão</span></p>
+    <h1 class="ki-h1" style="margin: 0; font-family: 'Syncopate', sans-serif; font-weight: 700; font-size: clamp(56px, 10.5vw, 168px); line-height: .9; letter-spacing: -0.03em; text-transform: uppercase">
+      <span class="ki-word">Dados</span><br><span class="ki-word ki-out">em</span> <span class="ki-word" style="background: #B9A6FF; padding: 0 .12em">movi</span><br><span class="ki-word">mento</span>
+    </h1>
+    <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-end; justify-content: space-between">
+      <p style="margin: 0; max-width: 560px; font-size: 19px">Consultoria em dados e BI. Transformo planilhas de Excel, sistemas e bases soltas em painéis que o time usa para decidir.</p>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap; font-weight: 700">
+        <a href="#ki-form" class="ki-btn" style="background: #160C33; color: #F4F2FF; padding: 18px 28px; text-decoration: none">Quero um diagnóstico</a>
+        <a href="#ki-telas" class="ki-btn" style="border: 2px solid #160C33; color: #160C33; padding: 16px 26px; text-decoration: none">Ver protótipos</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Faixas em movimento -->
+  <section aria-label="Destaques" style="border-top: 2px solid #160C33; border-bottom: 2px solid #160C33; font-family: 'Syncopate', sans-serif; font-weight: 700; text-transform: uppercase">
+    <div class="ki-marq" style="background: #160C33; color: #F4F2FF; font-size: 44px; padding: 14px 0">
+      <div class="ki-track"><span>Excel</span><span style="color: #B9A6FF">✦</span><span>Power BI</span><span style="color: #B9A6FF">✦</span><span>SQL</span><span style="color: #B9A6FF">✦</span><span>Python</span><span style="color: #B9A6FF">✦</span><span>PySpark</span><span style="color: #B9A6FF">✦</span><span>Cloud</span><span style="color: #B9A6FF">✦</span></div>
+      <div class="ki-track" aria-hidden="true"><span>Excel</span><span style="color: #B9A6FF">✦</span><span>Power BI</span><span style="color: #B9A6FF">✦</span><span>SQL</span><span style="color: #B9A6FF">✦</span><span>Python</span><span style="color: #B9A6FF">✦</span><span>PySpark</span><span style="color: #B9A6FF">✦</span><span>Cloud</span><span style="color: #B9A6FF">✦</span></div>
+    </div>
+    <div class="ki-marq ki-rev" style="background: linear-gradient(90deg,#C4B5FD,#A5F3FC,#F9A8D4); color: #160C33; font-size: 28px; padding: 12px 0">
+      <div class="ki-track"><span>Financeiro</span><span>/</span><span>CRM / Vendas</span><span>/</span><span>Recursos Humanos</span><span>/</span><span>Advocacia</span><span>/</span><span>Observabilidade TI</span><span>/</span><span>FinOps</span><span>/</span><span>Gerencial / PMO</span><span>/</span><span>Jurídico</span><span>/</span><span>Educação</span><span>/</span><span>Logística</span><span>/</span><span>SLA / Suporte</span><span>/</span></div>
+      <div class="ki-track" aria-hidden="true"><span>Financeiro</span><span>/</span><span>CRM / Vendas</span><span>/</span><span>Recursos Humanos</span><span>/</span><span>Advocacia</span><span>/</span><span>Observabilidade TI</span><span>/</span><span>FinOps</span><span>/</span><span>Gerencial / PMO</span><span>/</span><span>Jurídico</span><span>/</span><span>Educação</span><span>/</span><span>Logística</span><span>/</span><span>SLA / Suporte</span><span>/</span></div>
+    </div>
+  </section>
+
+  <!-- Demo + formulario (estrutura Pipefy) -->
+  <section id="ki-form" class="au-wrap" style="max-width: 1320px; margin: 0 auto; padding: 88px 24px; display: flex; flex-wrap: wrap; gap: 40px; align-items: center">
+    <div class="au-bg" aria-hidden="true"><div class="au-blob au-b1"></div><div class="au-blob au-b2"></div><div class="au-blob au-b3"></div></div>
+        <div style="flex: 3 1 620px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+      <span style="font-weight: 700">(01) Veja acontecer</span>
+      <div class="ki-mkw"><div class="mk" role="img" aria-label="Animação de um dashboard sendo montado a partir de uma planilha" style="--mk-bg:rgba(255,255,255,.6);--mk-surf:#F4F2FF;--mk-line:#D6CEF5;--mk-text:#160C33;--mk-muted:#4B4170;--mk-strong:#160C33;--mk-a:#160C33;--mk-b:#B9A6FF;--mk-on:#B9A6FF;--mk-r:22px;--mk-shadow:0 40px 90px rgba(22,12,51,.2);--mk-w:100%">
+  <div class="mk-file" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13l4 5M12 13l-4 5"/></svg>vendas.xlsx</div>
+  <svg class="mk-cur" aria-hidden="true" viewBox="0 0 24 24"><path d="M4 2l16 9-7 2-3 7z" fill="var(--mk-strong)" stroke="var(--mk-bg)" stroke-width="1.5"/></svg>
+  <div class="mk-win" aria-hidden="true">
+    <div class="mk-bar"><span class="mk-dot"></span><span class="mk-dot"></span><span class="mk-dot"></span><span class="mk-name">painel_operacao.pbix</span><span class="mk-st"><span class="mk-busy">montando painel...</span><span class="mk-done">painel pronto</span></span></div>
+    <div class="mk-body">
+      <div class="mk-side"><i></i><i></i><i></i><i style="width:60%"></i></div>
+      <div class="mk-main">
+        <div class="mk-kpis">
+          <div class="mk-kpi"><small>Receita</small><b>R$ 4,2 mi</b><em>+8% no mês</em></div>
+          <div class="mk-kpi"><small>Inadimplência</small><b>3,1%</b><em>-0,4 p.p.</em></div>
+          <div class="mk-kpi"><small>Tempo de análise</small><b>-20%</b><em>com SQL</em></div>
+        </div>
+        <div class="mk-row">
+          <div class="mk-panel"><small>Receita por canal</small><div class="mk-bars"><span style="height:55%"></span><span style="height:80%"></span><span style="height:42%"></span><span style="height:92%"></span><span style="height:66%"></span><span style="height:74%"></span></div></div>
+          <div class="mk-panel"><small>Carteira</small><div class="mk-donut"><svg width="104" height="104" viewBox="0 0 42 42"><circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--mk-line)" stroke-width="5"/><circle class="mk-arc" cx="21" cy="21" r="15.9" fill="none" stroke="var(--mk-a)" stroke-width="5" pathLength="100" stroke-dasharray="100" style="--mk-off:38" stroke-dashoffset="38" transform="rotate(-90 21 21)"/><circle class="mk-arc mk-arc2" cx="21" cy="21" r="15.9" fill="none" stroke="var(--mk-b)" stroke-width="5" pathLength="100" stroke-dasharray="100" style="--mk-off:76" stroke-dashoffset="76" transform="rotate(130 21 21)"/><text x="21" y="23.5" text-anchor="middle" font-size="7" font-weight="700" fill="var(--mk-strong)">62%</text></svg></div></div>
+        </div>
+        <div class="mk-panel mk-line"><small>Evolução mensal</small><svg viewBox="0 0 300 70" preserveAspectRatio="none"><path class="mk-area" d="M0 58 L50 50 L100 54 L150 34 L200 38 L250 18 L300 10 L300 70 L0 70 Z" fill="var(--mk-a)" fill-opacity=".14"/><path class="mk-path" d="M0 58 L50 50 L100 54 L150 34 L200 38 L250 18 L300 10" fill="none" stroke="var(--mk-a)" stroke-width="2.5" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/></svg></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+    </div>
+    <div style="flex: 2 1 340px; border: 2px solid #160C33; background: rgba(255,255,255,.55); padding: 32px; display: flex; flex-direction: column; gap: 14px; border-radius: 24px; box-shadow: 0 30px 80px rgba(22,12,51,.18)" class="au-glass">
+      <form id="form-contato" style="display: flex; flex-direction: column; gap: 14px" novalidate>
+        <strong style="font-family: 'Syncopate', sans-serif; font-size: 24px; line-height: 1.1; text-transform: uppercase">Agende um diagnóstico</strong>
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 700">Nome<input name="nome" type="text" autocomplete="name" placeholder="Seu nome" required style="font: inherit; font-weight: 400; border: 2px solid #160C33; padding: 12px; background: #F4F2FF"></label>
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 700">E-mail de trabalho<input name="email" type="email" autocomplete="email" placeholder="voce@empresa.com" required style="font: inherit; font-weight: 400; border: 2px solid #160C33; padding: 12px; background: #F4F2FF"></label>
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 700">Onde estão seus dados?<input name="dados" type="text" placeholder="Excel, sistemas, ainda não sei" style="font: inherit; font-weight: 400; border: 2px solid #160C33; padding: 12px; background: #F4F2FF"></label>
+        <button type="submit" class="ki-btn" style="font: inherit; font-weight: 700; cursor: pointer; border: 2px solid #160C33; background: #160C33; color: #F4F2FF; padding: 16px">Enviar →</button>
+        <p id="form-msg" role="status" style="margin: 0; font-size: 14px; color: #4B4170"></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- Duvidas e respostas (mesmo layout das linhas numeradas) -->
+  <section id="ki-faq" style="border-top: 2px solid #160C33">
+    <div style="max-width: 1320px; margin: 0 auto; padding: 72px 24px 24px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px">
+      <h2 style="margin: 0; font-family: 'Syncopate', sans-serif; font-weight: 700; text-transform: uppercase; font-size: clamp(40px, 6vw, 88px); line-height: .95">Dúvidas <span class="ki-out">&amp;</span><br>Respostas</h2>
+      <span style="font-weight: 700">(02) clique para abrir</span>
+    </div>
+    <ul style="margin: 0; padding: 0; list-style: none; border-top: 2px solid #160C33">
+      <li style="border-bottom: 2px solid #160C33">
+        <button type="button" class="ki-row ki-faq-btn" id="faq-b0" aria-expanded="true" aria-controls="faq-r0" style="font: inherit; color: #160C33; cursor: pointer; width: 100%; text-align: left; border: none; padding: 26px 24px; display: flex; align-items: center; gap: 16px; background: #B9A6FF">
+          <span style="font-weight: 700; width: 64px; flex: none">(01)</span>
+          <span style="flex: 1 1 auto; font-family: 'Syncopate', sans-serif; font-weight: 700; text-transform: uppercase; font-size: clamp(18px, 2.3vw, 30px); line-height: 1.15">Preciso ter Power BI para começar?</span>
+          <span class="ki-arrow ki-sign" aria-hidden="true" style="font-size: 32px">−</span>
+        </button>
+        <div id="faq-r0" role="region" aria-labelledby="faq-b0" style="max-width: 1320px; margin: 0 auto; padding: 0 24px 28px 112px; box-sizing: border-box"><p style="margin: 0; max-width: 760px; font-size: 18px">Não. Começo pelo que você já usa, inclusive planilhas, e indico a licença certa só se fizer sentido.</p></div>
+      </li>
+      <li style="border-bottom: 2px solid #160C33">
+        <button type="button" class="ki-row ki-faq-btn" id="faq-b1" aria-expanded="false" aria-controls="faq-r1" style="font: inherit; color: #160C33; cursor: pointer; width: 100%; text-align: left; border: none; padding: 26px 24px; display: flex; align-items: center; gap: 16px; background: transparent">
+          <span style="font-weight: 700; width: 64px; flex: none">(02)</span>
+          <span style="flex: 1 1 auto; font-family: 'Syncopate', sans-serif; font-weight: 700; text-transform: uppercase; font-size: clamp(18px, 2.3vw, 30px); line-height: 1.15">Meus dados estão bagunçados no Excel. Dá para usar?</span>
+          <span class="ki-arrow ki-sign" aria-hidden="true" style="font-size: 32px">+</span>
+        </button>
+        <div id="faq-r1" role="region" aria-labelledby="faq-b1" hidden style="max-width: 1320px; margin: 0 auto; padding: 0 24px 28px 112px; box-sizing: border-box"><p style="margin: 0; max-width: 760px; font-size: 18px">Sim. Parte do trabalho é reorganizar as abas em formato de tabela para o painel ler sem erro.</p></div>
+      </li>
+      <li style="border-bottom: 2px solid #160C33">
+        <button type="button" class="ki-row ki-faq-btn" id="faq-b2" aria-expanded="false" aria-controls="faq-r2" style="font: inherit; color: #160C33; cursor: pointer; width: 100%; text-align: left; border: none; padding: 26px 24px; display: flex; align-items: center; gap: 16px; background: transparent">
+          <span style="font-weight: 700; width: 64px; flex: none">(03)</span>
+          <span style="flex: 1 1 auto; font-family: 'Syncopate', sans-serif; font-weight: 700; text-transform: uppercase; font-size: clamp(18px, 2.3vw, 30px); line-height: 1.15">Quanto tempo leva um primeiro painel?</span>
+          <span class="ki-arrow ki-sign" aria-hidden="true" style="font-size: 32px">+</span>
+        </button>
+        <div id="faq-r2" role="region" aria-labelledby="faq-b2" hidden style="max-width: 1320px; margin: 0 auto; padding: 0 24px 28px 112px; box-sizing: border-box"><p style="margin: 0; max-width: 760px; font-size: 18px">Depende das fontes. O prazo é definido no diagnóstico, antes de qualquer compromisso.</p></div>
+      </li>
+      <li style="border-bottom: 2px solid #160C33">
+        <button type="button" class="ki-row ki-faq-btn" id="faq-b3" aria-expanded="false" aria-controls="faq-r3" style="font: inherit; color: #160C33; cursor: pointer; width: 100%; text-align: left; border: none; padding: 26px 24px; display: flex; align-items: center; gap: 16px; background: transparent">
+          <span style="font-weight: 700; width: 64px; flex: none">(04)</span>
+          <span style="flex: 1 1 auto; font-family: 'Syncopate', sans-serif; font-weight: 700; text-transform: uppercase; font-size: clamp(18px, 2.3vw, 30px); line-height: 1.15">Meu time consegue manter depois?</span>
+          <span class="ki-arrow ki-sign" aria-hidden="true" style="font-size: 32px">+</span>
+        </button>
+        <div id="faq-r3" role="region" aria-labelledby="faq-b3" hidden style="max-width: 1320px; margin: 0 auto; padding: 0 24px 28px 112px; box-sizing: border-box"><p style="margin: 0; max-width: 760px; font-size: 18px">Sim. Cada projeto termina com documentação e passagem de conhecimento.</p></div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Processo -->
+  <section style="background: #160C33; color: #F4F2FF">
+    <div style="max-width: 1320px; margin: 0 auto; padding: 88px 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 40px 32px; text-align: center">
+      <div><div style="font-family: 'Syncopate', sans-serif; font-weight: 700; font-size: 96px; line-height: 1; color: #B9A6FF">1</div><strong>Diagnóstico</strong><p style="margin: 6px 0 0; color: #D6CEF5">Decisões, fontes de dados e o que já existe.</p></div>
+      <div><div style="font-family: 'Syncopate', sans-serif; font-weight: 700; font-size: 96px; line-height: 1; color: transparent; -webkit-text-stroke: 2px #B9A6FF">2</div><strong>Modelagem</strong><p style="margin: 6px 0 0; color: #D6CEF5">Bases organizadas e regra única por métrica.</p></div>
+      <div><div style="font-family: 'Syncopate', sans-serif; font-weight: 700; font-size: 96px; line-height: 1; color: #B9A6FF">3</div><strong>Dashboard</strong><p style="margin: 6px 0 0; color: #D6CEF5">Protótipo validado e versão final publicada.</p></div>
+      <div><div style="font-family: 'Syncopate', sans-serif; font-weight: 700; font-size: 96px; line-height: 1; color: transparent; -webkit-text-stroke: 2px #B9A6FF">4</div><strong>Acompanhamento</strong><p style="margin: 6px 0 0; color: #D6CEF5">Ajustes com uso real e passagem de conhecimento.</p></div>
+    </div>
+  </section>
+
+  <!-- Imagens dos prototipos (demos do gerador de dashboards) -->
+  <section id="ki-telas" style="border-top: 2px solid #160C33; overflow: hidden">
+    <div style="max-width: 1320px; margin: 0 auto; padding: 72px 24px 40px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px">
+      <h2 style="margin: 0; font-family: 'Syncopate', sans-serif; font-weight: 700; text-transform: uppercase; font-size: clamp(40px, 6vw, 88px); line-height: .95">Protótipos<br><span class="ki-out">em tela</span></h2>
+      <div style="display: flex; flex-direction: column; gap: 14px; max-width: 380px; align-items: flex-start"><span style="font-weight: 700">(03) Demos do meu gerador de dashboards, com dados fictícios. Passe o mouse para pausar.</span><a href="/dashboard-generator/" class="ki-btn" style="background: #160C33; color: #F4F2FF; padding: 14px 22px; text-decoration: none; font-weight: 700">Abrir o gerador →</a></div>
+    </div>
+    <div class="ki-marq ki-shots" style="padding: 0 0 72px; white-space: normal">
+      <div class="ki-track ki-shots-track" style="gap: 28px; padding-right: 28px; animation-duration: 60s">
+        <figure style="margin: 0; flex: none; width: 640px; display: flex; flex-direction: column; gap: 12px">
+          <div style="border: 1px solid rgba(22,12,51,.25); border-radius: 18px; overflow: hidden; background: #FFFFFF; box-shadow: 0 30px 70px rgba(22,12,51,.22)">
+            <div style="display: flex; gap: 6px; padding: 10px 14px; background: #EDE9FE"><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span></div>
+            <img src="/home/img/demo-vendas.webp" alt="Protótipo de dashboard de crm e vendas: pipeline comercial, funil e meta do time" width="640" height="400" loading="lazy" style="display: block; width: 100%; height: auto">
+          </div>
+          <figcaption style="font-weight: 700; font-size: 15px">CRM e vendas <span style="font-weight: 400">· Pipeline comercial, funil e meta do time</span></figcaption>
+        </figure>
+        <figure style="margin: 0; flex: none; width: 640px; display: flex; flex-direction: column; gap: 12px">
+          <div style="border: 1px solid rgba(22,12,51,.25); border-radius: 18px; overflow: hidden; background: #FFFFFF; box-shadow: 0 30px 70px rgba(22,12,51,.22)">
+            <div style="display: flex; gap: 6px; padding: 10px 14px; background: #EDE9FE"><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span></div>
+            <img src="/home/img/demo-mapa.webp" alt="Protótipo de dashboard de logística: mapa do brasil, otif por uf e mapa de calor" width="640" height="400" loading="lazy" style="display: block; width: 100%; height: auto">
+          </div>
+          <figcaption style="font-weight: 700; font-size: 15px">Logística <span style="font-weight: 400">· Mapa do Brasil, OTIF por UF e mapa de calor</span></figcaption>
+        </figure>
+        <figure style="margin: 0; flex: none; width: 640px; display: flex; flex-direction: column; gap: 12px">
+          <div style="border: 1px solid rgba(22,12,51,.25); border-radius: 18px; overflow: hidden; background: #FFFFFF; box-shadow: 0 30px 70px rgba(22,12,51,.22)">
+            <div style="display: flex; gap: 6px; padding: 10px 14px; background: #EDE9FE"><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span></div>
+            <img src="/home/img/demo-financeiro.webp" alt="Protótipo de dashboard de financeiro: dre em cascata, ebitda e caixa" width="640" height="400" loading="lazy" style="display: block; width: 100%; height: auto">
+          </div>
+          <figcaption style="font-weight: 700; font-size: 15px">Financeiro <span style="font-weight: 400">· DRE em cascata, EBITDA e caixa</span></figcaption>
+        </figure>
+        <figure style="margin: 0; flex: none; width: 640px; display: flex; flex-direction: column; gap: 12px">
+          <div style="border: 1px solid rgba(22,12,51,.25); border-radius: 18px; overflow: hidden; background: #FFFFFF; box-shadow: 0 30px 70px rgba(22,12,51,.22)">
+            <div style="display: flex; gap: 6px; padding: 10px 14px; background: #EDE9FE"><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span></div>
+            <img src="/home/img/demo-rh.webp" alt="Protótipo de dashboard de recursos humanos: headcount, turnover e clima" width="640" height="400" loading="lazy" style="display: block; width: 100%; height: auto">
+          </div>
+          <figcaption style="font-weight: 700; font-size: 15px">Recursos humanos <span style="font-weight: 400">· Headcount, turnover e clima</span></figcaption>
+        </figure>
+        <figure style="margin: 0; flex: none; width: 640px; display: flex; flex-direction: column; gap: 12px">
+          <div style="border: 1px solid rgba(22,12,51,.25); border-radius: 18px; overflow: hidden; background: #FFFFFF; box-shadow: 0 30px 70px rgba(22,12,51,.22)">
+            <div style="display: flex; gap: 6px; padding: 10px 14px; background: #EDE9FE"><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span></div>
+            <img src="/home/img/demo-logistica.webp" alt="Protótipo de dashboard de logística: custo da frota, kpis com ícone e sparkline" width="640" height="400" loading="lazy" style="display: block; width: 100%; height: auto">
+          </div>
+          <figcaption style="font-weight: 700; font-size: 15px">Logística <span style="font-weight: 400">· Custo da frota, KPIs com ícone e sparkline</span></figcaption>
+        </figure>
+      </div>
+      <div class="ki-track ki-shots-track" aria-hidden="true" style="gap: 28px; padding-right: 28px; animation-duration: 60s">
+        <figure style="margin: 0; flex: none; width: 640px; display: flex; flex-direction: column; gap: 12px">
+          <div style="border: 1px solid rgba(22,12,51,.25); border-radius: 18px; overflow: hidden; background: #FFFFFF; box-shadow: 0 30px 70px rgba(22,12,51,.22)">
+            <div style="display: flex; gap: 6px; padding: 10px 14px; background: #EDE9FE"><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span></div>
+            <img src="/home/img/demo-vendas.webp" alt="Protótipo de dashboard de crm e vendas: pipeline comercial, funil e meta do time" width="640" height="400" loading="lazy" style="display: block; width: 100%; height: auto">
+          </div>
+          <figcaption style="font-weight: 700; font-size: 15px">CRM e vendas <span style="font-weight: 400">· Pipeline comercial, funil e meta do time</span></figcaption>
+        </figure>
+        <figure style="margin: 0; flex: none; width: 640px; display: flex; flex-direction: column; gap: 12px">
+          <div style="border: 1px solid rgba(22,12,51,.25); border-radius: 18px; overflow: hidden; background: #FFFFFF; box-shadow: 0 30px 70px rgba(22,12,51,.22)">
+            <div style="display: flex; gap: 6px; padding: 10px 14px; background: #EDE9FE"><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span></div>
+            <img src="/home/img/demo-mapa.webp" alt="Protótipo de dashboard de logística: mapa do brasil, otif por uf e mapa de calor" width="640" height="400" loading="lazy" style="display: block; width: 100%; height: auto">
+          </div>
+          <figcaption style="font-weight: 700; font-size: 15px">Logística <span style="font-weight: 400">· Mapa do Brasil, OTIF por UF e mapa de calor</span></figcaption>
+        </figure>
+        <figure style="margin: 0; flex: none; width: 640px; display: flex; flex-direction: column; gap: 12px">
+          <div style="border: 1px solid rgba(22,12,51,.25); border-radius: 18px; overflow: hidden; background: #FFFFFF; box-shadow: 0 30px 70px rgba(22,12,51,.22)">
+            <div style="display: flex; gap: 6px; padding: 10px 14px; background: #EDE9FE"><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span></div>
+            <img src="/home/img/demo-financeiro.webp" alt="Protótipo de dashboard de financeiro: dre em cascata, ebitda e caixa" width="640" height="400" loading="lazy" style="display: block; width: 100%; height: auto">
+          </div>
+          <figcaption style="font-weight: 700; font-size: 15px">Financeiro <span style="font-weight: 400">· DRE em cascata, EBITDA e caixa</span></figcaption>
+        </figure>
+        <figure style="margin: 0; flex: none; width: 640px; display: flex; flex-direction: column; gap: 12px">
+          <div style="border: 1px solid rgba(22,12,51,.25); border-radius: 18px; overflow: hidden; background: #FFFFFF; box-shadow: 0 30px 70px rgba(22,12,51,.22)">
+            <div style="display: flex; gap: 6px; padding: 10px 14px; background: #EDE9FE"><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span></div>
+            <img src="/home/img/demo-rh.webp" alt="Protótipo de dashboard de recursos humanos: headcount, turnover e clima" width="640" height="400" loading="lazy" style="display: block; width: 100%; height: auto">
+          </div>
+          <figcaption style="font-weight: 700; font-size: 15px">Recursos humanos <span style="font-weight: 400">· Headcount, turnover e clima</span></figcaption>
+        </figure>
+        <figure style="margin: 0; flex: none; width: 640px; display: flex; flex-direction: column; gap: 12px">
+          <div style="border: 1px solid rgba(22,12,51,.25); border-radius: 18px; overflow: hidden; background: #FFFFFF; box-shadow: 0 30px 70px rgba(22,12,51,.22)">
+            <div style="display: flex; gap: 6px; padding: 10px 14px; background: #EDE9FE"><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span><span style="width: 9px; height: 9px; border-radius: 50%; background: #B9A6FF"></span></div>
+            <img src="/home/img/demo-logistica.webp" alt="Protótipo de dashboard de logística: custo da frota, kpis com ícone e sparkline" width="640" height="400" loading="lazy" style="display: block; width: 100%; height: auto">
+          </div>
+          <figcaption style="font-weight: 700; font-size: 15px">Logística <span style="font-weight: 400">· Custo da frota, KPIs com ícone e sparkline</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="au-wrap" style="background: linear-gradient(120deg,#DDD6FE,#CFFAFE 50%,#FCE7F3); border-top: 2px solid #160C33">
+    <div class="au-bg" aria-hidden="true"><div class="au-blob au-b1"></div><div class="au-blob au-b2"></div><div class="au-blob au-b3"></div></div>
+        <div style="max-width: 1320px; margin: 0 auto; padding: 96px 24px; display: flex; flex-direction: column; gap: 28px">
+      <h2 style="margin: 0; font-family: 'Syncopate', sans-serif; font-weight: 700; font-size: clamp(48px, 8vw, 128px); line-height: .9; text-transform: uppercase">Vamos<br>conversar</h2>
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; font-weight: 700">
+        <a id="c-email" hidden href="#" class="ki-btn" style="background: #160C33; color: #F4F2FF; padding: 18px 24px; text-decoration: none">E-mail</a>
+        <a id="c-wpp" hidden href="#" class="ki-btn" style="border: 2px solid #160C33; color: #160C33; padding: 16px 22px; text-decoration: none">WhatsApp</a>
+        <a href="https://www.linkedin.com/in/byanaflavia" target="_blank" rel="noopener" class="ki-btn" style="border: 2px solid #160C33; color: #160C33; padding: 16px 22px; text-decoration: none">LinkedIn</a>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  <footer style="background: #160C33; color: #D6CEF5; font-size: 13px">
+    <div style="max-width: 1320px; margin: 0 auto; padding: 20px 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px">
+      <span>Ana Flávia · Consultoria em Dados e BI · São Paulo</span><span>Excel · Power BI · SQL · Python · Cloud</span>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  // Canais de contato. Preencha para exibir os botões e habilitar o formulário.
+  var CONTACT = { email: '', whatsapp: '', linkedin: 'https://www.linkedin.com/in/byanaflavia' };
+
+  var email = document.getElementById('c-email'), wpp = document.getElementById('c-wpp');
+  if (CONTACT.email) { email.href = 'mailto:' + CONTACT.email; email.textContent = 'E-mail: ' + CONTACT.email; email.hidden = false; }
+  if (CONTACT.whatsapp) { wpp.href = 'https://wa.me/' + CONTACT.whatsapp.replace(/\D/g, ''); wpp.textContent = 'WhatsApp'; wpp.hidden = false; }
+
+  var botoes = document.querySelectorAll('.ki-faq-btn');
+  function alternar(b, abrir) {
+    b.setAttribute('aria-expanded', String(abrir));
+    document.getElementById(b.getAttribute('aria-controls')).hidden = !abrir;
+    b.style.background = abrir ? '#B9A6FF' : 'transparent';
+      }
+  botoes.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var abrir = b.getAttribute('aria-expanded') !== 'true';
+      botoes.forEach(function (o) { alternar(o, false); o.querySelector('.ki-sign').textContent = '+'; });
+      alternar(b, abrir);
+      b.querySelector('.ki-sign').textContent = abrir ? '\u2212' : '+';
+    });
+  });
+
+  var form = document.getElementById('form-contato'), msg = document.getElementById('form-msg');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var d = new FormData(form), nome = (d.get('nome') || '').trim(), mail = (d.get('email') || '').trim(), dados = (d.get('dados') || '').trim();
+    if (!nome || !/^\S+@\S+\.\S+$/.test(mail)) { msg.textContent = 'Preencha o nome e um e-mail válido.'; return; }
+    var texto = 'Olá, Ana! Sou ' + nome + ' (' + mail + '). Quero agendar um diagnóstico. Meus dados estão em: ' + (dados || 'ainda não sei') + '.';
+    if (CONTACT.email) { location.href = 'mailto:' + CONTACT.email + '?subject=' + encodeURIComponent('Diagnóstico de dados') + '&body=' + encodeURIComponent(texto); msg.textContent = 'Abrindo o seu e-mail para enviar.'; }
+    else if (CONTACT.whatsapp) { window.open('https://wa.me/' + CONTACT.whatsapp.replace(/\D/g, '') + '?text=' + encodeURIComponent(texto), '_blank', 'noopener'); msg.textContent = 'Abrindo o WhatsApp.'; }
+    else { msg.innerHTML = 'Por enquanto, me chame no <a href="' + CONTACT.linkedin + '" target="_blank" rel="noopener" style="color:#160C33;font-weight:700">LinkedIn</a>.'; }
+  });
+})();
+</script>
+</body>
+</html>

@@ -2,5 +2,12 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "installCommand": "npm install",
-  "framework": "vite"
+  "framework": "vite",
+  "redirects": [
+    { "source": "/", "destination": "/home", "permanent": false }
+  ],
+  "rewrites": [
+    { "source": "/home", "destination": "/home/index.html" },
+    { "source": "/dashboard-generator", "destination": "/dashboard-generator/index.html" }
+  ]
 }
