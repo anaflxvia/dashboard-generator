@@ -1,4 +1,4 @@
-import { defineConfig, type Plugin } from 'vite'
+import { defineConfig, loadEnv, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { cpSync, existsSync, readFileSync, rmSync, statSync } from 'node:fs'
@@ -45,9 +45,39 @@ function landing(): Plugin {
   }
 }
 
+// Em desenvolvimento, atende /api/gemini com o mesmo arquivo da Vercel (api/gemini.ts),
+// lendo GEMINI_API_KEY e ACCESS_CODES do .env.
+function apiLocal(): Plugin {
+  return {
+    name: 'api-local',
+    configureServer(server) {
+      Object.assign(process.env, loadEnv('development', raiz, ''))
+      server.middlewares.use('/api/gemini', async (req, res) => {
+        try {
+          const partes: Buffer[] = []
+          for await (const p of req) partes.push(p as Buffer)
+          const pedido = new Request('http://localhost/api/gemini', {
+            method: req.method,
+            headers: req.headers as Record<string, string>,
+            body: req.method === 'POST' ? Buffer.concat(partes) : undefined,
+          })
+          const { POST } = await server.ssrLoadModule('/api/gemini.ts') as { POST: (r: Request) => Promise<Response> }
+          const resposta = req.method === 'POST' ? await POST(pedido) : new Response(null, { status: 405 })
+          res.statusCode = resposta.status
+          resposta.headers.forEach((v, k) => res.setHeader(k, v))
+          res.end(Buffer.from(await resposta.arrayBuffer()))
+        } catch (e) {
+          res.statusCode = 500
+          res.end(JSON.stringify({ error: { message: e instanceof Error ? e.message : 'Erro na API local' } }))
+        }
+      })
+    },
+  }
+}
+
 // O app React fica em afkview.com/dashboard-generator (base + outDir).
 export default defineConfig({
   base: '/dashboard-generator/',
-  plugins: [react(), tailwindcss(), landing()],
+  plugins: [react(), tailwindcss(), landing(), apiLocal()],
   build: { outDir: 'dist/dashboard-generator', emptyOutDir: true },
 })
